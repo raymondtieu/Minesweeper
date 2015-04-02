@@ -1,10 +1,11 @@
-package com.raymondtieu.minesweeper;
+package com.raymondtieu.minesweeper.activities;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.raymondtieu.minesweeper.R;
 
 public class MainActivity extends ActionBarActivity {
 
