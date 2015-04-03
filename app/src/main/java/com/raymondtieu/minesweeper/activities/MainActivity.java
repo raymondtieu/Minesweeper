@@ -1,17 +1,21 @@
 package com.raymondtieu.minesweeper.activities;
 
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.raymondtieu.minesweeper.fragments.*;
+
 import com.raymondtieu.minesweeper.R;
 
 public class MainActivity extends ActionBarActivity {
-
-    // titles for navigation drawer
-    String TITLES[] = {"Home", "Events", "Mail"};
 
     private Toolbar toolbar;
 
@@ -23,8 +27,12 @@ public class MainActivity extends ActionBarActivity {
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
 
+        NavigationDrawerFragment drawerFragment;
+        drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_navigation_drawer);
 
-
+        drawerFragment.setUp((DrawerLayout) findViewById(R.id.drawer_layout),
+                toolbar);
     }
 
 
