@@ -1,6 +1,7 @@
 package com.raymondtieu.minesweeper.activities;
 
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,10 +10,21 @@ import com.raymondtieu.minesweeper.R;
 
 public class MainActivity extends ActionBarActivity {
 
+    // titles for navigation drawer
+    String TITLES[] = {"Home", "Events", "Mail"};
+
+    private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+
+
+
     }
 
 
