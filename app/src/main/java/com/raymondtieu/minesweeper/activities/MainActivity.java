@@ -26,15 +26,15 @@ public class MainActivity extends ActionBarActivity {
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         NavigationDrawerFragment drawerFragment;
         drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_navigation_drawer);
 
-        drawerFragment.setUp((DrawerLayout) findViewById(R.id.drawer_layout),
-                toolbar);
+        drawerFragment.setUp(R.id.fragment_navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
