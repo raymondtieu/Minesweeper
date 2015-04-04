@@ -3,21 +3,16 @@ package com.raymondtieu.minesweeper.fragments;
 
 import android.support.v4.app.Fragment;
 
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.raymondtieu.minesweeper.R;
 
 import com.raymondtieu.minesweeper.adapters.CellAdapter;
-import com.raymondtieu.minesweeper.models.Board;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 
 public class MinesweeperFragment extends Fragment {
@@ -26,16 +21,29 @@ public class MinesweeperFragment extends Fragment {
     private CellAdapter adapter;
 
     private OnePlayerGame game;
+    private int x, y, m;
 
     public MinesweeperFragment() {
         // Required empty public constructor
     }
 
+    public static MinesweeperFragment newInstance(int x, int y, int m) {
+        Bundle args = new Bundle();
+
+        args.putInt("xDim", x);
+        args.putInt("yDim", y);
+        args.putInt("nMines", m);
+
+        MinesweeperFragment f = new MinesweeperFragment();
+
+        f.setArguments(args);
+
+        return f;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        game = new OnePlayerGame(16, 16, 40);
     }
 
     @Override
@@ -45,9 +53,15 @@ public class MinesweeperFragment extends Fragment {
         final View layout = inflater
             .inflate(R.layout.fragment_minesweeper, container, false);
 
+        Bundle args = getArguments();
+        x = args.getInt("xDim", 16);
+        y = args.getInt("yDim", 16);
+        m = args.getInt("nMines", 40);
+
+        game = new OnePlayerGame(x, y, m);
 
         gridView = (GridView) layout.findViewById(R.id.minesweeper_board);
-        gridView.setNumColumns(16);
+        gridView.setNumColumns(y);
 
         adapter = new CellAdapter(getActivity(), game.getBoard());
         gridView.setAdapter(adapter);
@@ -75,9 +89,4 @@ public class MinesweeperFragment extends Fragment {
 
         return layout;
     }
-
-    public void setUp(int x, int y, int m) {
-
-    }
-
 }

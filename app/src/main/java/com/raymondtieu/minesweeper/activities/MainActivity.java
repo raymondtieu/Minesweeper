@@ -1,9 +1,9 @@
 package com.raymondtieu.minesweeper.activities;
 
-import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -87,11 +87,22 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void setUpBoard(int x, int y, int m) {
-        MinesweeperFragment gameFragment;
-        gameFragment = (MinesweeperFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_minesweeper);
+        FragmentManager fm = getSupportFragmentManager();
 
-        gameFragment.setUp(x, y, m);
+        FragmentTransaction ft = fm.beginTransaction();
+
+        MinesweeperFragment f = new MinesweeperFragment();
+
+        Bundle args = new Bundle();
+
+        args.putInt("xDim", x);
+        args.putInt("yDim", y);
+        args.putInt("nMines", m);
+
+        f.setArguments(args);
+
+        ft.replace(R.id.fragment_minesweeper, f);
+        ft.commit();
     }
 
     public void setUpGameInfo(int x, int y, int m) {

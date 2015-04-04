@@ -25,7 +25,6 @@ public class CellAdapter extends BaseAdapter {
 
     public CellAdapter(Context context, Board board) {
         this.context = context;
-
         this.board = board;
     }
 
@@ -40,8 +39,8 @@ public class CellAdapter extends BaseAdapter {
             cell = (View) convertView;
         }
 
-        final int i = position / board.getxDimension();
-        final int j = position % board.getyDimension();
+        final int i = position / board.getyDimension();
+        final int j = position % board.getxDimension();
 
         TextView cell_data = (TextView) cell.findViewById(R.id.cell_data);
 
