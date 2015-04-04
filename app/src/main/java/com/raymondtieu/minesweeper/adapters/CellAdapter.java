@@ -40,7 +40,7 @@ public class CellAdapter extends BaseAdapter {
         }
 
         final int i = position / board.getyDimension();
-        final int j = position % board.getxDimension();
+        final int j = position % board.getyDimension();
 
         TextView cell_data = (TextView) cell.findViewById(R.id.cell_data);
 

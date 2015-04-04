@@ -103,7 +103,7 @@ public class OnePlayerGame implements Game {
     public void revealAll() {
         for (int i = 0; i < board.getxDimension(); i++) {
             for (int j = 0; j < board.getyDimension(); j++) {
-                if (!board.isRevealed(i, j))
+                if (board.getNumMines(i, j) >= 9)
                     board.revealCell(i, j);
             }
         }

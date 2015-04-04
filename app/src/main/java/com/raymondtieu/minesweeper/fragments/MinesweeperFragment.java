@@ -71,7 +71,7 @@ public class MinesweeperFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final CellAdapter adapter = (CellAdapter) gridView.getAdapter();
 
-                final int i = position / game.getBoard().getxDimension();
+                final int i = position / game.getBoard().getyDimension();
                 final int j = position % game.getBoard().getyDimension();
 
                 if (!game.isStarted()) {
