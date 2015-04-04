@@ -19,6 +19,7 @@ import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.adapters.CellAdapter;
 import com.raymondtieu.minesweeper.adapters.NavBarAdapter;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
+import com.raymondtieu.minesweeper.views.FixedGridLayoutManager;
 
 public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener {
 
@@ -69,9 +70,13 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         adapter = new CellAdapter(getActivity(), game.getBoard());
         adapter.setOnItemClickListener(this);
 
+        FixedGridLayoutManager manager = new FixedGridLayoutManager();
+        manager.setTotalColumnCount(y);
+
         recyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), y));
+
+        recyclerView.setLayoutManager(manager);
 
         return layout;
     }
