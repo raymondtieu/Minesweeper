@@ -5,6 +5,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.Fragment;
 
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.content.Context;
@@ -15,6 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.raymondtieu.minesweeper.R;
+import com.raymondtieu.minesweeper.models.NavBarData;
+import com.raymondtieu.minesweeper.adapters.NavBarAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +39,10 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
 
     private View containerView;
+
+    private RecyclerView recyclerView;
+    private NavBarAdapter adapter;
+
 
     public NavigationDrawerFragment() {
         // Required empty public constructor
@@ -54,8 +65,32 @@ public class NavigationDrawerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        View layout =  inflater
+                .inflate(R.layout.fragment_navigation_drawer, container, false);
+
+        recyclerView = (RecyclerView) layout.findViewById(R.id.drawerList);
+        adapter = new NavBarAdapter(getActivity(), getData());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        return layout;
     }
+
+
+    public static List<NavBarData> getData() {
+        List<NavBarData> data = new ArrayList<>();
+        // int[] icons =
+        String[] titles = {"Home", "Settings", "About"};
+
+        for (int i = 0; i < titles.length; i++) {
+            NavBarData n = new NavBarData(titles[i], 0);
+
+            data.add(n);
+        }
+
+        return data;
+    }
+
 
     public void setUp(int fragId, DrawerLayout drawerLayout, Toolbar toolbar) {
         containerView = getActivity().findViewById(fragId);
