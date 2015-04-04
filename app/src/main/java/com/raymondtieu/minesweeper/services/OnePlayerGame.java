@@ -8,11 +8,13 @@ import com.raymondtieu.minesweeper.models.*;
 
 public class OnePlayerGame implements Game {	
     // timer
+    private boolean started;
     private boolean finished;
     private Board board;
 
     public OnePlayerGame(int dx, int dy, int m) {
         this.board = new Board(dx, dy, m);
+        this.started = false;
     }
 
     public Board getBoard() {
@@ -23,6 +25,8 @@ public class OnePlayerGame implements Game {
         return finished;
     }
 
+    public boolean isStarted() { return started; }
+
     public void setFinished(boolean finished) {
         this.finished = finished;
     }
@@ -31,6 +35,7 @@ public class OnePlayerGame implements Game {
     public void startGame(int x, int y) {
         this.board.generateBoard(x, y);
         this.finished = false;
+        this.started = true;
 
         // reveal blocks surrounding starting position and everything around 0 blocks in
         // reach
@@ -93,5 +98,14 @@ public class OnePlayerGame implements Game {
     @Override
     public boolean gameOver() {
         return false;
+    }
+
+    public void revealAll() {
+        for (int i = 0; i < board.getxDimension(); i++) {
+            for (int j = 0; j < board.getyDimension(); j++) {
+                if (!board.isRevealed(i, j))
+                    board.revealCell(i, j);
+            }
+        }
     }
 }
