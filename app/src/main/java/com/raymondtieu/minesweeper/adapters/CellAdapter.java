@@ -2,7 +2,7 @@ package com.raymondtieu.minesweeper.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +10,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.models.Board;
-import com.raymondtieu.minesweeper.services.Game;
-import com.raymondtieu.minesweeper.services.OnePlayerGame;
-
-import java.util.List;
 
 /**
  * Created by raymond on 2015-04-04.
@@ -26,10 +21,10 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
 
     private LayoutInflater inflater;
     private Board board;
-
     private Context mContext;
-
     private AdapterView.OnItemClickListener mOnItemClickListener;
+
+    private int cellDimensions = 0;
 
     public CellAdapter(Context context, Board board) {
         inflater = LayoutInflater.from(context);
@@ -41,8 +36,18 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
     public CellHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // the root - linear layout
         View view = inflater.inflate(R.layout.cell, parent, false);
-        CellHolder holder = new CellHolder(view, this);
 
+
+        // calculate cell size
+        if (cellDimensions == 0) {
+            DisplayMetrics display = mContext.getResources().getDisplayMetrics();
+            float width = display.widthPixels;
+
+            cellDimensions = Math.round(width / 10);
+        }
+
+
+        CellHolder holder = new CellHolder(view, this, cellDimensions);
         // return holder that was inflated
         return holder;
     }

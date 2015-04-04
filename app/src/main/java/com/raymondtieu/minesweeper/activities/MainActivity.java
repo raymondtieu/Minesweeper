@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
 
         setUpToolbar();
 
-        setUpGame(MEDIUM);
+        setUpField(MEDIUM);
     }
 
     @Override
@@ -55,11 +55,11 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_easy) {
-            setUpGame(EASY);
+            setUpField(EASY);
         } else if (id == R.id.action_medium) {
-            setUpGame(MEDIUM);
+            setUpField(MEDIUM);
         } else if (id == R.id.action_hard) {
-            setUpGame(HARD);
+            setUpField(HARD);
         }
 
         return super.onOptionsItemSelected(item);
@@ -78,16 +78,11 @@ public class MainActivity extends ActionBarActivity {
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
     }
 
-    public void setUpGame(int[] difficulty) {
+    public void setUpField(int[] difficulty) {
         int x = difficulty[0];
         int y = difficulty[1];
         int m = difficulty[2];
 
-        setUpBoard(x, y, m);
-        setUpGameInfo(x, y, m);
-    }
-
-    public void setUpBoard(int x, int y, int m) {
         FragmentManager fm = getSupportFragmentManager();
 
         FragmentTransaction ft = fm.beginTransaction();
@@ -104,13 +99,5 @@ public class MainActivity extends ActionBarActivity {
 
         ft.replace(R.id.fragment_minesweeper, f);
         ft.commit();
-    }
-
-    public void setUpGameInfo(int x, int y, int m) {
-        GameInfoFragment infoFragment;
-        infoFragment = (GameInfoFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_game_info);
-
-        infoFragment.setUp(x, y, m);
     }
 }

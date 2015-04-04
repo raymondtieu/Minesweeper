@@ -4,31 +4,29 @@ package com.raymondtieu.minesweeper.fragments;
 import android.support.v4.app.Fragment;
 
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.raymondtieu.minesweeper.R;
 
 import com.raymondtieu.minesweeper.adapters.CellAdapter;
-import com.raymondtieu.minesweeper.adapters.NavBarAdapter;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
 public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private GridView gridView;
     private CellAdapter adapter;
     private RecyclerView recyclerView;
 
     private OnePlayerGame game;
     private int x, y, m;
+    private TextView Difficulty, Time, Mines;
 
     public MinesweeperFragment() {
         // Required empty public constructor
@@ -77,6 +75,18 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         recyclerView.setAdapter(adapter);
 
         recyclerView.setLayoutManager(manager);
+
+        // set up game information in footer
+        Difficulty = (TextView) layout.findViewById(R.id.difficulty);
+
+        switch(y) {
+            case 9 : Difficulty.setText("Easy"); break;
+            case 16: Difficulty.setText("Medium"); break;
+            case 30: Difficulty.setText("Hard"); break;
+        }
+
+        Mines = (TextView) layout.findViewById(R.id.num_mines);
+        Mines.setText("" + m);
 
         return layout;
     }

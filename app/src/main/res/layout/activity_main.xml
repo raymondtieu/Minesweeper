@@ -25,29 +25,10 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/fragment_minesweeper"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:weightSum="100"
-            android:orientation="vertical">
-
-
-
-            <FrameLayout
-                android:id="@+id/fragment_minesweeper"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="90" />
-
-            <fragment
-                android:id="@+id/fragment_game_info"
-                android:name="com.raymondtieu.minesweeper.fragments.GameInfoFragment"
-                android:layout_height="0dp"
-                android:layout_width="match_parent"
-                android:layout_weight="10"
-                app:layout="@layout/fragment_game_info"
-                tools:layout="@layout/fragment_game_info" />
-        </LinearLayout>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
     <fragment
