@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,11 +27,14 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
     private LayoutInflater inflater;
     private Board board;
 
+    private Context mContext;
+
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
     public CellAdapter(Context context, Board board) {
         inflater = LayoutInflater.from(context);
         this.board = board;
+        this.mContext = context;
     }
 
     @Override
@@ -51,6 +56,13 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
         } else {
             holder.cell.setText("+");
         }
+
+        setAnimation(holder.cell, position);
+    }
+
+    public void setAnimation(View v, int position) {
+        Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
+        v.startAnimation(animation);
     }
 
     @Override
