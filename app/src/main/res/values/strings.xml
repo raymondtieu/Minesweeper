@@ -9,4 +9,7 @@
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
+    <string name="easy_mode">Easy (9x9, 10 mines)</string>
+    <string name="med_mode">Medium (16x16, 40 mines)</string>
+    <string name="hard_mode">Hard (16x30, 99 mines)</string>
 </resources>
