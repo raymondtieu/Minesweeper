@@ -19,7 +19,7 @@ import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.adapters.CellAdapter;
 import com.raymondtieu.minesweeper.adapters.NavBarAdapter;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
-import com.raymondtieu.minesweeper.views.FixedGridLayoutManager;
+import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
 public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener {
 
