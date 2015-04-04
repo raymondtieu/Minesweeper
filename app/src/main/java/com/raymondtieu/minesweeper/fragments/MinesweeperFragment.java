@@ -4,21 +4,27 @@ package com.raymondtieu.minesweeper.fragments;
 import android.support.v4.app.Fragment;
 
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.raymondtieu.minesweeper.R;
 
 import com.raymondtieu.minesweeper.adapters.CellAdapter;
+import com.raymondtieu.minesweeper.adapters.NavBarAdapter;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 
-public class MinesweeperFragment extends Fragment {
+public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private GridView gridView;
     private CellAdapter adapter;
+    private RecyclerView recyclerView;
 
     private OnePlayerGame game;
     private int x, y, m;
@@ -60,33 +66,33 @@ public class MinesweeperFragment extends Fragment {
 
         game = new OnePlayerGame(x, y, m);
 
-        gridView = (GridView) layout.findViewById(R.id.minesweeper_board);
-        gridView.setNumColumns(y);
-
         adapter = new CellAdapter(getActivity(), game.getBoard());
-        gridView.setAdapter(adapter);
+        adapter.setOnItemClickListener(this);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final CellAdapter adapter = (CellAdapter) gridView.getAdapter();
-
-                final int i = position / game.getBoard().getyDimension();
-                final int j = position % game.getBoard().getyDimension();
-
-                if (!game.isStarted()) {
-                    game.startGame(i, j);
-                    adapter.notifyDataSetChanged();
-                } else {
-                    if (game.revealCell(i, j)) {
-                        game.revealAll();
-                    }
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        });
-
+        recyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), y));
 
         return layout;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        System.out.println("" + position);
+        CellAdapter.Coordinates c = adapter.convertPosition(position);
+
+        if (!game.isStarted()) {
+            game.startGame(c.i, c.j);
+
+            Toast.makeText(getActivity(),
+                    "Game started at " + c.i + ", " + c.j,
+                    Toast.LENGTH_SHORT).show();
+
+            adapter.notifyDataSetChanged();
+
+        } else {
+            game.revealCell(c.i, c.j);
+            adapter.notifyDataSetChanged();
+        }
     }
 }

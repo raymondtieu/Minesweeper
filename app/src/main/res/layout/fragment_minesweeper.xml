@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/minesweeper_board"
-    android:numColumns="1"
-    android:gravity="center"
-    android:verticalSpacing="5dp"
-    android:horizontalSpacing="5dp"
-    android:stretchMode="columnWidth"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#ffffff" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    tools:context="com.raymondtieu.minesweeper.fragments.MinesweeperFragment">
 
-</GridView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/minefield"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+</RelativeLayout>
