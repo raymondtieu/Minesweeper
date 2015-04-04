@@ -24,12 +24,17 @@ public class MainActivity extends ActionBarActivity {
 
     private Button easyMode, mediumMode, hardMode;
 
+    private final int[] EASY = {9, 9, 10};
+    private final int[] MEDIUM = {16, 16, 40};
+    private final int[] HARD = {16, 30, 99};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         setUpToolbar();
+        setUpGameInfo(MEDIUM);
     }
 
     @Override
@@ -48,11 +53,11 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_easy) {
-            return true;
+            setUpGameInfo(EASY);
         } else if (id == R.id.action_medium) {
-            return true;
+            setUpGameInfo(MEDIUM);
         } else if (id == R.id.action_hard) {
-            return true;
+            setUpGameInfo(HARD);
         }
 
         return super.onOptionsItemSelected(item);
@@ -71,4 +76,11 @@ public class MainActivity extends ActionBarActivity {
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
     }
 
+    public void setUpGameInfo(int[] difficulty) {
+        GameInfoFragment infoFragment;
+        infoFragment = (GameInfoFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_game_info);
+
+        infoFragment.setUp(difficulty[0], difficulty[1], difficulty[2]);
+    }
 }
