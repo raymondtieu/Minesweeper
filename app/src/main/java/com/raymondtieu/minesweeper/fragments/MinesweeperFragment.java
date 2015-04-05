@@ -19,6 +19,9 @@ import com.raymondtieu.minesweeper.adapters.CellAdapter;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
+import jp.wasabeef.recyclerview.animators.FlipInLeftYAnimator;
+import jp.wasabeef.recyclerview.animators.FlipInTopXAnimator;
+
 public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private CellAdapter adapter;
@@ -63,20 +66,29 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         y = args.getInt("yDim", 16);
         m = args.getInt("nMines", 40);
 
+        // instantiate a new game
         game = new OnePlayerGame(x, y, m);
 
+        // instantiate a recycler view to display game
+        recyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
+
+        // create adapter
         adapter = new CellAdapter(getActivity(), game.getBoard());
         adapter.setOnItemClickListener(this);
 
+        // set adapter in the game to notify view for changes
         game.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
 
+        // the recycler view manager
         FixedGridLayoutManager manager = new FixedGridLayoutManager();
         manager.setTotalColumnCount(y);
 
-        recyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
-        recyclerView.setAdapter(adapter);
-
         recyclerView.setLayoutManager(manager);
+
+        // set item animations
+        recyclerView.setItemAnimator(new FlipInTopXAnimator());
+        recyclerView.getItemAnimator().setChangeDuration(3000);
 
         // set up game information in footer
         Difficulty = (TextView) layout.findViewById(R.id.difficulty);

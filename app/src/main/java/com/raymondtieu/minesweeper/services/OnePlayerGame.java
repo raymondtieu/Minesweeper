@@ -69,9 +69,6 @@ public class OnePlayerGame implements Game {
 
         // reveal all blocks around any block with no adjacent mines
         if (this.board.revealCell(x, y) == 0) {
-
-            adapter.notifyItemChanged(getPosition(x, y));
-
             for (int a = -1; a <= 1; a++) {
                 for (int b = -1; b <= 1; b++) {
                     int s_x = x + a;

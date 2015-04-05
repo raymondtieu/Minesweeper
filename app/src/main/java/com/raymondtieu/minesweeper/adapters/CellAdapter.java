@@ -6,8 +6,6 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 
 import com.raymondtieu.minesweeper.R;
@@ -24,8 +22,6 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
     private int cellDimensions = 0;
-
-
 
     // 1 - blue, 2 - green, 3 - red, 4 - dark blue, 5 - dark red, 6 - teal
     // 7 - purple, 8 - black
@@ -57,9 +53,8 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
             DisplayMetrics display = mContext.getResources().getDisplayMetrics();
             float width = display.widthPixels;
 
-            cellDimensions = Math.round(width / 10);
+            cellDimensions = Math.round(width / ((float) 12.5));
         }
-
 
         CellHolder holder = new CellHolder(view, this, cellDimensions);
         // return holder that was inflated
@@ -90,13 +85,6 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
             holder.cell.setText("");
             holder.icon.setImageResource(R.drawable.hidden);
         }
-
-        setAnimation(holder.cell, position);
-    }
-
-    public void setAnimation(View v, int position) {
-        Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
-        v.startAnimation(animation);
     }
 
     @Override
