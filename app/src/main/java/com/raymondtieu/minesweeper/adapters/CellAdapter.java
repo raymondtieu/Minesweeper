@@ -62,7 +62,7 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final CellHolder holder, int position) {
+    public void onBindViewHolder(CellHolder holder, int position) {
         Coordinates c = convertPosition(position);
 
         if (board.isRevealed(c.i, c.j)) {

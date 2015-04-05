@@ -13,6 +13,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.flippers.FlipInXAnimator;
 import com.raymondtieu.minesweeper.R;
 
 import com.raymondtieu.minesweeper.adapters.CellAdapter;
@@ -85,10 +86,6 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         manager.setTotalColumnCount(y);
 
         recyclerView.setLayoutManager(manager);
-
-        // set item animations
-        recyclerView.setItemAnimator(new FlipInTopXAnimator());
-        recyclerView.getItemAnimator().setChangeDuration(3000);
 
         // set up game information in footer
         Difficulty = (TextView) layout.findViewById(R.id.difficulty);
