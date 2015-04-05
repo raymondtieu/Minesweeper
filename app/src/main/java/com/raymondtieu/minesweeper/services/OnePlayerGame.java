@@ -4,6 +4,7 @@ package com.raymondtieu.minesweeper.services;
  * Created by raymond on 2015-04-02.
  */
 
+import com.raymondtieu.minesweeper.adapters.CellAdapter;
 import com.raymondtieu.minesweeper.models.*;
 
 public class OnePlayerGame implements Game {	
@@ -11,6 +12,8 @@ public class OnePlayerGame implements Game {
     private boolean started;
     private boolean finished;
     private Board board;
+
+    private CellAdapter adapter;
 
     public OnePlayerGame(int dx, int dy, int m) {
         this.board = new Board(dx, dy, m);
@@ -42,9 +45,13 @@ public class OnePlayerGame implements Game {
         revealAdjacent(x, y);
     }
 
+
+    // adapter to notify recycle viewer of any revealed cells
     @Override
     public boolean revealCell(int x, int y) {
         boolean m = this.board.revealCell(x, y) >= 9;
+
+        adapter.notifyItemChanged(getPosition(x, y));
 
         // selected a mine
         if (m) {
@@ -62,6 +69,9 @@ public class OnePlayerGame implements Game {
 
         // reveal all blocks around any block with no adjacent mines
         if (this.board.revealCell(x, y) == 0) {
+
+            adapter.notifyItemChanged(getPosition(x, y));
+
             for (int a = -1; a <= 1; a++) {
                 for (int b = -1; b <= 1; b++) {
                     int s_x = x + a;
@@ -77,6 +87,7 @@ public class OnePlayerGame implements Game {
                         }
 
                         board.revealCell(s_x, s_y);
+                        adapter.notifyItemChanged(getPosition(s_x, s_y));
                     }
                 }
             }
@@ -107,5 +118,14 @@ public class OnePlayerGame implements Game {
                     board.revealCell(i, j);
             }
         }
+    }
+
+
+    public void setAdapter(CellAdapter adapter) {
+        this.adapter = adapter;
+    }
+
+    public int getPosition(int x, int y) {
+        return x * board.getyDimension() + y;
     }
 }

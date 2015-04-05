@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="white" type="color">#FFFFFF</item>
+    <item name="black" type="color">#000000</item>
+    <item name="blue" type="color">#2196F3</item>
+    <item name="purple" type="color">#9C27B0</item>
+    <item name="green" type="color">#4CAF50</item>
+    <item name="orange" type="color">#FF9800</item>
+    <item name="red" type="color">#F44336</item>
+    <item name="yellow" type="color">#FFEB3B</item>
+    <item name="teal" type="color">#009688</item>
+    <item name="darkblue" type="color">#0D47A1</item>
+    <item name="darkpurple" type="color">#311B92</item>
+    <item name="darkgreen" type="color">#1B5E20</item>
+    <item name="darkred" type="color">#B71C1C</item>
+</resources>

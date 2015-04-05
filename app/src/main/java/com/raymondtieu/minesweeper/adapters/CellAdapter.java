@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.TextView;
 
 import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.models.Board;
@@ -25,6 +24,21 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
     private int cellDimensions = 0;
+
+
+
+    // 1 - blue, 2 - green, 3 - red, 4 - dark blue, 5 - dark red, 6 - teal
+    // 7 - purple, 8 - black
+    Integer[] MINE_COLOUR = {
+            R.color.blue,
+            R.color.green,
+            R.color.red,
+            R.color.darkblue,
+            R.color.darkred,
+            R.color.teal,
+            R.color.purple,
+            R.color.black
+        };
 
     public CellAdapter(Context context, Board board) {
         inflater = LayoutInflater.from(context);
@@ -57,9 +71,24 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
         Coordinates c = convertPosition(position);
 
         if (board.isRevealed(c.i, c.j)) {
-            holder.cell.setText("" + board.getNumMines(c.i, c.j));
+            int n = board.getNumMines(c.i, c.j);
+            if (n < 9) {
+                if (n == 0) {
+                    holder.cell.setText("");
+                } else {
+                    holder.cell.setText("" + n);
+                    holder.cell.setTextColor(holder.cell
+                            .getResources().getColor(MINE_COLOUR[n - 1]));
+
+                }
+                holder.icon.setImageResource(R.drawable.cell_bg);
+            } else {
+                holder.cell.setText("");
+                holder.icon.setImageResource(R.drawable.mine);
+            }
         } else {
-            holder.cell.setText("+");
+            holder.cell.setText("");
+            holder.icon.setImageResource(R.drawable.hidden);
         }
 
         setAnimation(holder.cell, position);

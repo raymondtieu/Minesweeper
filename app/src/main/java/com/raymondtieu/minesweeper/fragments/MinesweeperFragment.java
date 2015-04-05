@@ -68,6 +68,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         adapter = new CellAdapter(getActivity(), game.getBoard());
         adapter.setOnItemClickListener(this);
 
+        game.setAdapter(adapter);
+
         FixedGridLayoutManager manager = new FixedGridLayoutManager();
         manager.setTotalColumnCount(y);
 
@@ -102,12 +104,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
             Toast.makeText(getActivity(),
                     "Game started at " + c.i + ", " + c.j,
                     Toast.LENGTH_SHORT).show();
-
-            adapter.notifyDataSetChanged();
-
         } else {
             game.revealCell(c.i, c.j);
-            adapter.notifyDataSetChanged();
         }
     }
 }
