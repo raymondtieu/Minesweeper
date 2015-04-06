@@ -13,4 +13,8 @@
     <item name="darkpurple" type="color">#311B92</item>
     <item name="darkgreen" type="color">#1B5E20</item>
     <item name="darkred" type="color">#B71C1C</item>
+
+    <item name="colorPrimary" type="color">#E53935</item>
+    <item name="colorPrimaryDark" type="color">#C62828</item>
+    <item name="colorAccent" type="color">#536DFE</item>
 </resources>
