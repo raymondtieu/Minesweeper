@@ -6,10 +6,14 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 
 import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.models.Board;
+
+import java.util.HashMap;
 
 /**
  * Created by raymond on 2015-04-04.
@@ -22,6 +26,8 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
     private int cellDimensions = 0;
+
+    HashMap<Integer, CellHolder> holders = new HashMap<>();
 
     // 1 - blue, 2 - green, 3 - red, 4 - dark blue, 5 - dark red, 6 - teal
     // 7 - purple, 8 - black
@@ -63,6 +69,10 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
 
     @Override
     public void onBindViewHolder(CellHolder holder, int position) {
+        if (!holders.containsKey(position)) {
+            holders.put(position, holder);
+        }
+
         Coordinates c = convertPosition(position);
 
         if (board.isRevealed(c.i, c.j)) {
@@ -119,6 +129,19 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
         public Coordinates(int i, int j) {
             this.i = i;
             this.j = j;
+        }
+    }
+
+    public void notifyAndAnimate(int position) {
+        this.notifyItemChanged(position);
+
+        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.scale);
+        CellHolder holder = holders.get(position);
+
+        if (holder.hidden) {
+            holder.cell.startAnimation(animation);
+            holder.icon.startAnimation(animation);
+            holder.hidden = false;
         }
     }
 }

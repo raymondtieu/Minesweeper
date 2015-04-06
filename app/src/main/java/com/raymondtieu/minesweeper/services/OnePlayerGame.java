@@ -51,7 +51,7 @@ public class OnePlayerGame implements Game {
     public boolean revealCell(int x, int y) {
         boolean m = this.board.revealCell(x, y) >= 9;
 
-        adapter.notifyItemChanged(getPosition(x, y));
+        adapter.notifyAndAnimate(getPosition(x, y));
 
         // selected a mine
         if (m) {
@@ -84,7 +84,7 @@ public class OnePlayerGame implements Game {
                         }
 
                         board.revealCell(s_x, s_y);
-                        adapter.notifyItemChanged(getPosition(s_x, s_y));
+                        adapter.notifyAndAnimate(getPosition(s_x, s_y));
                     }
                 }
             }
