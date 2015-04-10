@@ -66,7 +66,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void setUpToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +64,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         y = args.getInt("yDim", 16);
         m = args.getInt("nMines", 40);
 
+        int cellWidth = calculateCellWidth();
+
         // instantiate a new game
         game = new OnePlayerGame(x, y, m);
 
@@ -70,7 +73,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         recyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
 
         // create adapter
-        adapter = new CellAdapter(getActivity(), game.getBoard());
+        adapter = new CellAdapter(getActivity(), game.getBoard(), cellWidth);
         adapter.setOnItemClickListener(this);
 
         // set adapter in the game to notify view for changes
@@ -95,17 +98,22 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         Mines = (TextView) layout.findViewById(R.id.num_mines);
         Mines.setText("" + m);
 
+        // set appropriate size for view containers
+        recyclerView.getLayoutParams().height = x * cellWidth;
+        recyclerView.getLayoutParams().width = y * cellWidth;
+
         FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.minefield_container);
-
-        frameLayout.getLayoutParams().height = x*99;
-        frameLayout.getLayoutParams().width = y*99;
-
-
-        recyclerView.getLayoutParams().height = x * 99;
-        recyclerView.getLayoutParams().width = y * 99;
-
+        frameLayout.getLayoutParams().height = x * cellWidth;
+        frameLayout.getLayoutParams().width = y * cellWidth;
 
         return layout;
+    }
+
+    // calculate the size of a cell based on screen dpi
+    // try to fit 10 on the screen
+    public int calculateCellWidth() {
+        DisplayMetrics display = getActivity().getResources().getDisplayMetrics();
+        return Math.round(display.widthPixels / ((float) 10.5));
     }
 
     @Override

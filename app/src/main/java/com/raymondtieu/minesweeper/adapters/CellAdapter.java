@@ -25,7 +25,7 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
     private Context mContext;
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
-    private int cellDimensions = 0;
+    private int cellDimensions;
 
     HashMap<Integer, CellHolder> holders = new HashMap<>();
 
@@ -42,10 +42,11 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
             R.color.black
         };
 
-    public CellAdapter(Context context, Board board) {
+    public CellAdapter(Context context, Board board, int size) {
         inflater = LayoutInflater.from(context);
         this.board = board;
         this.mContext = context;
+        this.cellDimensions = size;
     }
 
     @Override
@@ -53,16 +54,7 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
         // the root - linear layout
         View view = inflater.inflate(R.layout.cell, parent, false);
 
-
-        // calculate cell size
-        if (cellDimensions == 0) {
-            DisplayMetrics display = mContext.getResources().getDisplayMetrics();
-            float width = display.widthPixels;
-
-            cellDimensions = Math.round(width / ((float) 12.5));
-        }
-
-        CellHolder holder = new CellHolder(view, this, 99);
+        CellHolder holder = new CellHolder(view, this, cellDimensions);
         // return holder that was inflated
         return holder;
     }
