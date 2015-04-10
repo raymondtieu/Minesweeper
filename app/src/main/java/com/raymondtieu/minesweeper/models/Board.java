@@ -45,6 +45,8 @@ public class Board {
     private int mines;
     private Cell[][] board;
 
+    private int cellsHidden;
+
     public Board(int dx, int dy, int m) {
         setxDimension(dx);
         setyDimension(dy);
@@ -118,6 +120,8 @@ public class Board {
                 }
             }
         }
+
+        this.cellsHidden = xDimension * yDimension - mines;
     }
 
     public int getNumMines(int x, int y) {
@@ -131,11 +135,17 @@ public class Board {
     public int revealCell(int x, int y) {
         board[x][y].setRevealed(true);
 
+        this.cellsHidden--;
+
         return getNumMines(x, y);
     }
 
     public void markCell(FlagType type) {
         // TODO
+    }
+
+    public int getCellsHidden() {
+        return cellsHidden;
     }
 }
 

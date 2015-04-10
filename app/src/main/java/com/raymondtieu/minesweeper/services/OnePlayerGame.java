@@ -73,6 +73,7 @@ public class OnePlayerGame implements Game {
 
         // reveal all blocks around any block with no adjacent mines
         if (this.board.revealCell(x, y) == 0) {
+
             for (int a = -1; a <= 1; a++) {
                 for (int b = -1; b <= 1; b++) {
                     int s_x = x + a;
@@ -112,7 +113,7 @@ public class OnePlayerGame implements Game {
         return false;
     }
 
-    public void revealAll() {
+    public void revealAllMines() {
         for (int i = 0; i < board.getxDimension(); i++) {
             for (int j = 0; j < board.getyDimension(); j++) {
                 if (board.getNumMines(i, j) >= 9)
@@ -122,9 +123,10 @@ public class OnePlayerGame implements Game {
     }
 
 
-    public void setAdapter(CellAdapter adapter) {
+    public void setCellAdapter(CellAdapter adapter) {
         this.adapter = adapter;
     }
+
     public void setPositionAdapter(PositionPointAdapter adapter) {
         this.positionAdapter = adapter;
     }

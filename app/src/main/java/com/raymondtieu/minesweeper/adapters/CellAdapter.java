@@ -45,12 +45,9 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
             R.color.black
         };
 
-    public CellAdapter(Context context, Board board, int size, PositionPointAdapter adapter) {
+    public CellAdapter(Context context) {
         inflater = LayoutInflater.from(context);
-        this.board = board;
         this.mContext = context;
-        this.cellDimensions = size;
-        this.positionAdapter = adapter;
     }
 
     @Override
@@ -108,6 +105,18 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
             mOnItemClickListener.onItemClick(null, holder.cell, holder.getPosition(),
                     holder.getItemId());
         }
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    public void setCellDimensions(int size) {
+        this.cellDimensions = size;
+    }
+
+    public void setPositionAdapter(PositionPointAdapter adapter) {
+        this.positionAdapter = adapter;
     }
 
     public void notifyAndAnimate(int position) {

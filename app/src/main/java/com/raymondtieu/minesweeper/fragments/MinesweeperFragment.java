@@ -1,6 +1,8 @@
 package com.raymondtieu.minesweeper.fragments;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Point;
 import android.support.v4.app.Fragment;
 
@@ -31,6 +33,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     private OnePlayerGame game;
     private int x, y, m;
     private TextView Difficulty, Time, Mines;
+    private int cellWidth;
 
     public MinesweeperFragment() {
         // Required empty public constructor
@@ -67,24 +70,14 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         y = args.getInt("yDim", 16);
         m = args.getInt("nMines", 40);
 
-        int cellWidth = calculateCellWidth();
-
-        // instantiate a new game
-        game = new OnePlayerGame(x, y, m);
+        // calculate how large a cell should be to fit 10 per row on the screen
+        cellWidth = calculateCellWidth();
 
         // instantiate a recycler view to display game
         recyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
 
-        // create adapter to convert positions to points and points to positions
-        positionAdapter = new PositionPointAdapter(x, y);
-
-        // create adapter to handle mine field
-        adapter = new CellAdapter(getActivity(), game.getBoard(), cellWidth, positionAdapter);
-        adapter.setOnItemClickListener(this);
-
-        // set adapter in the game to notify view for changes
-        game.setAdapter(adapter);
-        recyclerView.setAdapter(adapter);
+        // start a new game
+        startNewGame();
 
         // the recycler view manager
         FixedGridLayoutManager manager = new FixedGridLayoutManager();
@@ -124,13 +117,53 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        System.out.println("" + position);
         Point p = positionAdapter.positionToPoint(position);
 
         if (!game.isStarted()) {
             game.startGame(p.x, p.y);
-        } else {
-            game.revealCell(p.x, p.y);
+        } else if (!game.isFinished()) {
+            if (game.revealCell(p.x, p.y)) {
+                new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.lost_title)
+                    .setMessage(R.string.lost_message)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int button) {
+                                startNewGame();
+                            }
+                        })
+                    .setNegativeButton(android.R.string.no, null).show();
+            };
         }
+    }
+
+    public void startNewGame() {
+        cellWidth = calculateCellWidth();
+
+        game = new OnePlayerGame(x, y, m);
+
+        configureAdapters();
+    }
+
+    public void configureAdapters() {
+
+        // create adapter to convert positions to points and points to positions
+        positionAdapter = new PositionPointAdapter(x, y);
+
+        // create adapter to handle mine field
+        adapter = new CellAdapter(getActivity());
+
+        adapter.setBoard(game.getBoard());
+        adapter.setCellDimensions(cellWidth);
+        adapter.setPositionAdapter(positionAdapter);
+        adapter.setOnItemClickListener(this);
+
+        recyclerView.setAdapter(adapter);
+
+        /// set adapter in the game to notify view for changes
+        game.setCellAdapter(adapter);
+        game.setPositionAdapter(positionAdapter);
+
+        adapter.notifyDataSetChanged();
     }
 }
