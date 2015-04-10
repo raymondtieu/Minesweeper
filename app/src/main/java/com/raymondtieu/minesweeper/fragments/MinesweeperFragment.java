@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -93,6 +94,16 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         Mines = (TextView) layout.findViewById(R.id.num_mines);
         Mines.setText("" + m);
+
+        FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.minefield_container);
+
+        frameLayout.getLayoutParams().height = x*99;
+        frameLayout.getLayoutParams().width = y*99;
+
+
+        recyclerView.getLayoutParams().height = x * 99;
+        recyclerView.getLayoutParams().width = y * 99;
+
 
         return layout;
     }

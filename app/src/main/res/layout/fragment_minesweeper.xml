@@ -6,7 +6,6 @@
     android:background="#ffffff"
     android:orientation="vertical"
     android:weightSum="100"
-
     android:gravity="center"
     tools:context="com.raymondtieu.minesweeper.fragments.MinesweeperFragment">
 
@@ -39,12 +38,30 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/minefield"
-        android:overScrollMode="never"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="90" >
+    <RelativeLayout
 
-    </android.support.v7.widget.RecyclerView>
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="90"
+        android:background="#000Fff"
+        android:layout_gravity="center_horizontal">
+
+        <com.raymondtieu.minesweeper.layouts.BiDirectionScrollView
+            android:id="@+id/scrollview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00ff00" >
+
+            <FrameLayout
+                android:id="@+id/minefield_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/minefield"
+                    android:overScrollMode="never"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+        </com.raymondtieu.minesweeper.layouts.BiDirectionScrollView>
+    </RelativeLayout>
 </LinearLayout>

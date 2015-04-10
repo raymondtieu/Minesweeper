@@ -62,7 +62,7 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
             cellDimensions = Math.round(width / ((float) 12.5));
         }
 
-        CellHolder holder = new CellHolder(view, this, cellDimensions);
+        CellHolder holder = new CellHolder(view, this, 99);
         // return holder that was inflated
         return holder;
     }
