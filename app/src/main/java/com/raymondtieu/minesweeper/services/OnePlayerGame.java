@@ -4,7 +4,10 @@ package com.raymondtieu.minesweeper.services;
  * Created by raymond on 2015-04-02.
  */
 
+import android.graphics.Point;
+
 import com.raymondtieu.minesweeper.adapters.CellAdapter;
+import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
 import com.raymondtieu.minesweeper.models.*;
 
 public class OnePlayerGame implements Game {	
@@ -14,6 +17,7 @@ public class OnePlayerGame implements Game {
     private Board board;
 
     private CellAdapter adapter;
+    private PositionPointAdapter positionAdapter;
 
     public OnePlayerGame(int dx, int dy, int m) {
         this.board = new Board(dx, dy, m);
@@ -51,7 +55,7 @@ public class OnePlayerGame implements Game {
     public boolean revealCell(int x, int y) {
         boolean m = this.board.revealCell(x, y) >= 9;
 
-        adapter.notifyAndAnimate(getPosition(x, y));
+        adapter.notifyAndAnimate(positionAdapter.pointToPosition(new Point(x, y)));
 
         // selected a mine
         if (m) {
@@ -84,7 +88,7 @@ public class OnePlayerGame implements Game {
                         }
 
                         board.revealCell(s_x, s_y);
-                        adapter.notifyAndAnimate(getPosition(s_x, s_y));
+                        adapter.notifyAndAnimate(positionAdapter.pointToPosition(new Point(s_x, s_y)));
                     }
                 }
             }
@@ -121,8 +125,7 @@ public class OnePlayerGame implements Game {
     public void setAdapter(CellAdapter adapter) {
         this.adapter = adapter;
     }
-
-    public int getPosition(int x, int y) {
-        return x * board.getyDimension() + y;
+    public void setPositionAdapter(PositionPointAdapter adapter) {
+        this.positionAdapter = adapter;
     }
 }
