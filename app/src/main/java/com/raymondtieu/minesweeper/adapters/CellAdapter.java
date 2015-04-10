@@ -1,6 +1,7 @@
 package com.raymondtieu.minesweeper.adapters;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -27,6 +28,8 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
 
     private int cellDimensions;
 
+    private PositionPointAdapter positionAdapter;
+
     HashMap<Integer, CellHolder> holders = new HashMap<>();
 
     // 1 - blue, 2 - green, 3 - red, 4 - dark blue, 5 - dark red, 6 - teal
@@ -42,11 +45,12 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
             R.color.black
         };
 
-    public CellAdapter(Context context, Board board, int size) {
+    public CellAdapter(Context context, Board board, int size, PositionPointAdapter adapter) {
         inflater = LayoutInflater.from(context);
         this.board = board;
         this.mContext = context;
         this.cellDimensions = size;
+        this.positionAdapter = adapter;
     }
 
     @Override
@@ -65,10 +69,10 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
             holders.put(position, holder);
         }
 
-        Coordinates c = convertPosition(position);
+        Point p = positionAdapter.positionToPoint(position);
 
-        if (board.isRevealed(c.i, c.j)) {
-            int n = board.getNumMines(c.i, c.j);
+        if (board.isRevealed(p.x, p.y)) {
+            int n = board.getNumMines(p.x, p.y);
             if (n < 9) {
                 if (n == 0) {
                     holder.cell.setText("");
@@ -94,14 +98,6 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
         return board.getxDimension() * board.getyDimension();
     }
 
-    public Coordinates convertPosition(int position) {
-        int i = position / board.getyDimension();
-        int j = position % board.getyDimension();
-
-        Coordinates c = new Coordinates(i, j);
-        return c;
-    }
-
 
     public void setOnItemClickListener(AdapterView.OnItemClickListener i) {
         this.mOnItemClickListener = i;
@@ -111,16 +107,6 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
         if (mOnItemClickListener != null) {
             mOnItemClickListener.onItemClick(null, holder.cell, holder.getPosition(),
                     holder.getItemId());
-        }
-    }
-
-    public class Coordinates {
-        public int i;
-        public int j;
-
-        public Coordinates(int i, int j) {
-            this.i = i;
-            this.j = j;
         }
     }
 

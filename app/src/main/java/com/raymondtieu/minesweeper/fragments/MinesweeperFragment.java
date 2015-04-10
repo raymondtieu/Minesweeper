@@ -1,6 +1,7 @@
 package com.raymondtieu.minesweeper.fragments;
 
 
+import android.graphics.Point;
 import android.support.v4.app.Fragment;
 
 import android.os.Bundle;
@@ -17,12 +18,14 @@ import android.widget.Toast;
 import com.raymondtieu.minesweeper.R;
 
 import com.raymondtieu.minesweeper.adapters.CellAdapter;
+import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
 public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private CellAdapter adapter;
+    private PositionPointAdapter positionAdapter;
     private RecyclerView recyclerView;
 
     private OnePlayerGame game;
@@ -72,8 +75,11 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         // instantiate a recycler view to display game
         recyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
 
-        // create adapter
-        adapter = new CellAdapter(getActivity(), game.getBoard(), cellWidth);
+        // create adapter to convert positions to points and points to positions
+        positionAdapter = new PositionPointAdapter(x, y);
+
+        // create adapter to handle mine field
+        adapter = new CellAdapter(getActivity(), game.getBoard(), cellWidth, positionAdapter);
         adapter.setOnItemClickListener(this);
 
         // set adapter in the game to notify view for changes
@@ -119,16 +125,12 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         System.out.println("" + position);
-        CellAdapter.Coordinates c = adapter.convertPosition(position);
+        Point p = positionAdapter.positionToPoint(position);
 
         if (!game.isStarted()) {
-            game.startGame(c.i, c.j);
-
-            Toast.makeText(getActivity(),
-                    "Game started at " + c.i + ", " + c.j,
-                    Toast.LENGTH_SHORT).show();
+            game.startGame(p.x, p.y);
         } else {
-            game.revealCell(c.i, c.j);
+            game.revealCell(p.x, p.y);
         }
     }
 }
