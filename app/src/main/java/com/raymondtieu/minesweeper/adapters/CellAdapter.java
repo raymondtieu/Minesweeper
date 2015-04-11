@@ -3,7 +3,6 @@ package com.raymondtieu.minesweeper.adapters;
 import android.content.Context;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 
 import com.raymondtieu.minesweeper.R;
-import com.raymondtieu.minesweeper.models.Board;
+import com.raymondtieu.minesweeper.models.Field;
 
 import java.util.HashMap;
 
@@ -22,7 +21,7 @@ import java.util.HashMap;
 public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
 
     private LayoutInflater inflater;
-    private Board board;
+    private Field field;
     private Context mContext;
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
@@ -68,8 +67,8 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
 
         Point p = positionAdapter.positionToPoint(position);
 
-        if (board.isRevealed(p.x, p.y)) {
-            int n = board.getNumMines(p.x, p.y);
+        if (field.isRevealed(p.x, p.y)) {
+            int n = field.getNumMines(p.x, p.y);
             if (n < 9) {
                 if (n == 0) {
                     holder.cell.setText("");
@@ -92,7 +91,7 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
 
     @Override
     public int getItemCount() {
-        return board.getxDimension() * board.getyDimension();
+        return field.getDimX() * field.getDimY();
     }
 
 
@@ -107,8 +106,8 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
         }
     }
 
-    public void setBoard(Board board) {
-        this.board = board;
+    public void setField(Field field) {
+        this.field = field;
     }
 
     public void setCellDimensions(int size) {

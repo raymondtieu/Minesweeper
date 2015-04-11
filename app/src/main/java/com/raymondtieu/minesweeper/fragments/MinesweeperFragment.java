@@ -122,7 +122,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         if (!game.isStarted()) {
             game.startGame(p.x, p.y);
         } else if (!game.isFinished()) {
-            if (game.revealCell(p.x, p.y)) {
+            if (game.reveal(p.x, p.y) >= 9) {
                 new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.lost_title)
                     .setMessage(R.string.lost_message)
@@ -153,7 +153,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         // create adapter to handle mine field
         adapter = new CellAdapter(getActivity());
 
-        adapter.setBoard(game.getBoard());
+        adapter.setField(game.getField());
         adapter.setCellDimensions(cellWidth);
         adapter.setPositionAdapter(positionAdapter);
         adapter.setOnItemClickListener(this);
