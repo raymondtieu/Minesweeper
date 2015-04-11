@@ -116,38 +116,33 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnTouch
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Point p = mPositionAdapter.positionToPoint(position);
 
-        if (!game.isStarted()) {
-            game.startGame(p.x, p.y);
-        } else if (!game.isFinished()) {
+        // number of mines adjacent to cell at x, y
+        int result = game.onClick(p.x, p.y);
 
-            // number of mines adjacent to cell at x, y
-            int result = game.reveal(p.x, p.y);
+        if (result >= 9) {
+            game.revealAllMines();
 
-            if (result >= 9) {
-                game.revealAllMines();
+            new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.lost_title)
+                .setMessage(R.string.lost_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.lost_title)
-                    .setMessage(R.string.lost_message)
+                        public void onClick(DialogInterface dialog, int button) {
+                            startNewGame();
+                        }
+                    })
+                .setNegativeButton(android.R.string.no, null).show();
+        } else if (result == -1) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.win_title)
+                    .setMessage(R.string.win_message)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                            public void onClick(DialogInterface dialog, int button) {
-                                startNewGame();
-                            }
-                        })
+                        public void onClick(DialogInterface dialog, int button) {
+                            startNewGame();
+                        }
+                    })
                     .setNegativeButton(android.R.string.no, null).show();
-            } else if (result == -1) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.win_title)
-                        .setMessage(R.string.win_message)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int button) {
-                                startNewGame();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, null).show();
-            }
         }
     }
 
@@ -156,15 +151,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnTouch
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Point p = mPositionAdapter.positionToPoint(position);
 
-        if (!game.isFinished()) {
-
-            boolean flagBefore = game.isFlagMode();
-
-            game.setFlagMode(true);
-            game.reveal(p.x, p.y);
-            game.setFlagMode(flagBefore);
-        }
-        return true;
+        return game.onLongClick(p.x, p.y);
     }
 
 

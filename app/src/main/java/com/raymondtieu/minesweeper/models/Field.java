@@ -10,7 +10,12 @@ public class Field {
     static class Cell {
         private int numMines = 0;
         private boolean revealed = false;
-        private int isFlagged = 0;
+
+        // -1 : no flag
+        // 1 : flagged
+        // 2 : flagged correctly
+        // 3 : flagged incorrectly
+        private int isFlagged = -1;
 
         public int getNumMines() {
             return numMines;
@@ -33,7 +38,7 @@ public class Field {
         }
 
         public boolean isFlagged() {
-            return isFlagged != 0;
+            return isFlagged != -1;
         }
 
         public int getFlagged() {
@@ -45,15 +50,10 @@ public class Field {
     private int dimY;
     private int mines;
     private int cellsHidden;
-
     private int flagsPlaced;
 
     private Cell[][] field;
-
     private Game game;
-
-
-    private MinesChangedListener mListener;
 
     public Field(int dx, int dy, int mines) {
         setDimX(dx);
@@ -160,10 +160,7 @@ public class Field {
         game.notifyFlagged(x, y, field[x][y].isFlagged());
         field[x][y].setFlagged(f);
 
-        if (f == 0)
-            updateFlags(-1);
-        else
-            updateFlags(1);
+        updateFlags(f);
     }
 
     public boolean isFlagged(int x, int y) {
@@ -213,13 +210,8 @@ public class Field {
 
     public void updateFlags(int i) {
         flagsPlaced += i;
-        mListener.onValueChanged(mines - flagsPlaced);
+        game.notifyMinesLeft(mines - flagsPlaced);
     }
-
-    public void setMinesListener(MinesChangedListener m) {
-        mListener = m;
-    }
-
 
     public static interface MinesChangedListener {
         void onValueChanged(int newValue);

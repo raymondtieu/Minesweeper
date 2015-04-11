@@ -21,8 +21,7 @@ public class OnePlayerGame implements Game {
 
     private FieldAdapter fieldAdapter;
     private PositionPointAdapter positionAdapter;
-
-    private int minesLeft;
+    private Field.MinesChangedListener minesListener;
 
     public OnePlayerGame(int dx, int dy, int m) {
         field = new Field(dx, dy, m);
@@ -30,8 +29,6 @@ public class OnePlayerGame implements Game {
         started = false;
         finished = false;
         flagMode = false;
-
-        minesLeft = m;
     }
 
     public Field getField() {
@@ -50,47 +47,64 @@ public class OnePlayerGame implements Game {
 
     @Override
     public void startGame(int x, int y) {
-        if (!flagMode && !field.isFlagged(x, y)) {
-            this.field.generateField(x, y);
-            this.finished = false;
-            this.started = true;
+        this.field.generateField(x, y);
+        this.finished = false;
+        this.started = true;
 
-            // reveal blocks surrounding starting position
-            field.reveal(x, y);
-        } else {
-            reveal(x, y);
-        }
+        reveal(x, y);
     }
 
 
-    @Override
-    public int reveal(int x, int y) {
-        if (!flagMode && !field.isFlagged(x, y)) {
-            int n = field.reveal(x, y);
+    public int onClick(int x, int y) {
+        if (isFinished())
+            return 0;
 
-            // selected a mine
-            if (n >= 9) {
-                setFinished(true);
-            } else if (field.getCellsHidden() == 0) {
-                setFinished(true);
-                return -1;
+        if (flagMode) {
+            markCell(x, y);
+        } else if (!field.isFlagged(x, y)) {
+
+            if (!isStarted()) {
+                startGame(x, y);
+                return 0;
             }
 
-            return n;
-        } else if (flagMode) {
-            if (field.isFlagged(x, y))
-                field.setFlag(x, y, 0);
-            else
-                field.setFlag(x, y, 1);
+            return reveal(x, y);
         }
 
         return 0;
     }
 
+    public boolean onLongClick(int x, int y) {
+        if (isFinished())
+            return false;
+
+        markCell(x, y);
+        return true;
+    }
+
+    @Override
+    public int reveal(int x, int y) {
+        int n = field.reveal(x, y);
+
+        // selected a mine
+        if (n >= 9) {
+            setFinished(true);
+        } else if (field.getCellsHidden() == 0) {
+            setFinished(true);
+            return -1;
+        }
+
+        return n;
+    }
+
     @Override
     public void markCell(int x, int y) {
-        // TODO Auto-generated method stub
-
+        if (field.isFlagged(x, y)) {
+            // if there's a flag at x, y, remove it
+            field.setFlag(x, y, -1);
+        } else {
+            field.setFlag(x, y, 1);
+        }
     }
 
     @Override
@@ -154,15 +168,12 @@ public class OnePlayerGame implements Game {
         return flagMode;
     }
 
-    public void setFlagMode(boolean flag) {
-        flagMode = flag;
-    }
-
-    public int getMinesLeft() {
-        return minesLeft;
-    }
-
     public void setMinesListener(MinesTextView m) {
-        getField().setMinesListener(m);
+        minesListener = m;
+    }
+
+    @Override
+    public void notifyMinesLeft(int n) {
+        minesListener.onValueChanged(n);
     }
 }

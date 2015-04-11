@@ -11,4 +11,5 @@ public interface Game {
     public boolean gameOver();
     public void notifyRevealed(int x, int y);
     public void notifyFlagged(int x, int y, boolean isFlagged);
+    public void notifyMinesLeft(int n);
 }
