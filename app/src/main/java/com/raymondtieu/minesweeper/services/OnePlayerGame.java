@@ -110,9 +110,9 @@ public class OnePlayerGame implements Game {
     }
 
     @Override
-    public void notifyFlagged(int x, int y) {
+    public void notifyFlagged(int x, int y, boolean isFlagged) {
         fieldAdapter.notifyFlagged(positionAdapter
-                .pointToPosition(new Point(x, y)));
+                .pointToPosition(new Point(x, y)), isFlagged);
     }
 
     public void revealAllMines() {

@@ -10,5 +10,5 @@ public interface Game {
     public void markAdjacent(int x, int y);
     public boolean gameOver();
     public void notifyRevealed(int x, int y);
-    public void notifyFlagged(int x, int y);
+    public void notifyFlagged(int x, int y, boolean isFlagged);
 }

@@ -92,7 +92,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             holder.icon.setImageResource(R.drawable.flag);
         } else {
             holder.cell.setText("");
-            holder.icon.setImageResource(R.drawable.hidden);
+            holder.icon.setImageResource(android.R.color.transparent);
         }
     }
 
@@ -134,20 +134,26 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         CellHolder holder = holders.get(position);
 
         if (holder.hidden) {
-            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.scale);
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
             holder.cell.startAnimation(animation);
             holder.icon.startAnimation(animation);
             holder.hidden = false;
         }
     }
 
-    public void notifyFlagged(int position) {
+    public void notifyFlagged(int position, boolean isFlagged) {
         this.notifyItemChanged(position);
 
         CellHolder holder = holders.get(position);
 
         if (holder.hidden) {
-            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.scale);
+            Animation animation;
+            if (isFlagged)
+                animation = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
+
+            else
+                animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
+
             holder.cell.startAnimation(animation);
             holder.icon.startAnimation(animation);
         }

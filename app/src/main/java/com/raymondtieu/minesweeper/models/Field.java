@@ -148,8 +148,8 @@ public class Field {
     }
 
     public void setFlag(int x, int y, boolean f) {
+        game.notifyFlagged(x, y, field[x][y].isFlagged());
         field[x][y].setFlagged(f);
-        game.notifyFlagged(x, y);
     }
 
     public boolean isFlagged(int x, int y) {
