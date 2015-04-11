@@ -3,6 +3,7 @@ package com.raymondtieu.minesweeper.adapters;
 import android.content.Context;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     private Field field;
     private Context mContext;
     private AdapterView.OnItemClickListener mOnItemClickListener;
+    private AdapterView.OnItemLongClickListener mOnItemLongClickListener;
 
     private int cellDimensions;
 
@@ -104,10 +106,21 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         this.mOnItemClickListener = i;
     }
 
+    public void setOnItemLongClickListener(AdapterView.OnItemLongClickListener i) {
+        this.mOnItemLongClickListener = i;
+    }
+
     public void onCellClick(CellHolder holder) {
         if (mOnItemClickListener != null) {
             mOnItemClickListener.onItemClick(null, holder.cell, holder.getPosition(),
                     holder.getItemId());
+        }
+    }
+
+    public void onCellLongClick(CellHolder holder) {
+        if (mOnItemLongClickListener != null) {
+            mOnItemLongClickListener.onItemLongClick(null, holder.cell,
+                    holder.getPosition(), holder.getItemId());
         }
     }
 

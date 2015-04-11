@@ -9,7 +9,9 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,7 +26,7 @@ import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
-public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class MinesweeperFragment extends Fragment implements AdapterView.OnTouchListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private FieldAdapter mFieldAdapter;
     private PositionPointAdapter mPositionAdapter;
@@ -116,7 +118,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
             game.startGame(p.x, p.y);
         } else if (!game.isFinished()) {
 
-
+            // number of mines adjacent to cell at x, y
             int result = game.reveal(p.x, p.y);
 
             if (result >= 9) {
@@ -146,6 +148,21 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
             }
         }
     }
+
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        Point p = mPositionAdapter.positionToPoint(position);
+
+        boolean flagBefore = game.isFlagMode();
+
+        game.setFlagMode(true);
+        game.reveal(p.x, p.y);
+        game.setFlagMode(flagBefore);
+
+        return true;
+    }
+
 
     private void configureHeader() {
 
@@ -193,6 +210,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         mFieldAdapter = new FieldAdapter(getActivity(), game.getField(), cellWidth);
         mFieldAdapter.setPositionAdapter(mPositionAdapter);
         mFieldAdapter.setOnItemClickListener(this);
+        mFieldAdapter.setOnItemLongClickListener(this);
 
         mRecyclerView.setAdapter(mFieldAdapter);
 
@@ -211,5 +229,10 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.minefield_container);
         frameLayout.getLayoutParams().height = x * cellWidth;
         frameLayout.getLayoutParams().width = y * cellWidth;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return false;
     }
 }

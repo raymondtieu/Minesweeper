@@ -49,13 +49,16 @@ public class OnePlayerGame implements Game {
 
     @Override
     public void startGame(int x, int y) {
-        this.field.generateField(x, y);
-        this.finished = false;
-        this.started = true;
-        this.flagMode = false;
+        if (!flagMode) {
+            this.field.generateField(x, y);
+            this.finished = false;
+            this.started = true;
 
-        // reveal blocks surrounding starting position
-        field.reveal(x, y);
+            // reveal blocks surrounding starting position
+            field.reveal(x, y);
+        } else {
+            reveal(x, y);
+        }
     }
 
 
@@ -78,7 +81,6 @@ public class OnePlayerGame implements Game {
                 field.setFlag(x, y, false);
             else
                 field.setFlag(x, y, true);
-
         }
 
         return 0;
@@ -137,6 +139,10 @@ public class OnePlayerGame implements Game {
 
     public boolean isFlagMode() {
         return flagMode;
+    }
+
+    public void setFlagMode(boolean flag) {
+        flagMode = flag;
     }
 
     public int getMinesLeft() {
