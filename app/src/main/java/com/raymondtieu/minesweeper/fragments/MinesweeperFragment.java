@@ -128,6 +128,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
             int result = game.reveal(p.x, p.y);
 
             if (result >= 9) {
+                game.revealAllMines();
+
                 new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.lost_title)
                     .setMessage(R.string.lost_message)

@@ -6,19 +6,6 @@ import com.raymondtieu.minesweeper.services.Game;
  * Created by raymond on 2015-04-02.
  */
 public class Field {
-    public enum FlagType {
-        NONE("None"), FLAG("Flag"), UNKNOWN("Unknown");
-
-        private String type;
-
-        private FlagType(String type) {
-            this.type = type;
-        }
-
-        public String showType() {
-            return this.type;
-        }
-    }
 
     static class Cell {
         private int numMines = 0;
@@ -150,10 +137,6 @@ public class Field {
 
     public boolean isRevealed(int x, int y) {
         return field[x][y].isRevealed();
-    }
-
-    public void markCell(FlagType type) {
-        // TODO
     }
 
     public int getCellsHidden() {

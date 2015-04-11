@@ -61,7 +61,7 @@ public class OnePlayerGame implements Game {
 
     @Override
     public int reveal(int x, int y) {
-        if (!flagMode) {
+        if (!flagMode && !field.isFlagged(x, y)) {
             int n = field.reveal(x, y);
 
             // selected a mine
@@ -73,14 +73,15 @@ public class OnePlayerGame implements Game {
             }
 
             return n;
-        } else {
+        } else if (flagMode) {
             if (field.isFlagged(x, y))
                 field.setFlag(x, y, false);
             else
                 field.setFlag(x, y, true);
 
-            return 0;
         }
+
+        return 0;
     }
 
     @Override
@@ -116,7 +117,7 @@ public class OnePlayerGame implements Game {
         for (int i = 0; i < field.getDimX(); i++) {
             for (int j = 0; j < field.getDimY(); j++) {
                 if (field.getNumMines(i, j) >= 9)
-                    field.reveal(i, j);
+                    field.setRevealed(i, j);
             }
         }
     }
