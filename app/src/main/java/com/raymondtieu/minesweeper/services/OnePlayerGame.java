@@ -21,12 +21,16 @@ public class OnePlayerGame implements Game {
     private FieldAdapter fieldAdapter;
     private PositionPointAdapter positionAdapter;
 
+    private int minesLeft;
+
     public OnePlayerGame(int dx, int dy, int m) {
         field = new Field(dx, dy, m);
         field.setGame(this);
         started = false;
         finished = false;
         flagMode = false;
+
+        minesLeft = m;
     }
 
     public Field getField() {
@@ -48,6 +52,7 @@ public class OnePlayerGame implements Game {
         this.field.generateField(x, y);
         this.finished = false;
         this.started = true;
+        this.flagMode = false;
 
         // reveal blocks surrounding starting position
         field.reveal(x, y);
@@ -68,9 +73,14 @@ public class OnePlayerGame implements Game {
             }
 
             return n;
-        }
+        } else {
+            if (field.isFlagged(x, y))
+                field.setFlag(x, y, false);
+            else
+                field.setFlag(x, y, true);
 
-        return 0;
+            return 0;
+        }
     }
 
     @Override
@@ -92,7 +102,13 @@ public class OnePlayerGame implements Game {
 
     @Override
     public void notifyRevealed(int x, int y) {
-        fieldAdapter.notifyAndAnimate(positionAdapter
+        fieldAdapter.notifyRevealed(positionAdapter
+                .pointToPosition(new Point(x, y)));
+    }
+
+    @Override
+    public void notifyFlagged(int x, int y) {
+        fieldAdapter.notifyFlagged(positionAdapter
                 .pointToPosition(new Point(x, y)));
     }
 
@@ -112,5 +128,17 @@ public class OnePlayerGame implements Game {
 
     public void setPositionAdapter(PositionPointAdapter adapter) {
         this.positionAdapter = adapter;
+    }
+
+    public void toggleFlag() {
+        flagMode = !flagMode;
+    }
+
+    public boolean isFlagMode() {
+        return flagMode;
+    }
+
+    public int getMinesLeft() {
+        return minesLeft;
     }
 }

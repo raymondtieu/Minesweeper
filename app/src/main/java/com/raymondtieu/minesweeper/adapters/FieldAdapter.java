@@ -85,6 +85,9 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
                 holder.cell.setText("");
                 holder.icon.setImageResource(R.drawable.mine);
             }
+        } else if (field.isFlagged(p.x, p.y)) {
+            holder.cell.setText("");
+            holder.icon.setImageResource(R.drawable.flag);
         } else {
             holder.cell.setText("");
             holder.icon.setImageResource(R.drawable.hidden);
@@ -112,16 +115,29 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         this.positionAdapter = adapter;
     }
 
-    public void notifyAndAnimate(int position) {
+    public void notifyRevealed(int position) {
         this.notifyItemChanged(position);
 
-        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.scale);
         CellHolder holder = holders.get(position);
 
         if (holder.hidden) {
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.scale);
             holder.cell.startAnimation(animation);
             holder.icon.startAnimation(animation);
             holder.hidden = false;
         }
+    }
+
+    public void notifyFlagged(int position) {
+        this.notifyItemChanged(position);
+
+        CellHolder holder = holders.get(position);
+
+        if (holder.hidden) {
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.scale);
+            holder.cell.startAnimation(animation);
+            holder.icon.startAnimation(animation);
+        }
+
     }
 }

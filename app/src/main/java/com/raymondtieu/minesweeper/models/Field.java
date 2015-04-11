@@ -23,6 +23,7 @@ public class Field {
     static class Cell {
         private int numMines = 0;
         private boolean revealed = false;
+        private boolean isFlagged = false;
 
         public int getNumMines() {
             return numMines;
@@ -38,6 +39,14 @@ public class Field {
         }
         public void addMine() {
             this.numMines++;
+        }
+
+        public void setFlagged(boolean flag) {
+            this.isFlagged = flag;
+        }
+
+        public boolean isFlagged() {
+            return isFlagged;
         }
     }
 
@@ -153,6 +162,15 @@ public class Field {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public void setFlag(int x, int y, boolean f) {
+        field[x][y].setFlagged(f);
+        game.notifyFlagged(x, y);
+    }
+
+    public boolean isFlagged(int x, int y) {
+        return field[x][y].isFlagged();
     }
 
     public int reveal(int x, int y) {

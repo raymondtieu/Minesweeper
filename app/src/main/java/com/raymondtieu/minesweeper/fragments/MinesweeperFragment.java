@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.raymondtieu.minesweeper.R;
@@ -31,6 +32,9 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
     private OnePlayerGame game;
     private int x, y, m;
+
+    private ImageView mFlagMode;
+
     private TextView Difficulty, Time, Mines;
     private int cellWidth;
 
@@ -100,6 +104,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         setViewDimensions(layout);
 
+        setFlagMode(layout);
+
         return layout;
     }
 
@@ -117,6 +123,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         if (!game.isStarted()) {
             game.startGame(p.x, p.y);
         } else if (!game.isFinished()) {
+
+
             int result = game.reveal(p.x, p.y);
 
             if (result >= 9) {
@@ -181,4 +189,16 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         frameLayout.getLayoutParams().height = x * cellWidth;
         frameLayout.getLayoutParams().width = y * cellWidth;
     }
+
+    private void setFlagMode(View layout) {
+        mFlagMode = (ImageView) layout.findViewById(R.id.flag_mode);
+        mFlagMode.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                game.toggleFlag();
+            }
+        });
+    }
+
 }
