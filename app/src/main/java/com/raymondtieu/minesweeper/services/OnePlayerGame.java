@@ -61,16 +61,18 @@ public class OnePlayerGame implements Game {
         if (isFinished())
             return 0;
 
-        if (flagMode) {
-            markCell(x, y);
-        } else if (!field.isFlagged(x, y)) {
+        if (!field.isRevealed(x, y)) {
+            if (flagMode) {
+                markCell(x, y);
+            } else if (!field.isFlagged(x, y)) {
 
-            if (!isStarted()) {
-                startGame(x, y);
-                return 0;
+                if (!isStarted()) {
+                    startGame(x, y);
+                    return 0;
+                }
+
+                return reveal(x, y);
             }
-
-            return reveal(x, y);
         }
 
         return 0;
@@ -79,9 +81,12 @@ public class OnePlayerGame implements Game {
     public boolean onLongClick(int x, int y) {
         if (isFinished())
             return false;
+        if (!field.isRevealed(x, y)) {
+            markCell(x, y);
+            return true;
+        }
 
-        markCell(x, y);
-        return true;
+        return false;
     }
 
     @Override
