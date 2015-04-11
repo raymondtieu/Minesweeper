@@ -6,7 +6,7 @@ package com.raymondtieu.minesweeper.services;
 
 import android.graphics.Point;
 
-import com.raymondtieu.minesweeper.adapters.CellAdapter;
+import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
 import com.raymondtieu.minesweeper.models.*;
 
@@ -18,7 +18,7 @@ public class OnePlayerGame implements Game {
 
     private Field field;
 
-    private CellAdapter cellAdapter;
+    private FieldAdapter fieldAdapter;
     private PositionPointAdapter positionAdapter;
 
     public OnePlayerGame(int dx, int dy, int m) {
@@ -92,7 +92,7 @@ public class OnePlayerGame implements Game {
 
     @Override
     public void notifyRevealed(int x, int y) {
-        cellAdapter.notifyAndAnimate(positionAdapter
+        fieldAdapter.notifyAndAnimate(positionAdapter
                 .pointToPosition(new Point(x, y)));
     }
 
@@ -106,8 +106,8 @@ public class OnePlayerGame implements Game {
     }
 
 
-    public void setCellAdapter(CellAdapter adapter) {
-        cellAdapter = adapter;
+    public void setFieldAdapter(FieldAdapter adapter) {
+        fieldAdapter = adapter;
     }
 
     public void setPositionAdapter(PositionPointAdapter adapter) {

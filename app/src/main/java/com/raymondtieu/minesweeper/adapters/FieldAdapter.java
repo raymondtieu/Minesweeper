@@ -18,7 +18,7 @@ import java.util.HashMap;
 /**
  * Created by raymond on 2015-04-04.
  */
-public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
+public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
     private LayoutInflater inflater;
     private Field field;
@@ -42,9 +42,9 @@ public class CellAdapter extends RecyclerView.Adapter<CellHolder> {
             R.color.teal,
             R.color.purple,
             R.color.black
-        };
+    };
 
-    public CellAdapter(Context context) {
+    public FieldAdapter(Context context) {
         inflater = LayoutInflater.from(context);
         this.mContext = context;
     }

@@ -15,20 +15,19 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.raymondtieu.minesweeper.R;
 
-import com.raymondtieu.minesweeper.adapters.CellAdapter;
+import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
 public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private CellAdapter adapter;
-    private PositionPointAdapter positionAdapter;
-    private RecyclerView recyclerView;
+    private FieldAdapter mFieldAdapter;
+    private PositionPointAdapter mPositionAdapter;
+    private RecyclerView mRecyclerView;
 
     private OnePlayerGame game;
     private int x, y, m;
@@ -74,7 +73,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         cellWidth = calculateCellWidth();
 
         // instantiate a recycler view to display game
-        recyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
+        mRecyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
 
         // start a new game
         startNewGame();
@@ -83,7 +82,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         FixedGridLayoutManager manager = new FixedGridLayoutManager();
         manager.setTotalColumnCount(y);
 
-        recyclerView.setLayoutManager(manager);
+        mRecyclerView.setLayoutManager(manager);
 
         // set up game information in footer
         Difficulty = (TextView) layout.findViewById(R.id.difficulty);
@@ -94,30 +93,26 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
             case 30: Difficulty.setText("Hard"); break;
         }
 
+        // set up game info
+
         Mines = (TextView) layout.findViewById(R.id.num_mines);
         Mines.setText("" + m);
 
-        // set appropriate size for view containers
-        recyclerView.getLayoutParams().height = x * cellWidth;
-        recyclerView.getLayoutParams().width = y * cellWidth;
-
-        FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.minefield_container);
-        frameLayout.getLayoutParams().height = x * cellWidth;
-        frameLayout.getLayoutParams().width = y * cellWidth;
+        setViewDimensions(layout);
 
         return layout;
     }
 
     // calculate the size of a cell based on screen dpi
     // try to fit 10 on the screen
-    public int calculateCellWidth() {
+    private int calculateCellWidth() {
         DisplayMetrics display = getActivity().getResources().getDisplayMetrics();
         return Math.round(display.widthPixels / ((float) 10.5));
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Point p = positionAdapter.positionToPoint(position);
+        Point p = mPositionAdapter.positionToPoint(position);
 
         if (!game.isStarted()) {
             game.startGame(p.x, p.y);
@@ -137,7 +132,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         }
     }
 
-    public void startNewGame() {
+    private void startNewGame() {
         cellWidth = calculateCellWidth();
 
         game = new OnePlayerGame(x, y, m);
@@ -145,25 +140,35 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         configureAdapters();
     }
 
-    public void configureAdapters() {
+    private void configureAdapters() {
 
         // create adapter to convert positions to points and points to positions
-        positionAdapter = new PositionPointAdapter(x, y);
+        mPositionAdapter = new PositionPointAdapter(x, y);
 
         // create adapter to handle mine field
-        adapter = new CellAdapter(getActivity());
+        mFieldAdapter = new FieldAdapter(getActivity());
 
-        adapter.setField(game.getField());
-        adapter.setCellDimensions(cellWidth);
-        adapter.setPositionAdapter(positionAdapter);
-        adapter.setOnItemClickListener(this);
+        mFieldAdapter.setField(game.getField());
+        mFieldAdapter.setCellDimensions(cellWidth);
+        mFieldAdapter.setPositionAdapter(mPositionAdapter);
+        mFieldAdapter.setOnItemClickListener(this);
 
-        recyclerView.setAdapter(adapter);
+        mRecyclerView.setAdapter(mFieldAdapter);
 
         /// set adapter in the game to notify view for changes
-        game.setCellAdapter(adapter);
-        game.setPositionAdapter(positionAdapter);
+        game.setFieldAdapter(mFieldAdapter);
+        game.setPositionAdapter(mPositionAdapter);
 
-        adapter.notifyDataSetChanged();
+        mFieldAdapter.notifyDataSetChanged();
+    }
+
+    private void setViewDimensions(View layout) {
+        // set appropriate size for view containers
+        mRecyclerView.getLayoutParams().height = x * cellWidth;
+        mRecyclerView.getLayoutParams().width = y * cellWidth;
+
+        FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.minefield_container);
+        frameLayout.getLayoutParams().height = x * cellWidth;
+        frameLayout.getLayoutParams().width = y * cellWidth;
     }
 }

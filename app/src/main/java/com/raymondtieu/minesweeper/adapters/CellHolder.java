@@ -2,7 +2,6 @@ package com.raymondtieu.minesweeper.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ImageView;
 
@@ -17,9 +16,9 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     public boolean hidden;
 
-    public CellAdapter mAdapter;
+    public FieldAdapter mAdapter;
 
-    public CellHolder(View itemView, CellAdapter adapter, int size)  {
+    public CellHolder(View itemView, FieldAdapter adapter, int size)  {
         super(itemView);
         itemView.setOnClickListener(this);
 

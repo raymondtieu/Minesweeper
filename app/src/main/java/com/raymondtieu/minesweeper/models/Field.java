@@ -161,7 +161,7 @@ public class Field {
         return getNumMines(x, y);
     }
 
-    public void revealAdjacent(int x, int y) {
+    private void revealAdjacent(int x, int y) {
 
         setRevealed(x, y);
 
