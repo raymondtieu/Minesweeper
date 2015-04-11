@@ -11,6 +11,7 @@ import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
 import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.models.*;
 
+
 public class OnePlayerGame implements Game {	
     // timer
     private boolean started;
@@ -21,7 +22,8 @@ public class OnePlayerGame implements Game {
 
     private FieldAdapter fieldAdapter;
     private PositionPointAdapter positionAdapter;
-    private Field.MinesChangedListener minesListener;
+    private MinesTextView minesListener;
+
 
     public OnePlayerGame(int dx, int dy, int m) {
         field = new Field(dx, dy, m);

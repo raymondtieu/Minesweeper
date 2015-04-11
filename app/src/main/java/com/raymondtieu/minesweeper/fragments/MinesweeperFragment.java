@@ -4,6 +4,7 @@ package com.raymondtieu.minesweeper.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Point;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,7 +27,10 @@ import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
-public class MinesweeperFragment extends Fragment implements AdapterView.OnTouchListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+import java.text.SimpleDateFormat;
+import java.util.Timer;
+
+public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private FieldAdapter mFieldAdapter;
     private PositionPointAdapter mPositionAdapter;
@@ -41,6 +44,11 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnTouch
     private TextView mDifficulty, mTimer;
     private MinesTextView mMines;
     private int cellWidth;
+
+    private Handler timerHandler;
+    private Timer timer;
+    private long startTime;
+    private SimpleDateFormat sdf;
 
     public MinesweeperFragment() {
         // Required empty public constructor
@@ -89,7 +97,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnTouch
         cellWidth = calculateCellWidth();
 
         // start a new game
-        startNewGame();
+        loadNewGame();
 
         // the recycler view manager
         FixedGridLayoutManager manager = new FixedGridLayoutManager();
@@ -115,31 +123,45 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnTouch
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Point p = mPositionAdapter.positionToPoint(position);
+        boolean startedBeforeClick = game.isStarted();
 
         // number of mines adjacent to cell at x, y
         int result = game.onClick(p.x, p.y);
 
+        // start timer if game has just started
+        if (game.isStarted() && !startedBeforeClick) {
+            timerHandler = new Handler();
+            sdf = new SimpleDateFormat("mm:ss");
+            startTime = System.currentTimeMillis();
+            timerHandler.postDelayed(updateTime, 0);
+        }
+
         if (result >= 9) {
             game.revealAllMines();
+
+            timerHandler.removeCallbacks(updateTime);
 
             new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.lost_title)
                 .setMessage(R.string.lost_message)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                        public void onClick(DialogInterface dialog, int button) {
-                            startNewGame();
-                        }
-                    })
+                    public void onClick(DialogInterface dialog, int button) {
+                        loadNewGame();
+                    }
+                })
                 .setNegativeButton(android.R.string.no, null).show();
         } else if (result == -1) {
+
+            timerHandler.removeCallbacks(updateTime);
+
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.win_title)
                     .setMessage(R.string.win_message)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {
-                            startNewGame();
+                            loadNewGame();
                         }
                     })
                     .setNegativeButton(android.R.string.no, null).show();
@@ -183,7 +205,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnTouch
 
     }
 
-    private void startNewGame() {
+    private void loadNewGame() {
         cellWidth = calculateCellWidth();
 
         game = new OnePlayerGame(x, y, m);
@@ -223,8 +245,13 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnTouch
         frameLayout.getLayoutParams().width = y * cellWidth;
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        return false;
-    }
+    private Runnable updateTime = new Runnable() {
+
+        public void run() {
+            long time = System.currentTimeMillis() - startTime;
+            mTimer.setText("" + sdf.format(time));
+
+            timerHandler.postDelayed(this, 1000);
+        }
+    };
 }

@@ -217,10 +217,6 @@ public class Field {
     public void setCellRevealed(int x, int y) {
         field[x][y].setRevealed(true);
     }
-
-    public static interface MinesChangedListener {
-        void onValueChanged(int newValue);
-    }
 }
 
 

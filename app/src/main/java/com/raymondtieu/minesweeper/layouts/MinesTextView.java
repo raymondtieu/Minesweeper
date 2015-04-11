@@ -4,12 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.raymondtieu.minesweeper.models.Field;
+import com.raymondtieu.minesweeper.services.MinesListener;
 
 /**
  * Created by raymond on 2015-04-11.
  */
-public class MinesTextView extends TextView implements Field.MinesChangedListener {
+public class MinesTextView extends TextView implements MinesListener {
 
     public MinesTextView(Context context) {
         super(context);
