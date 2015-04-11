@@ -13,9 +13,14 @@
     <string name="med_mode">Medium (16x16, 40 mines)</string>
     <string name="hard_mode">Hard (16x30, 99 mines)</string>
 
+    <string name="easy_title">EASY</string>
+    <string name="medium_title">MEDIUM</string>
+    <string name="hard_title">HARD</string>
+
     <string name="lost_title">You Lost!</string>
     <string name="lost_message">Play again.</string>
 
     <string name="win_title">You Won!</string>
     <string name="win_message">Play again.</string>
+
 </resources>
