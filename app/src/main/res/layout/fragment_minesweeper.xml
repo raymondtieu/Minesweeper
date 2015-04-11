@@ -39,7 +39,7 @@
                 android:src="@drawable/mine_toolbar"
                 android:layout_weight="1"/>
 
-            <TextView
+            <com.raymondtieu.minesweeper.layouts.MinesTextView
                 android:id="@+id/num_mines"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

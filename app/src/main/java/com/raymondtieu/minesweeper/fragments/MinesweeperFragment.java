@@ -23,6 +23,7 @@ import com.raymondtieu.minesweeper.R;
 
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
+import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
@@ -37,7 +38,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnTouch
 
     private ImageView mFlagMode;
 
-    private TextView mDifficulty, mTimer, mMines;
+    private TextView mDifficulty, mTimer;
+    private MinesTextView mMines;
     private int cellWidth;
 
     public MinesweeperFragment() {
@@ -72,7 +74,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnTouch
 
         // set all views
         mDifficulty = (TextView) layout.findViewById(R.id.difficulty);
-        mMines = (TextView) layout.findViewById(R.id.num_mines);
+        mMines = (MinesTextView) layout.findViewById(R.id.num_mines);
         mTimer = (TextView) layout.findViewById(R.id.timer);
         mFlagMode = (ImageView) layout.findViewById(R.id.flag_mode);
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
@@ -154,12 +156,14 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnTouch
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Point p = mPositionAdapter.positionToPoint(position);
 
-        boolean flagBefore = game.isFlagMode();
+        if (!game.isFinished()) {
 
-        game.setFlagMode(true);
-        game.reveal(p.x, p.y);
-        game.setFlagMode(flagBefore);
+            boolean flagBefore = game.isFlagMode();
 
+            game.setFlagMode(true);
+            game.reveal(p.x, p.y);
+            game.setFlagMode(flagBefore);
+        }
         return true;
     }
 
@@ -217,6 +221,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnTouch
         /// set adapter in the game to notify view for changes
         game.setFieldAdapter(mFieldAdapter);
         game.setPositionAdapter(mPositionAdapter);
+        game.setMinesListener(mMines);
 
         mFieldAdapter.notifyDataSetChanged();
     }

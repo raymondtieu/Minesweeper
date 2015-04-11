@@ -8,6 +8,7 @@ import android.graphics.Point;
 
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
+import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.models.*;
 
 public class OnePlayerGame implements Game {	
@@ -49,7 +50,7 @@ public class OnePlayerGame implements Game {
 
     @Override
     public void startGame(int x, int y) {
-        if (!flagMode) {
+        if (!flagMode && !field.isFlagged(x, y)) {
             this.field.generateField(x, y);
             this.finished = false;
             this.started = true;
@@ -78,9 +79,9 @@ public class OnePlayerGame implements Game {
             return n;
         } else if (flagMode) {
             if (field.isFlagged(x, y))
-                field.setFlag(x, y, false);
+                field.setFlag(x, y, 0);
             else
-                field.setFlag(x, y, true);
+                field.setFlag(x, y, 1);
         }
 
         return 0;
@@ -120,14 +121,14 @@ public class OnePlayerGame implements Game {
             for (int j = 0; j < field.getDimY(); j++) {
                 if (field.getNumMines(i, j) >= 9) {
                     if (field.isFlagged(i, j))
-                        field.setFlagCorrect(i, j, 1);
+                        field.setFlag(i, j, 2);
                     else
                         field.reveal(i, j);
 
                     fieldAdapter.notifyItemChanged(positionAdapter
                         .pointToPosition(new Point(i, j)));
                 } else if (field.isFlagged(i, j)) {
-                    field.setFlagCorrect(i, j, 2);
+                    field.setFlag(i, j, -1);
 
                     fieldAdapter.notifyItemChanged(positionAdapter
                             .pointToPosition(new Point(i, j)));
@@ -159,5 +160,9 @@ public class OnePlayerGame implements Game {
 
     public int getMinesLeft() {
         return minesLeft;
+    }
+
+    public void setMinesListener(MinesTextView m) {
+        getField().setMinesListener(m);
     }
 }

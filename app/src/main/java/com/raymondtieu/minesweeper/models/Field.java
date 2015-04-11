@@ -10,9 +10,7 @@ public class Field {
     static class Cell {
         private int numMines = 0;
         private boolean revealed = false;
-        private boolean isFlagged = false;
-
-        private int flagCorrect = 0;
+        private int isFlagged = 0;
 
         public int getNumMines() {
             return numMines;
@@ -30,20 +28,16 @@ public class Field {
             this.numMines++;
         }
 
-        public void setFlagged(boolean flag) {
+        public void setFlagged(int flag) {
             this.isFlagged = flag;
         }
 
         public boolean isFlagged() {
+            return isFlagged != 0;
+        }
+
+        public int getFlagged() {
             return isFlagged;
-        }
-
-        public void setFlagCorrect(int i) {
-            flagCorrect = i;
-        }
-
-        public int getFlagCorrect() {
-            return flagCorrect;
         }
     }
 
@@ -52,9 +46,14 @@ public class Field {
     private int mines;
     private int cellsHidden;
 
+    private int flagsPlaced;
+
     private Cell[][] field;
 
     private Game game;
+
+
+    private MinesChangedListener mListener;
 
     public Field(int dx, int dy, int mines) {
         setDimX(dx);
@@ -157,9 +156,14 @@ public class Field {
         this.game = game;
     }
 
-    public void setFlag(int x, int y, boolean f) {
+    public void setFlag(int x, int y, int f) {
         game.notifyFlagged(x, y, field[x][y].isFlagged());
         field[x][y].setFlagged(f);
+
+        if (f == 0)
+            updateFlags(-1);
+        else
+            updateFlags(1);
     }
 
     public boolean isFlagged(int x, int y) {
@@ -175,6 +179,10 @@ public class Field {
     private void revealAdjacent(int x, int y) {
 
         setRevealed(x, y);
+
+        if (field[x][y].isFlagged()) {
+            updateFlags(-1);
+        }
 
         // if there are no adjacent mines, recursively reveal all cells
         // around this one
@@ -195,13 +203,26 @@ public class Field {
         }
     }
 
-
-    public void setFlagCorrect(int x, int y, int i) {
-        field[x][y].setFlagCorrect(i);
+    public int getFlagType(int x, int y) {
+        return field[x][y].getFlagged();
     }
 
-    public int getFlagCorrect(int x, int y) {
-        return field[x][y].getFlagCorrect();
+    public int getFlagsPlaced() {
+        return flagsPlaced;
+    }
+
+    public void updateFlags(int i) {
+        flagsPlaced += i;
+        mListener.onValueChanged(mines - flagsPlaced);
+    }
+
+    public void setMinesListener(MinesChangedListener m) {
+        mListener = m;
+    }
+
+
+    public static interface MinesChangedListener {
+        void onValueChanged(int newValue);
     }
 }
 

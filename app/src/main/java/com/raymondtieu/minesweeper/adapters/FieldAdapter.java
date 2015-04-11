@@ -87,18 +87,18 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
                 holder.cell.setText("");
                 holder.icon.setImageResource(R.drawable.mine);
             }
+        } else if (field.getFlagType(p.x, p.y) == 1) {
+            holder.cell.setText("");
+            holder.icon.setImageResource(R.drawable.flag);
 
-        } else if (field.getFlagCorrect(p.x, p.y) == 1) {
+        } else if (field.getFlagType(p.x, p.y) == 2) {
             holder.cell.setText("");
             holder.icon.setImageResource(R.drawable.flag_correct);
 
-        } else if (field.getFlagCorrect(p.x, p.y) == 2) {
+        } else if (field.getFlagType(p.x, p.y) == -1) {
             holder.cell.setText("");
             holder.icon.setImageResource(R.drawable.flag_incorrect);
 
-        } else if (field.isFlagged(p.x, p.y)) {
-            holder.cell.setText("");
-            holder.icon.setImageResource(R.drawable.flag);
         } else {
             holder.cell.setText("");
             holder.icon.setImageResource(android.R.color.transparent);
@@ -156,7 +156,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             animation = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
         else
             animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
-
 
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
