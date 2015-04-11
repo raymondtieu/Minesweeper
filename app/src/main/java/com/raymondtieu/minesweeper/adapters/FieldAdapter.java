@@ -142,29 +142,47 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
         CellHolder holder = holders.get(position);
 
-        if (holder.hidden) {
-            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
-            holder.cell.startAnimation(animation);
-            holder.icon.startAnimation(animation);
-            holder.hidden = false;
-        }
+        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
+        holder.cell.startAnimation(animation);
+        holder.icon.startAnimation(animation);
     }
 
-    public void notifyFlagged(int position, boolean isFlagged) {
-        this.notifyItemChanged(position);
+    public void notifyFlagged(final int position, final boolean isFlagged) {
+        Animation animation;
+
+        final FieldAdapter f = this;
+
+        if (isFlagged)
+            animation = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
+        else
+            animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
+
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                if (!isFlagged) {
+                    f.notifyItemChanged(position);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (isFlagged) {
+                    f.notifyItemChanged(position);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
 
         CellHolder holder = holders.get(position);
 
-        if (holder.hidden) {
-            Animation animation;
-            if (isFlagged)
-                animation = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
+        holder.cell.startAnimation(animation);
+        holder.icon.startAnimation(animation);
 
-            else
-                animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
-
-            holder.cell.startAnimation(animation);
-            holder.icon.startAnimation(animation);
-        }
     }
 }
