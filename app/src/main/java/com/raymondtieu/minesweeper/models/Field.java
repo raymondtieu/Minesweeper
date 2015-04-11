@@ -12,6 +12,8 @@ public class Field {
         private boolean revealed = false;
         private boolean isFlagged = false;
 
+        private int flagCorrect = 0;
+
         public int getNumMines() {
             return numMines;
         }
@@ -34,6 +36,14 @@ public class Field {
 
         public boolean isFlagged() {
             return isFlagged;
+        }
+
+        public void setFlagCorrect(int i) {
+            flagCorrect = i;
+        }
+
+        public int getFlagCorrect() {
+            return flagCorrect;
         }
     }
 
@@ -183,6 +193,15 @@ public class Field {
                 }
             }
         }
+    }
+
+
+    public void setFlagCorrect(int x, int y, int i) {
+        field[x][y].setFlagCorrect(i);
+    }
+
+    public int getFlagCorrect(int x, int y) {
+        return field[x][y].getFlagCorrect();
     }
 }
 

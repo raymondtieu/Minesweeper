@@ -118,8 +118,20 @@ public class OnePlayerGame implements Game {
     public void revealAllMines() {
         for (int i = 0; i < field.getDimX(); i++) {
             for (int j = 0; j < field.getDimY(); j++) {
-                if (field.getNumMines(i, j) >= 9)
-                    field.setRevealed(i, j);
+                if (field.getNumMines(i, j) >= 9) {
+                    if (field.isFlagged(i, j))
+                        field.setFlagCorrect(i, j, 1);
+                    else
+                        field.reveal(i, j);
+
+                    fieldAdapter.notifyItemChanged(positionAdapter
+                        .pointToPosition(new Point(i, j)));
+                } else if (field.isFlagged(i, j)) {
+                    field.setFlagCorrect(i, j, 2);
+
+                    fieldAdapter.notifyItemChanged(positionAdapter
+                            .pointToPosition(new Point(i, j)));
+                }
             }
         }
     }
