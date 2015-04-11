@@ -102,7 +102,7 @@ public class OnePlayerGame implements Game {
         if (field.isFlagged(x, y)) {
             // if there's a flag at x, y, remove it
             field.setFlag(x, y, -1);
-        } else {
+        } else if (field.getFlagsPlaced() < field.getMines()) {
             field.setFlag(x, y, 1);
         }
     }
@@ -137,12 +137,12 @@ public class OnePlayerGame implements Game {
                     if (field.isFlagged(i, j))
                         field.setFlag(i, j, 2);
                     else
-                        field.reveal(i, j);
+                        field.setCellRevealed(i, j);
 
                     fieldAdapter.notifyItemChanged(positionAdapter
                         .pointToPosition(new Point(i, j)));
                 } else if (field.isFlagged(i, j)) {
-                    field.setFlag(i, j, -1);
+                    field.setFlag(i, j, 3);
 
                     fieldAdapter.notifyItemChanged(positionAdapter
                             .pointToPosition(new Point(i, j)));

@@ -160,7 +160,8 @@ public class Field {
         game.notifyFlagged(x, y, field[x][y].isFlagged());
         field[x][y].setFlagged(f);
 
-        updateFlags(f);
+        if (f < 2)
+            updateFlags(f);
     }
 
     public boolean isFlagged(int x, int y) {
@@ -211,6 +212,10 @@ public class Field {
     public void updateFlags(int i) {
         flagsPlaced += i;
         game.notifyMinesLeft(mines - flagsPlaced);
+    }
+
+    public void setCellRevealed(int x, int y) {
+        field[x][y].setRevealed(true);
     }
 
     public static interface MinesChangedListener {

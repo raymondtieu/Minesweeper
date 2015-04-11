@@ -95,7 +95,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             holder.cell.setText("");
             holder.icon.setImageResource(R.drawable.flag_correct);
 
-        } else if (field.getFlagType(p.x, p.y) == -1) {
+        } else if (field.getFlagType(p.x, p.y) == 3) {
             holder.cell.setText("");
             holder.icon.setImageResource(R.drawable.flag_incorrect);
 
