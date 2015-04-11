@@ -15,4 +15,7 @@
 
     <string name="lost_title">You Lost!</string>
     <string name="lost_message">Play again.</string>
+
+    <string name="win_title">You Won!</string>
+    <string name="win_message">Play again.</string>
 </resources>

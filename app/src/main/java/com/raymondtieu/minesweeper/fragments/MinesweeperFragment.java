@@ -117,7 +117,9 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         if (!game.isStarted()) {
             game.startGame(p.x, p.y);
         } else if (!game.isFinished()) {
-            if (game.reveal(p.x, p.y) >= 9) {
+            int result = game.reveal(p.x, p.y);
+
+            if (result >= 9) {
                 new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.lost_title)
                     .setMessage(R.string.lost_message)
@@ -128,7 +130,18 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
                             }
                         })
                     .setNegativeButton(android.R.string.no, null).show();
-            };
+            } else if (result == -1) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.win_title)
+                        .setMessage(R.string.win_message)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int button) {
+                                startNewGame();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null).show();
+            }
         }
     }
 
@@ -146,10 +159,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         mPositionAdapter = new PositionPointAdapter(x, y);
 
         // create adapter to handle mine field
-        mFieldAdapter = new FieldAdapter(getActivity());
-
-        mFieldAdapter.setField(game.getField());
-        mFieldAdapter.setCellDimensions(cellWidth);
+        mFieldAdapter = new FieldAdapter(getActivity(), game.getField(), cellWidth);
         mFieldAdapter.setPositionAdapter(mPositionAdapter);
         mFieldAdapter.setOnItemClickListener(this);
 

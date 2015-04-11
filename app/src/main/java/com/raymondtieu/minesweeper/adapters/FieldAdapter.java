@@ -44,9 +44,11 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             R.color.black
     };
 
-    public FieldAdapter(Context context) {
+    public FieldAdapter(Context context, Field field, int size) {
         inflater = LayoutInflater.from(context);
         this.mContext = context;
+        this.field = field;
+        this.cellDimensions = size;
     }
 
     @Override
@@ -104,14 +106,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             mOnItemClickListener.onItemClick(null, holder.cell, holder.getPosition(),
                     holder.getItemId());
         }
-    }
-
-    public void setField(Field field) {
-        this.field = field;
-    }
-
-    public void setCellDimensions(int size) {
-        this.cellDimensions = size;
     }
 
     public void setPositionAdapter(PositionPointAdapter adapter) {
