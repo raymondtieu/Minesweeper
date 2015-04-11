@@ -23,7 +23,8 @@
             android:layout_weight="1"
             android:textStyle="bold"
             android:text="@string/medium_title"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:capitalize="characters"/>
 
         <LinearLayout
             android:layout_width="0dp"

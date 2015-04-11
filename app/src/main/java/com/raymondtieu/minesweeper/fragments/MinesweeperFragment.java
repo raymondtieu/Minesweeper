@@ -35,7 +35,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
     private ImageView mFlagMode;
 
-    private TextView Difficulty, Time, Mines;
+    private TextView mDifficulty, mTimer, mMines;
     private int cellWidth;
 
     public MinesweeperFragment() {
@@ -68,6 +68,14 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         final View layout = inflater
             .inflate(R.layout.fragment_minesweeper, container, false);
 
+        // set all views
+        mDifficulty = (TextView) layout.findViewById(R.id.difficulty);
+        mMines = (TextView) layout.findViewById(R.id.num_mines);
+        mTimer = (TextView) layout.findViewById(R.id.timer);
+        mFlagMode = (ImageView) layout.findViewById(R.id.flag_mode);
+        mRecyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
+
+
         Bundle args = getArguments();
         x = args.getInt("xDim", 16);
         y = args.getInt("yDim", 16);
@@ -75,9 +83,6 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         // calculate how large a cell should be to fit 10 per row on the screen
         cellWidth = calculateCellWidth();
-
-        // instantiate a recycler view to display game
-        mRecyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
 
         // start a new game
         startNewGame();
@@ -88,23 +93,10 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         mRecyclerView.setLayoutManager(manager);
 
-        // set up game information in footer
-        Difficulty = (TextView) layout.findViewById(R.id.difficulty);
-
-        switch(y) {
-            case 9 : Difficulty.setText("Easy"); break;
-            case 16: Difficulty.setText("Medium"); break;
-            case 30: Difficulty.setText("Hard"); break;
-        }
-
-        // set up game info
-
-        Mines = (TextView) layout.findViewById(R.id.num_mines);
-        Mines.setText("" + m);
+        // set up game information in header
+        configureHeader();
 
         setViewDimensions(layout);
-
-        setFlagMode(layout);
 
         return layout;
     }
@@ -155,12 +147,41 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         }
     }
 
+    private void configureHeader() {
+
+        switch(y) {
+            case 9 : mDifficulty.setText(R.string.easy_title); break;
+            case 16: mDifficulty.setText(R.string.medium_title); break;
+            case 30: mDifficulty.setText(R.string.hard_title); break;
+        }
+
+        mMines.setText("" + m);
+
+        mFlagMode.setImageResource(R.drawable.flag_deselect);
+        mFlagMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!game.isFinished()) {
+                    game.toggleFlag();
+
+                    if (game.isFlagMode()) {
+                        mFlagMode.setImageResource(R.drawable.flag_select);
+                    } else {
+                        mFlagMode.setImageResource(R.drawable.flag_deselect);
+                    }
+                }
+            }
+        });
+
+    }
+
     private void startNewGame() {
         cellWidth = calculateCellWidth();
 
         game = new OnePlayerGame(x, y, m);
 
         configureAdapters();
+        configureHeader();
     }
 
     private void configureAdapters() {
@@ -191,16 +212,4 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         frameLayout.getLayoutParams().height = x * cellWidth;
         frameLayout.getLayoutParams().width = y * cellWidth;
     }
-
-    private void setFlagMode(View layout) {
-        mFlagMode = (ImageView) layout.findViewById(R.id.flag_mode);
-        mFlagMode.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                game.toggleFlag();
-            }
-        });
-    }
-
 }
