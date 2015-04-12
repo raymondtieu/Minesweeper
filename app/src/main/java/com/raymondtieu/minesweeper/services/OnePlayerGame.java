@@ -113,8 +113,21 @@ public class OnePlayerGame implements Game {
     }
 
 
-    public void onLongClick(int x, int y) {
+    public boolean onLongClick(int x, int y) {
+        if (isFinished())
+            return false;
 
+        Cell cell = field.getCell(x, y);
+
+        if (cell.getStatus() == Cell.Status.FLAGGED) {
+            flagCell(x, y, Cell.Status.HIDDEN);
+            return true;
+        } else if (cell.getStatus() == Cell.Status.HIDDEN) {
+            flagCell(x, y, Cell.Status.FLAGGED);
+            return true;
+        }
+
+        return false;
     }
 
     @Override

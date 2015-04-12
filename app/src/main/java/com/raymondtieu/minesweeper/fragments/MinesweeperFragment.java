@@ -174,8 +174,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Point p = mPositionAdapter.positionToPoint(position);
 
-        //return game.onLongClick(p.x, p.y);
-        return false;
+        return game.onLongClick(p.x, p.y);
     }
 
 
