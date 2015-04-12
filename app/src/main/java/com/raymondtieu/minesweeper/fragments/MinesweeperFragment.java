@@ -24,6 +24,7 @@ import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
 import com.raymondtieu.minesweeper.layouts.MinesTextView;
+import com.raymondtieu.minesweeper.services.Game;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
@@ -126,7 +127,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         boolean startedBeforeClick = game.isStarted();
 
         // number of mines adjacent to cell at x, y
-        int result = game.onClick(p.x, p.y);
+        Game.Status result = game.onClick(p.x, p.y);
 
         // start timer if game has just started
         if (game.isStarted() && !startedBeforeClick) {
@@ -136,7 +137,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
             timerHandler.postDelayed(updateTime, 0);
         }
 
-        if (result >= 9) {
+        if (result == Game.Status.LOSE) {
             game.revealAllMines();
 
             timerHandler.removeCallbacks(updateTime);
@@ -151,7 +152,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
                     }
                 })
                 .setNegativeButton(android.R.string.no, null).show();
-        } else if (result == -1) {
+        } else if (result == Game.Status.WIN) {
 
             timerHandler.removeCallbacks(updateTime);
 
@@ -173,7 +174,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Point p = mPositionAdapter.positionToPoint(position);
 
-        return game.onLongClick(p.x, p.y);
+        //return game.onLongClick(p.x, p.y);
+        return false;
     }
 
 
@@ -194,7 +196,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
                 if (!game.isFinished()) {
                     game.toggleFlag();
 
-                    if (game.isFlagMode()) {
+                    if (game.isFlagging()) {
                         mFlagMode.setImageResource(R.drawable.flag_select);
                     } else {
                         mFlagMode.setImageResource(R.drawable.flag_deselect);

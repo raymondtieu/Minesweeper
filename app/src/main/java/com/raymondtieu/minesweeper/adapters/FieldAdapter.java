@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 
 import com.raymondtieu.minesweeper.R;
+import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
 
 import java.util.HashMap;
@@ -71,37 +72,33 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
         Point p = positionAdapter.positionToPoint(position);
 
-        if (field.isRevealed(p.x, p.y)) {
-            int n = field.getNumMines(p.x, p.y);
+        Cell cell = field.getCell(p.x, p.y);
+        Cell.Status status = cell.getStatus();
+
+        holder.cell.setText("");
+
+        if (status == Cell.Status.REVEALED) {
+            int n = cell.getAdjacentMines();
+
             if (n < 9) {
-                if (n == 0) {
-                    holder.cell.setText("");
-                } else {
+                if (n > 0) {
                     holder.cell.setText("" + n);
                     holder.cell.setTextColor(holder.cell
                             .getResources().getColor(MINE_COLOUR[n - 1]));
-
                 }
+
                 holder.icon.setImageResource(R.drawable.cell_bg);
             } else {
-                holder.cell.setText("");
                 holder.icon.setImageResource(R.drawable.mine);
             }
-        } else if (field.getFlagType(p.x, p.y) == 1) {
-            holder.cell.setText("");
-            holder.icon.setImageResource(R.drawable.flag);
-
-        } else if (field.getFlagType(p.x, p.y) == 2) {
-            holder.cell.setText("");
-            holder.icon.setImageResource(R.drawable.flag_correct);
-
-        } else if (field.getFlagType(p.x, p.y) == 3) {
-            holder.cell.setText("");
-            holder.icon.setImageResource(R.drawable.flag_incorrect);
-
-        } else {
-            holder.cell.setText("");
+        } else if (status == Cell.Status.HIDDEN) {
             holder.icon.setImageResource(android.R.color.transparent);
+        } else if (status == Cell.Status.FLAGGED) {
+            holder.icon.setImageResource(R.drawable.flag);
+        } else if (status == Cell.Status.FLAG_CORRECT) {
+            holder.icon.setImageResource(R.drawable.flag_correct);
+        } else if (status == Cell.Status.FLAG_INCORRECT) {
+            holder.icon.setImageResource(R.drawable.flag_incorrect);
         }
     }
 
