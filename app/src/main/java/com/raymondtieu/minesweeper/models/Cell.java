@@ -13,10 +13,9 @@ public class Cell {
     private Status status;
 
     public Cell() {
-        adjacentMines = 0;
-        status = Status.HIDDEN;
+        this.adjacentMines = 0;
+        this.status = Status.HIDDEN;
     }
-
 
     public int getAdjacentMines() {
         return adjacentMines;
@@ -32,5 +31,9 @@ public class Cell {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public void addAdjacentMine() {
+        adjacentMines++;
     }
 }

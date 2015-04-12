@@ -2,65 +2,22 @@ package com.raymondtieu.minesweeper.models;
 
 import android.util.Log;
 
-import com.raymondtieu.minesweeper.services.Game;
-
 /**
  * Created by raymond on 2015-04-02.
  */
 public class Field {
 
-    static class Cell {
-        private int numMines = 0;
-        private boolean revealed = false;
-
-        // -1 : no flag
-        // 1 : flagged
-        // 2 : flagged correctly
-        // 3 : flagged incorrectly
-        private int isFlagged = -1;
-
-        public int getNumMines() {
-            return numMines;
-        }
-        public void setNumMines(int numMines) {
-            this.numMines = numMines;
-        }
-        public boolean isRevealed() {
-            return revealed;
-        }
-        public void setRevealed(boolean revealed) {
-            this.revealed = revealed;
-        }
-        public void addMine() {
-            this.numMines++;
-        }
-
-        public void setFlagged(int flag) {
-            this.isFlagged = flag;
-        }
-
-        public boolean isFlagged() {
-            return isFlagged != -1;
-        }
-
-        public int getFlagged() {
-            return isFlagged;
-        }
-    }
-
     private int dimX;
     private int dimY;
     private int mines;
-    private int cellsHidden;
-    private int flagsPlaced;
 
     private Cell[][] field;
-    private Game game;
 
-    public Field(int dx, int dy, int mines) {
-        setDimX(dx);
-        setDimY(dy);
-        setMines(mines);
+    public Field(int x, int y, int mines) {
+        this.dimX = x;
+        this.dimY = y;
+        this.mines = mines;
+
         this.field = new Cell[dimX][dimY];
 
         // generate blank field with empty cells
@@ -75,24 +32,20 @@ public class Field {
         return dimX;
     }
 
-    public void setDimX(int x) {
-        dimX = x;
-    }
-
     public int getDimY() {
         return dimY;
-    }
-
-    public void setDimY(int y) {
-        dimY = y;
     }
 
     public int getMines() {
         return mines;
     }
 
-    public void setMines(int mines) {
-        this.mines = mines;
+    public int getNumCells() {
+        return dimX * dimY;
+    }
+
+    public Cell getCell(int x, int y) {
+        return field[x][y];
     }
 
     public void generateField(int x, int y) {
@@ -101,39 +54,41 @@ public class Field {
         // place mines on blank field until there are no mines left to be placed
         // generate i and j value until position without mine is found
         while (n > 0) {
-            int i = (int) (Math.random() * dimX);
-            int j = (int) (Math.random() * dimY);
+            int a = (int) (Math.random() * dimX);
+            int b = (int) (Math.random() * dimY);
 
-            // boolean values for when i and j are surrounding x and y
-            boolean a_x = Math.abs(x - i) <= 1;
-            boolean a_y = Math.abs(y - j) <= 1;
+            // true when i and j are surrounding x and y
+            boolean adjacentX = Math.abs(x - a) <= 1;
+            boolean adjacentY = Math.abs(y - b) <= 1;
 
-            // check for valid coordinates, not starting point or around it
-            if (!(a_x && a_y)) {
+            // check for valid coordinates (not starting point or around it)
+            if (!(adjacentX && adjacentY)) {
 
-                // no mine here
-                if (field[i][j].getNumMines() < 9) {
-                    field[i][j].setNumMines(9);
+                // if no mine at (a,b), set mine
+                if (field[a][b].getAdjacentMines() < 9) {
+                    field[a][b].setAdjacentMines(9);
 
                     // update surrounding blocks
-                    for (int a = -1; a <= 1; a++) {
-                        for (int b = -1; b <= 1; b++) {
-                            int s_x = i + a;
-                            int s_y = j + b;
+                    for (int i = -1; i <= 1; i++) {
+                        for (int j = -1; j <= 1; j++) {
+                            int w = a + i;
+                            int v = b + j;
 
                             // check out of bounds
-                            if (s_x >= 0 && s_x < dimX && s_y >= 0 && s_y < dimY)
-                                field[s_x][s_y].addMine();
+                            if (w >= 0 && w < dimX && v >= 0 && v < dimY)
+                                field[w][v].addAdjacentMine();
                         }
                     }
 
-                    n -= 1;
+                    n--;
                 }
             }
         }
-
-        cellsHidden = dimX * dimY - mines;
     }
+
+
+
+
 
     public void setRevealed(int x, int y) {
         field[x][y].setRevealed(true);
