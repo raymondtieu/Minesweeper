@@ -1,5 +1,7 @@
 package com.raymondtieu.minesweeper.models;
 
+import android.util.Log;
+
 import com.raymondtieu.minesweeper.services.Game;
 
 /**
@@ -182,6 +184,7 @@ public class Field {
             updateFlags(-1);
         }
 
+
         // if there are no adjacent mines, recursively reveal all cells
         // around this one
         if (getNumMines(x, y) == 0) {
@@ -216,6 +219,43 @@ public class Field {
 
     public void setCellRevealed(int x, int y) {
         field[x][y].setRevealed(true);
+    }
+
+    public boolean revealSurrounding(int x, int y) {
+        // check for valid number of flags
+        int n = field[x][y].getNumMines();
+
+        int nFlags = 0;
+
+        for (int a = -1; a <= 1; a++) {
+            for (int b = -1; b <= 1; b++) {
+                int s_x = x + a;
+                int s_y = y + b;
+                if (s_x >= 0 && s_x < dimX && s_y >= 0 && s_y < dimY) {
+                    if (field[s_x][s_y].isFlagged())
+                        nFlags++;
+                }
+            }
+        }
+
+        Log.i("Field", "flags = " + nFlags + ", " + "number of mines = " + n);
+        // open surrounding cells
+        if (n != nFlags)
+            return -1;
+
+        Log.i("Field", "revealing surrounding");
+        for (int a = -1; a <= 1; a++) {
+            for (int b = -1; b <= 1; b++) {
+                int s_x = x + a;
+                int s_y = y + b;
+                if (s_x >= 0 && s_x < dimX && s_y >= 0 && s_y < dimY) {
+                    if (!field[s_x][s_y].isRevealed() && !field[s_x][s_y].isFlagged())
+                        reveal(s_x, s_y);
+                }
+            }
+        }
+
+        return true;
     }
 }
 

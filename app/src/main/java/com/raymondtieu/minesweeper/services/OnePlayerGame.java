@@ -12,8 +12,7 @@ import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.models.*;
 
 
-public class OnePlayerGame implements Game {	
-    // timer
+public class OnePlayerGame implements Game {
     private boolean started;
     private boolean finished;
     private boolean flagMode;
@@ -81,12 +80,14 @@ public class OnePlayerGame implements Game {
     public boolean onLongClick(int x, int y) {
         if (isFinished())
             return false;
+
         if (!field.isRevealed(x, y)) {
             markCell(x, y);
             return true;
+        } else {
+            // reveal all adjacent cells if all mines are found
+            return field.revealSurrounding(x, y);
         }
-
-        return false;
     }
 
     @Override
@@ -121,8 +122,13 @@ public class OnePlayerGame implements Game {
     }
 
     @Override
-    public boolean gameOver() {
-        return false;
+    public int gameOver(int result) {
+        // 1 = win
+        // -1 = lose
+
+
+
+        return 0;
     }
 
     @Override
