@@ -1,6 +1,7 @@
 package com.raymondtieu.minesweeper.adapters;
 
 import android.gesture.GestureOverlayView;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.raymondtieu.minesweeper.R;
 public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     public TextView cell;
     public ImageView icon;
+    public ImageView background;
 
     public FieldAdapter mAdapter;
 
@@ -27,6 +29,10 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
         cell = (TextView) itemView.findViewById(R.id.cell_data);
         icon = (ImageView) itemView.findViewById(R.id.cell_icon);
+
+        background = (ImageView) itemView.findViewById(R.id.cell_background);
+        background.setImageResource(R.drawable.hidden);
+
 
         itemView.getLayoutParams().width = size;
         itemView.getLayoutParams().height = size;

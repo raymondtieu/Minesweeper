@@ -16,6 +16,7 @@ import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
 
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Created by raymond on 2015-04-04.
@@ -66,6 +67,13 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
     @Override
     public void onBindViewHolder(CellHolder holder, int position) {
+        if (!holders.containsKey(position)) {
+            holders.put(position, holder);
+
+            if (holders.size() == field.getDimY() * field.getDimY())
+                animateStart();
+        }
+
         Point p = positionAdapter.positionToPoint(position);
 
         Cell cell = field.getCell(p.x, p.y);
@@ -95,13 +103,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             holder.icon.setImageResource(R.drawable.flag_correct);
         } else if (status == Cell.Status.FLAG_INCORRECT) {
             holder.icon.setImageResource(R.drawable.flag_incorrect);
-        }
-
-        if (!holders.containsKey(position)) {
-            holders.put(position, holder);
-
-            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.on_start);
-            holder.icon.startAnimation(animation);
         }
     }
 
@@ -183,5 +184,25 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         holder.cell.startAnimation(animation);
         holder.icon.startAnimation(animation);
 
+    }
+
+    public void animateStart() {
+        int n = field.getDimX() * field.getDimY();
+
+        for (int i = 0; i < n; i++) {
+            // animate each cell with random duration between 100 - 500 ms
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.on_start);
+
+            Random r = new Random();
+
+            int longest = 500;
+            int shortest = 100;
+
+            int duration = r.nextInt(longest - shortest) + shortest;
+
+            animation.setDuration(duration);
+
+            holders.get(i).background.startAnimation(animation);
+        }
     }
 }
