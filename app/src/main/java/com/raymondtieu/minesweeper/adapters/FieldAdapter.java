@@ -3,7 +3,6 @@ package com.raymondtieu.minesweeper.adapters;
 import android.content.Context;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
 
 import java.util.HashMap;
-import java.util.Random;
 
 /**
  * Created by raymond on 2015-04-04.
@@ -187,22 +185,23 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     }
 
     public void animateStart() {
+        //Animation alpha = AnimationUtils.loadAnimation(mContext, R.anim.start_alpha);
+        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.on_start);
+
         int n = field.getDimX() * field.getDimY();
 
         for (int i = 0; i < n; i++) {
-            // animate each cell with random duration between 100 - 500 ms
-            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.on_start);
-
-            Random r = new Random();
-
-            int longest = 500;
-            int shortest = 100;
-
-            int duration = r.nextInt(longest - shortest) + shortest;
-
-            animation.setDuration(duration);
-
+            //holders.get(i).background.startAnimation(alpha);
             holders.get(i).background.startAnimation(animation);
         }
+    }
+
+    public void notifyMine(int position) {
+        this.notifyItemChanged(position);
+
+        CellHolder holder = holders.get(position);
+
+        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.mine);
+        holder.icon.startAnimation(animation);
     }
 }

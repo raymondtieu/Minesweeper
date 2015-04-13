@@ -245,14 +245,17 @@ public class OnePlayerGame implements Game {
                 Cell cell = field.getCell(i, j);
 
                 if (cell.getAdjacentMines() >= 9) {
-                    if (cell.getStatus() == Cell.Status.FLAGGED)
+                    if (cell.getStatus() == Cell.Status.FLAGGED) {
                         cell.setStatus(Cell.Status.FLAG_CORRECT);
-                    else
+
+                        fieldAdapter.notifyRevealed(positionAdapter
+                                .pointToPosition(new Point(i, j)));
+                    } else {
                         cell.setStatus(Cell.Status.REVEALED);
 
-                    fieldAdapter.notifyRevealed(positionAdapter
-                            .pointToPosition(new Point(i, j)));
-
+                        fieldAdapter.notifyMine(positionAdapter
+                                .pointToPosition(new Point(i, j)));
+                    }
                 } else if (cell.getStatus() == Cell.Status.FLAGGED) {
                     cell.setStatus(Cell.Status.FLAG_INCORRECT);
 
