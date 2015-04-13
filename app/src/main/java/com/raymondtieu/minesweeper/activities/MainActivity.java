@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,8 @@ public class MainActivity extends ActionBarActivity {
     private final int[] EASY = {9, 9, 10};
     private final int[] MEDIUM = {16, 16, 40};
     private final int[] HARD = {16, 30, 99};
+
+    private MinesweeperFragment minesweeperFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +90,7 @@ public class MainActivity extends ActionBarActivity {
 
         FragmentTransaction ft = fm.beginTransaction();
 
-        MinesweeperFragment f = new MinesweeperFragment();
+        minesweeperFragment = new MinesweeperFragment();
 
         Bundle args = new Bundle();
 
@@ -95,9 +98,30 @@ public class MainActivity extends ActionBarActivity {
         args.putInt("yDim", y);
         args.putInt("nMines", m);
 
-        f.setArguments(args);
+        minesweeperFragment.setArguments(args);
 
-        ft.replace(R.id.fragment_minesweeper, f);
+        ft.replace(R.id.fragment_minesweeper, minesweeperFragment);
         ft.commit();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    minesweeperFragment.toggleFlagMode();
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    minesweeperFragment.toggleFlagMode();
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
     }
 }

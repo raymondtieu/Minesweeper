@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -209,18 +210,22 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         mFlagMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!game.isFinished()) {
-                    game.toggleFlag();
-
-                    if (game.isFlagging()) {
-                        mFlagMode.setImageResource(R.drawable.flag_select);
-                    } else {
-                        mFlagMode.setImageResource(R.drawable.flag_deselect);
-                    }
-                }
+                toggleFlagMode();
             }
         });
 
+    }
+
+    public void toggleFlagMode() {
+        if (!game.isFinished()) {
+            game.toggleFlag();
+
+            if (game.isFlagging()) {
+                mFlagMode.setImageResource(R.drawable.flag_select);
+            } else {
+                mFlagMode.setImageResource(R.drawable.flag_deselect);
+            }
+        }
     }
 
     private void loadNewGame() {

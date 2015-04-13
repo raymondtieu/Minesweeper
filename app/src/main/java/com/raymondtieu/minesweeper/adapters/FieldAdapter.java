@@ -189,4 +189,13 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.mine);
         holder.icon.startAnimation(animation);
     }
+
+    public void notifyInvalid(int position) {
+        CellHolder holder = holders.get(position);
+
+        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.invalid);
+        holder.cell.startAnimation(animation);
+        holder.icon.startAnimation(animation);
+        holder.background.startAnimation(animation);
+    }
 }
