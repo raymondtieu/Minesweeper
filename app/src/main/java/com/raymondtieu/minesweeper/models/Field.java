@@ -71,12 +71,12 @@ public class Field {
                     // update surrounding blocks
                     for (int i = -1; i <= 1; i++) {
                         for (int j = -1; j <= 1; j++) {
-                            int w = a + i;
-                            int v = b + j;
+                            int v = a + i;
+                            int w = b + j;
 
                             // check out of bounds
-                            if (w >= 0 && w < dimX && v >= 0 && v < dimY)
-                                field[w][v].addAdjacentMine();
+                            if (v >= 0 && v < dimX && w >= 0 && w < dimY)
+                                field[v][w].addAdjacentMine();
                         }
                     }
 

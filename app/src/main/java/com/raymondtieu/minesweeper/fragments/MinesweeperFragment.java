@@ -132,26 +132,46 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         // start timer if game has just started
         if (game.isStarted() && !startedBeforeClick) {
             timerHandler = new Handler();
-            sdf = new SimpleDateFormat("mm:ss");
+            sdf = new SimpleDateFormat("s");
             startTime = System.currentTimeMillis();
             timerHandler.postDelayed(updateTime, 0);
         }
 
+        handleGameOver(result);
+    }
+
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        if (game.isFinished())
+            return false;
+
+        Point p = mPositionAdapter.positionToPoint(position);
+
+        Game.Status result = game.onLongClick(p.x, p.y);
+
+        handleGameOver(result);
+
+        return true;
+    }
+
+
+    public void handleGameOver(Game.Status result) {
         if (result == Game.Status.LOSE) {
             game.revealAllMines();
 
             timerHandler.removeCallbacks(updateTime);
 
             new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.lost_title)
-                .setMessage(R.string.lost_message)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    .setTitle(R.string.lost_title)
+                    .setMessage(R.string.lost_message)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                    public void onClick(DialogInterface dialog, int button) {
-                        loadNewGame();
-                    }
-                })
-                .setNegativeButton(android.R.string.no, null).show();
+                        public void onClick(DialogInterface dialog, int button) {
+                            loadNewGame();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null).show();
         } else if (result == Game.Status.WIN) {
 
             timerHandler.removeCallbacks(updateTime);
@@ -167,14 +187,6 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
                     })
                     .setNegativeButton(android.R.string.no, null).show();
         }
-    }
-
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        Point p = mPositionAdapter.positionToPoint(position);
-
-        return game.onLongClick(p.x, p.y);
     }
 
 
@@ -210,6 +222,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         cellWidth = calculateCellWidth();
 
         game = new OnePlayerGame(x, y, m);
+
+        mTimer.setText("0");
 
         configureAdapters();
         configureHeader();

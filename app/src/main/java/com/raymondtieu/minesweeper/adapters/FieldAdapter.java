@@ -66,10 +66,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
     @Override
     public void onBindViewHolder(CellHolder holder, int position) {
-        if (!holders.containsKey(position)) {
-            holders.put(position, holder);
-        }
-
         Point p = positionAdapter.positionToPoint(position);
 
         Cell cell = field.getCell(p.x, p.y);
@@ -99,6 +95,13 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             holder.icon.setImageResource(R.drawable.flag_correct);
         } else if (status == Cell.Status.FLAG_INCORRECT) {
             holder.icon.setImageResource(R.drawable.flag_incorrect);
+        }
+
+        if (!holders.containsKey(position)) {
+            holders.put(position, holder);
+
+            Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.on_start);
+            holder.icon.startAnimation(animation);
         }
     }
 

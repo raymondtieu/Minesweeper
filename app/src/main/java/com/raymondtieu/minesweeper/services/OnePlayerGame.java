@@ -113,21 +113,33 @@ public class OnePlayerGame implements Game {
     }
 
 
-    public boolean onLongClick(int x, int y) {
+    public Status onLongClick(int x, int y) {
         if (isFinished())
-            return false;
+            return Status.NO_CHANGE;
 
         Cell cell = field.getCell(x, y);
 
         if (cell.getStatus() == Cell.Status.FLAGGED) {
+            // unflag cell
             flagCell(x, y, Cell.Status.HIDDEN);
-            return true;
         } else if (cell.getStatus() == Cell.Status.HIDDEN) {
+            // flag cell
             flagCell(x, y, Cell.Status.FLAGGED);
-            return true;
+        } else if (cell.getStatus() == Cell.Status.REVEALED) {
+            // reveal all surrounding cells
+            Status result = revealSurrounding(x, y);
+
+            // if a mine wasn't uncovered, check if there are any cells
+            // still hidden
+            if (result != Status.LOSE) {
+                result = checkGameFinished(cell);
+            }
+
+            return result;
+
         }
 
-        return false;
+        return Status.NO_CHANGE;
     }
 
     @Override
@@ -140,25 +152,24 @@ public class OnePlayerGame implements Game {
 
     @Override
     public int reveal(int x, int y) {
-        revealAdjacent(x, y);
+        revealAdjacent(x, y, true);
 
         return 0;
     }
 
-    public void revealAdjacent(int x, int y) {
+    public void revealAdjacent(int x, int y, boolean ignoreFlag) {
         Cell cell = field.getCell(x, y);
 
         // remove flag if cell is flagged
-        if (cell.getStatus() == Cell.Status.FLAGGED) {
+        if (cell.getStatus() == Cell.Status.FLAGGED && ignoreFlag) {
             flagCell(x, y, Cell.Status.HIDDEN);
         }
 
         // reveal this cell
-        revealCell(cell, x, y);
-
+        revealCell(x, y);
 
         // if this cell had no adjacent mines, reveal everything surrounding
-        if (cell.getAdjacentMines() == 0) {
+        if (cell.getStatus() == Cell.Status.REVEALED && cell.getAdjacentMines() == 0) {
             for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j <= 1; j++) {
 
@@ -169,10 +180,8 @@ public class OnePlayerGame implements Game {
                     // reveal if adjacent position is not out of bounds
                     if (v >= 0 && v < field.getDimX() &&
                             w >= 0 && w < field.getDimY() &&
-                            field.getCell(v, w).getStatus() != Cell.Status.REVEALED) {
-
-                        revealAdjacent(v, w);
-                    }
+                            field.getCell(v, w).getStatus() != Cell.Status.REVEALED)
+                        revealAdjacent(v, w, ignoreFlag);
                 }
             }
         }
@@ -198,12 +207,16 @@ public class OnePlayerGame implements Game {
     }
 
 
-    public void revealCell(Cell cell, int x, int y) {
-        cell.setStatus(Cell.Status.REVEALED);
-        cellsRemaining--;
+    public void revealCell(int x, int y) {
+        Cell cell = field.getCell(x, y);
 
-        fieldAdapter.notifyRevealed(positionAdapter
-                .pointToPosition(new Point(x, y)));
+        if (cell.getStatus() == Cell.Status.HIDDEN) {
+            cell.setStatus(Cell.Status.REVEALED);
+            cellsRemaining--;
+
+            fieldAdapter.notifyRevealed(positionAdapter
+                    .pointToPosition(new Point(x, y)));
+        }
     }
 
 
@@ -248,5 +261,53 @@ public class OnePlayerGame implements Game {
                 }
             }
         }
+    }
+
+    public Status revealSurrounding(int x, int y) {
+        Cell cell = field.getCell(x, y);
+
+        Status status = Status.NO_CHANGE;
+
+        // count number of adjacent flags
+        int flags = 0;
+
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                int v = x + i;
+                int w = y + j;
+
+                if (v >= 0 && v < field.getDimX() &&
+                        w >= 0 && w < field.getDimY() &&
+                        field.getCell(v, w).getStatus() == Cell.Status.FLAGGED)
+                    flags++;
+            }
+        }
+
+        // can't reveal surrounding cells if number of flags doesn't match
+        if (flags != cell.getAdjacentMines()) {
+            return status;
+            // animate current cell
+        }
+
+        // reveal all surrounding cells
+        // only ones immediately surrounding can be mines
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                int v = x + i;
+                int w = y + j;
+
+                if (v >= 0 && v < field.getDimX() &&
+                        w >= 0 && w < field.getDimY() &&
+                        field.getCell(v, w).getStatus() == Cell.Status.HIDDEN) {
+
+                    if (field.getCell(v, w).getAdjacentMines() >= 9)
+                        status = Status.LOSE;
+
+                    revealAdjacent(v, w, false);
+                }
+            }
+        }
+
+        return status;
     }
 }
