@@ -4,6 +4,7 @@ package com.raymondtieu.minesweeper.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 
@@ -131,8 +132,6 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         // start timer if game has just started
         if (game.isStarted() && !startedBeforeClick) {
-            timerHandler = new Handler();
-            sdf = new SimpleDateFormat("s");
             startTime = System.currentTimeMillis();
             timerHandler.postDelayed(updateTime, 0);
         }
@@ -162,6 +161,9 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
             timerHandler.removeCallbacks(updateTime);
 
+            mTimer.setTextColor(getResources().getColor(R.color.red));
+            mTimer.setTypeface(null, Typeface.BOLD);
+
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.lost_title)
                     .setMessage(R.string.lost_message)
@@ -175,6 +177,9 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         } else if (result == Game.Status.WIN) {
 
             timerHandler.removeCallbacks(updateTime);
+
+            mTimer.setTextColor(getResources().getColor(R.color.red));
+            mTimer.setTypeface(null, Typeface.BOLD);
 
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.win_title)
@@ -224,6 +229,11 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         game = new OnePlayerGame(x, y, m);
 
         mTimer.setText("0");
+        mTimer.setTextColor(getResources().getColor(R.color.black));
+        mTimer.setTypeface(null, Typeface.NORMAL);
+
+        timerHandler = new Handler();
+        sdf = new SimpleDateFormat("s");
 
         configureAdapters();
         configureHeader();
