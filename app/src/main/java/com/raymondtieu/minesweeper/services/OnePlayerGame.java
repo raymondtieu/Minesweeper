@@ -18,7 +18,6 @@ public class OnePlayerGame implements Game {
 
     private Field field;
 
-    private int minesRemaining;
     private int numFlags;
     private int cellsRemaining;
 
@@ -33,7 +32,6 @@ public class OnePlayerGame implements Game {
 
         this.field = new Field(dimX, dimY, mines);
 
-        this.minesRemaining = mines;
         this.numFlags = 0;
         this.cellsRemaining = field.getNumCells() - mines;
     }
@@ -100,7 +98,7 @@ public class OnePlayerGame implements Game {
             // remove flag if there is already a flag
             if (status == Cell.Status.FLAGGED)
                 flagCell(x, y, Cell.Status.HIDDEN);
-            else
+            else if (status == Cell.Status.HIDDEN)
                 flagCell(x, y, Cell.Status.FLAGGED);
         }
 
@@ -186,19 +184,23 @@ public class OnePlayerGame implements Game {
     public void flagCell(int x, int y, Cell.Status status) {
         Cell cell = field.getCell(x, y);
 
-        cell.setStatus(status);
-
         if (status == Cell.Status.HIDDEN) {
             numFlags--;
+
+            cell.setStatus(status);
+
             fieldAdapter.notifyFlagged(positionAdapter
                     .pointToPosition(new Point(x, y)), true);
-        } else if (status == Cell.Status.FLAGGED) {
+        } else if (status == Cell.Status.FLAGGED && numFlags < field.getMines()) {
             numFlags++;
+
+            cell.setStatus(status);
+
             fieldAdapter.notifyFlagged(positionAdapter
                     .pointToPosition(new Point(x, y)), false);
         }
 
-        minesListener.onValueChanged(minesRemaining - numFlags);
+        minesListener.onValueChanged(field.getMines() - numFlags);
     }
 
 
