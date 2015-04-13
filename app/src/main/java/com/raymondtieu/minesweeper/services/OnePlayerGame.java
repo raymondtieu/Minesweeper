@@ -59,10 +59,6 @@ public class OnePlayerGame implements Game {
         return flagging;
     }
 
-    public void setFlagging(boolean flagging) {
-        this.flagging = flagging;
-    }
-
     public void setMinesListener(MinesTextView minesListener) {
         this.minesListener = minesListener;
     }
@@ -136,7 +132,6 @@ public class OnePlayerGame implements Game {
             }
 
             return result;
-
         }
 
         return Status.NO_CHANGE;
@@ -303,8 +298,10 @@ public class OnePlayerGame implements Game {
                         w >= 0 && w < field.getDimY() &&
                         field.getCell(v, w).getStatus() == Cell.Status.HIDDEN) {
 
-                    if (field.getCell(v, w).getAdjacentMines() >= 9)
+                    if (field.getCell(v, w).getAdjacentMines() >= 9) {
                         status = Status.LOSE;
+                        setFinished(true);
+                    }
 
                     revealAdjacent(v, w, false);
                 }
