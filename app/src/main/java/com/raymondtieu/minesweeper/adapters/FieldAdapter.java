@@ -67,9 +67,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     public void onBindViewHolder(CellHolder holder, int position) {
         if (!holders.containsKey(position)) {
             holders.put(position, holder);
-
-            if (holders.size() == field.getDimY() * field.getDimY())
-                animateStart();
         }
 
         Point p = positionAdapter.positionToPoint(position);
@@ -182,18 +179,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         holder.cell.startAnimation(animation);
         holder.icon.startAnimation(animation);
 
-    }
-
-    public void animateStart() {
-        //Animation alpha = AnimationUtils.loadAnimation(mContext, R.anim.start_alpha);
-        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.on_start);
-
-        int n = field.getDimX() * field.getDimY();
-
-        for (int i = 0; i < n; i++) {
-            //holders.get(i).background.startAnimation(alpha);
-            holders.get(i).background.startAnimation(animation);
-        }
     }
 
     public void notifyMine(int position) {
