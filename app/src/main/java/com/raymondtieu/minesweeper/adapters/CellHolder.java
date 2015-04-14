@@ -1,12 +1,8 @@
 package com.raymondtieu.minesweeper.adapters;
 
 import android.content.Context;
-import android.gesture.GestureOverlayView;
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.ImageView;
 
 import com.larvalabs.svgandroid.SVG;
@@ -18,6 +14,7 @@ import com.raymondtieu.minesweeper.R;
  */
 public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     public ImageView mines;
+    public ImageView fillMines;
     public ImageView icon;
     public ImageView background;
 
@@ -31,11 +28,13 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
         mAdapter = adapter;
 
         mines = (ImageView) itemView.findViewById(R.id.cell_mines);
+        fillMines = (ImageView) itemView.findViewById(R.id.cell_fill);
         icon = (ImageView) itemView.findViewById(R.id.cell_icon);
         background = (ImageView) itemView.findViewById(R.id.cell_background);
 
         // disable hardware acceleration for image views
         mines.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        fillMines.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         icon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         background.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
@@ -54,10 +53,14 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
         return true;
     }
 
-    public void setMines(Context context, int id) {
-        SVG svg = SVGParser.getSVGFromResource(context.getResources(), id);
-
+    public void setMines(Context context, int minesId, int fillId) {
+        SVG svg = SVGParser.getSVGFromResource(context.getResources(), minesId);
         this.mines.setImageDrawable(svg.createPictureDrawable());
+
+        if (fillId != -1) {
+            SVG svgFill = SVGParser.getSVGFromResource(context.getResources(), fillId);
+            this.fillMines.setImageDrawable(svgFill.createPictureDrawable());
+        }
     }
 
     public void setIcon(Context context, int id) {
@@ -70,5 +73,6 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
         SVG svg = SVGParser.getSVGFromResource(context.getResources(), id);
 
         this.background.setImageDrawable(svg.createPictureDrawable());
+        this.fillMines.setImageDrawable((svg.createPictureDrawable()));
     }
 }

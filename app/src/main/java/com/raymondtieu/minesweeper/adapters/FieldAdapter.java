@@ -5,12 +5,14 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
@@ -72,6 +74,12 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         View view = inflater.inflate(R.layout.cell, parent, false);
 
         CellHolder holder = new CellHolder(view, this, cellDimensions);
+
+        // set holder to be a hidden cell
+        holder.setBackground(mContext, R.raw.cell_bg);
+        holder.mines.setImageResource(android.R.color.transparent);
+        holder.icon.setImageResource(android.R.color.transparent);
+
         // return holder that was inflated
         return holder;
     }
@@ -87,29 +95,29 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         Cell cell = field.getCell(p.x, p.y);
         Cell.Status status = cell.getStatus();
 
-        // set cell to be a hidden cell
-        holder.setBackground(mContext, R.raw.cell_bg);
-        holder.mines.setImageResource(android.R.color.transparent);
-        holder.icon.setImageResource(android.R.color.transparent);
-
         if (status == Cell.Status.REVEALED) {
             int n = cell.getAdjacentMines();
+
+            holder.mines.setImageResource(android.R.color.transparent);
 
             if (n < 9) {
                 holder.setIcon(mContext, R.raw.cell_outline);
 
                 if (n > 0)
-                    holder.setMines(mContext, CELL_MINES[n - 1]);
+                    holder.setMines(mContext, CELL_MINES[n - 1], CELL_MINES_FILLED[n - 1]);
             } else {
                 // set icon to be a mine
                 holder.setIcon(mContext, R.raw.mine_red);
             }
         } else if (status == Cell.Status.FLAGGED) {
-            holder.setMines(mContext, R.raw.flag_primary);
+            holder.setMines(mContext, R.raw.flag_primary, -1);
         } else if (status == Cell.Status.FLAG_CORRECT) {
-            holder.setMines(mContext, R.raw.flag_correct);
+            holder.setMines(mContext, R.raw.flag_correct, -1);
         } else if (status == Cell.Status.FLAG_INCORRECT) {
-            holder.setMines(mContext, R.raw.flag_incorrect);
+            holder.setMines(mContext, R.raw.flag_incorrect, -1);
+        } else if (status == Cell.Status.HIDDEN) {
+            holder.mines.setImageResource(android.R.color.transparent);
+            holder.icon.setImageResource(android.R.color.transparent);
         }
     }
 
@@ -202,10 +210,31 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     }
 
     public void notifyInvalid(int position) {
-        CellHolder holder = holders.get(position);
+        final CellHolder holder = holders.get(position);
 
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.invalid);
-        holder.icon.startAnimation(animation);
-        holder.background.startAnimation(animation);
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                holder.mines.setVisibility(View.INVISIBLE);
+                holder.icon.setVisibility(View.INVISIBLE);
+                holder.background.setVisibility(View.INVISIBLE);
+                holder.fillMines.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                holder.mines.setVisibility(View.VISIBLE);
+                holder.icon.setVisibility(View.VISIBLE);
+                holder.background.setVisibility(View.VISIBLE);
+                holder.fillMines.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) { }
+        });
+
+        holder.fillMines.startAnimation(animation);
     }
 }
