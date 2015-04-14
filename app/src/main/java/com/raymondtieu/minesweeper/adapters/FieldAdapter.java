@@ -1,6 +1,8 @@
 package com.raymondtieu.minesweeper.adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +12,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGParser;
 import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
@@ -46,6 +50,17 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             R.color.black
     };
 
+    Integer[] CELL_ICON = {
+            R.raw.mine_1,
+            R.raw.mine_2,
+            R.raw.mine_3,
+            R.raw.mine_4,
+            R.raw.mine_5,
+            R.raw.mine_6,
+            R.raw.mine_7,
+            R.raw.mine_8
+    };
+
     public FieldAdapter(Context context, Field field, int size) {
         inflater = LayoutInflater.from(context);
         this.mContext = context;
@@ -80,13 +95,17 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             int n = cell.getAdjacentMines();
 
             if (n < 9) {
-                if (n > 0) {
-                    holder.cell.setText("" + n);
-                    holder.cell.setTextColor(holder.cell
-                            .getResources().getColor(MINE_COLOUR[n - 1]));
-                }
 
                 holder.icon.setImageResource(R.drawable.cell_bg);
+
+                if (n > 0) {
+                    holder.icon.setBackgroundColor(Color.WHITE);
+                    SVG svg = SVGParser.getSVGFromResource(mContext.getResources(), CELL_ICON[n - 1]);
+
+                    holder.icon.setImageDrawable(svg.createPictureDrawable());
+                }
+
+
             } else {
                 holder.icon.setImageResource(R.drawable.mine);
             }

@@ -30,6 +30,9 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
         cell = (TextView) itemView.findViewById(R.id.cell_data);
         icon = (ImageView) itemView.findViewById(R.id.cell_icon);
 
+        // disable hardware acceleration for this image view
+        icon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
         background = (ImageView) itemView.findViewById(R.id.cell_background);
         background.setImageResource(R.drawable.hidden);
 
