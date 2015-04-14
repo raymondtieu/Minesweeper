@@ -6,23 +6,18 @@
     <ImageView
         android:id="@+id/cell_background"
         android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/cell_mines"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/hidden" />
+        android:padding="4dp"
+        android:scaleType="centerCrop" />
 
     <ImageView
         android:id="@+id/cell_icon"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent" />
 
-    <TextView
-        android:id="@+id/cell_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/cell_icon"
-        android:layout_alignBottom="@+id/cell_icon"
-        android:layout_alignLeft="@+id/cell_icon"
-        android:layout_alignRight="@+id/cell_icon"
-        android:textStyle="bold"
-        android:gravity="center" />
 </RelativeLayout>

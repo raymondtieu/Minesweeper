@@ -1,5 +1,6 @@
 package com.raymondtieu.minesweeper.adapters;
 
+import android.content.Context;
 import android.gesture.GestureOverlayView;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
@@ -8,13 +9,15 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.ImageView;
 
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGParser;
 import com.raymondtieu.minesweeper.R;
 
 /**
  * Created by raymond on 2015-04-04.
  */
 public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-    public TextView cell;
+    public ImageView mines;
     public ImageView icon;
     public ImageView background;
 
@@ -27,15 +30,14 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
         mAdapter = adapter;
 
-        cell = (TextView) itemView.findViewById(R.id.cell_data);
+        mines = (ImageView) itemView.findViewById(R.id.cell_mines);
         icon = (ImageView) itemView.findViewById(R.id.cell_icon);
-
-        // disable hardware acceleration for this image view
-        icon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-
         background = (ImageView) itemView.findViewById(R.id.cell_background);
-        background.setImageResource(R.drawable.hidden);
 
+        // disable hardware acceleration for image views
+        mines.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        icon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        background.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         itemView.getLayoutParams().width = size;
         itemView.getLayoutParams().height = size;
@@ -50,5 +52,23 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
     public boolean onLongClick(View v) {
         mAdapter.onCellLongClick(this);
         return true;
+    }
+
+    public void setMines(Context context, int id) {
+        SVG svg = SVGParser.getSVGFromResource(context.getResources(), id);
+
+        this.mines.setImageDrawable(svg.createPictureDrawable());
+    }
+
+    public void setIcon(Context context, int id) {
+        SVG svg = SVGParser.getSVGFromResource(context.getResources(), id);
+
+        this.icon.setImageDrawable(svg.createPictureDrawable());
+    }
+
+    public void setBackground(Context context, int id) {
+        SVG svg = SVGParser.getSVGFromResource(context.getResources(), id);
+
+        this.background.setImageDrawable(svg.createPictureDrawable());
     }
 }

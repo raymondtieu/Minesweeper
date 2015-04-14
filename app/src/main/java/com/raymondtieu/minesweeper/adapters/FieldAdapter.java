@@ -37,20 +37,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
     HashMap<Integer, CellHolder> holders = new HashMap<>();
 
-    // 1 - blue, 2 - green, 3 - red, 4 - dark blue, 5 - dark red, 6 - teal
-    // 7 - purple, 8 - black
-    Integer[] MINE_COLOUR = {
-            R.color.blue,
-            R.color.green,
-            R.color.red,
-            R.color.darkblue,
-            R.color.darkred,
-            R.color.teal,
-            R.color.purple,
-            R.color.black
-    };
-
-    Integer[] CELL_ICON = {
+    Integer[] CELL_MINES = {
             R.raw.mine_1,
             R.raw.mine_2,
             R.raw.mine_3,
@@ -59,6 +46,17 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             R.raw.mine_6,
             R.raw.mine_7,
             R.raw.mine_8
+    };
+
+    Integer[] CELL_MINES_FILLED = {
+            R.raw.fill_mine_1,
+            R.raw.fill_mine_2,
+            R.raw.fill_mine_3,
+            R.raw.fill_mine_4,
+            R.raw.fill_mine_5,
+            R.raw.fill_mine_6,
+            R.raw.fill_mine_7,
+            R.raw.fill_mine_8
     };
 
     public FieldAdapter(Context context, Field field, int size) {
@@ -89,34 +87,29 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         Cell cell = field.getCell(p.x, p.y);
         Cell.Status status = cell.getStatus();
 
-        holder.cell.setText("");
+        // set cell to be a hidden cell
+        holder.setBackground(mContext, R.raw.cell_bg);
+        holder.mines.setImageResource(android.R.color.transparent);
+        holder.icon.setImageResource(android.R.color.transparent);
 
         if (status == Cell.Status.REVEALED) {
             int n = cell.getAdjacentMines();
 
             if (n < 9) {
+                holder.setIcon(mContext, R.raw.cell_outline);
 
-                holder.icon.setImageResource(R.drawable.cell_bg);
-
-                if (n > 0) {
-                    holder.icon.setBackgroundColor(Color.WHITE);
-                    SVG svg = SVGParser.getSVGFromResource(mContext.getResources(), CELL_ICON[n - 1]);
-
-                    holder.icon.setImageDrawable(svg.createPictureDrawable());
-                }
-
-
+                if (n > 0)
+                    holder.setMines(mContext, CELL_MINES[n - 1]);
             } else {
-                holder.icon.setImageResource(R.drawable.mine);
+                // set icon to be a mine
+                holder.setIcon(mContext, R.raw.mine_red);
             }
-        } else if (status == Cell.Status.HIDDEN) {
-            holder.icon.setImageResource(android.R.color.transparent);
         } else if (status == Cell.Status.FLAGGED) {
-            holder.icon.setImageResource(R.drawable.flag);
+            holder.setMines(mContext, R.raw.flag_primary);
         } else if (status == Cell.Status.FLAG_CORRECT) {
-            holder.icon.setImageResource(R.drawable.flag_correct);
+            holder.setMines(mContext, R.raw.flag_correct);
         } else if (status == Cell.Status.FLAG_INCORRECT) {
-            holder.icon.setImageResource(R.drawable.flag_incorrect);
+            holder.setMines(mContext, R.raw.flag_incorrect);
         }
     }
 
@@ -136,14 +129,14 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
     public void onCellClick(CellHolder holder) {
         if (mOnItemClickListener != null) {
-            mOnItemClickListener.onItemClick(null, holder.cell, holder.getPosition(),
+            mOnItemClickListener.onItemClick(null, holder.icon, holder.getPosition(),
                     holder.getItemId());
         }
     }
 
     public void onCellLongClick(CellHolder holder) {
         if (mOnItemLongClickListener != null) {
-            mOnItemLongClickListener.onItemLongClick(null, holder.cell,
+            mOnItemLongClickListener.onItemLongClick(null, holder.icon,
                     holder.getPosition(), holder.getItemId());
         }
     }
@@ -158,7 +151,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         CellHolder holder = holders.get(position);
 
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
-        holder.cell.startAnimation(animation);
+        holder.mines.startAnimation(animation);
         holder.icon.startAnimation(animation);
     }
 
@@ -195,8 +188,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
         CellHolder holder = holders.get(position);
 
-        holder.cell.startAnimation(animation);
-        holder.icon.startAnimation(animation);
+        holder.mines.startAnimation(animation);
 
     }
 
@@ -213,7 +205,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         CellHolder holder = holders.get(position);
 
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.invalid);
-        holder.cell.startAnimation(animation);
         holder.icon.startAnimation(animation);
         holder.background.startAnimation(animation);
     }
