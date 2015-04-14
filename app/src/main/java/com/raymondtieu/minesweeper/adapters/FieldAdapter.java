@@ -156,9 +156,26 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     public void notifyRevealed(int position) {
         this.notifyItemChanged(position);
 
-        CellHolder holder = holders.get(position);
+        final CellHolder holder = holders.get(position);
 
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                holder.background.setImageResource(android.R.color.transparent);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         holder.mines.startAnimation(animation);
         holder.icon.startAnimation(animation);
     }

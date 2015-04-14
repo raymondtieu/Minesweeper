@@ -4,15 +4,12 @@ package com.raymondtieu.minesweeper.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Point;
-import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +18,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGParser;
 import com.raymondtieu.minesweeper.R;
 
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
@@ -30,10 +29,9 @@ import com.raymondtieu.minesweeper.services.Game;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
-import java.text.SimpleDateFormat;
-import java.util.Timer;
-
 public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+
+    private View layout;
 
     private FieldAdapter mFieldAdapter;
     private PositionPointAdapter mPositionAdapter;
@@ -42,16 +40,14 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     private OnePlayerGame game;
     private int x, y, m;
 
-    private ImageView mFlagMode;
+    private ImageView mFlagMode, minesIcon, timerIcon;
 
     private TextView mDifficulty, mTimer;
     private MinesTextView mMines;
     private int cellWidth;
 
     private Handler timerHandler;
-    private Timer timer;
-    private long startTime;
-    private SimpleDateFormat sdf;
+    private long startTime, endTime;
 
     public MinesweeperFragment() {
         // Required empty public constructor
@@ -80,16 +76,27 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View layout = inflater
+        layout = inflater
             .inflate(R.layout.fragment_minesweeper, container, false);
 
         // set all views
         mDifficulty = (TextView) layout.findViewById(R.id.difficulty);
         mMines = (MinesTextView) layout.findViewById(R.id.num_mines);
+        minesIcon = (ImageView) layout.findViewById(R.id.num_mines_icon);
         mTimer = (TextView) layout.findViewById(R.id.timer);
+        timerIcon = (ImageView) layout.findViewById(R.id.timer_icon);
         mFlagMode = (ImageView) layout.findViewById(R.id.flag_mode);
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
 
+        // disable hardware acceleration
+        minesIcon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        timerIcon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        mFlagMode.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+        // set image icons
+        setImageDrawable(minesIcon, R.raw.mine_toolbar);
+        setImageDrawable(timerIcon, R.raw.timer);
+        setImageDrawable(mFlagMode, R.raw.flag_deselect);
 
         Bundle args = getArguments();
         x = args.getInt("xDim", 16);
@@ -162,8 +169,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
             timerHandler.removeCallbacks(updateTime);
 
-            mTimer.setTextColor(getResources().getColor(R.color.red));
-            mTimer.setTypeface(null, Typeface.BOLD);
+            endTime = System.currentTimeMillis();
 
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.lost_title)
@@ -179,8 +185,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
             timerHandler.removeCallbacks(updateTime);
 
-            mTimer.setTextColor(getResources().getColor(R.color.red));
-            mTimer.setTypeface(null, Typeface.BOLD);
+            endTime = System.currentTimeMillis();
 
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.win_title)
@@ -206,7 +211,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         mMines.setText("" + m);
 
-        mFlagMode.setImageResource(R.drawable.flag_deselect);
+        setImageDrawable(mFlagMode, R.raw.flag_deselect);
         mFlagMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -221,9 +226,9 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
             game.toggleFlag();
 
             if (game.isFlagging()) {
-                mFlagMode.setImageResource(R.drawable.flag_select);
+                setImageDrawable(mFlagMode, R.raw.flag_primary);
             } else {
-                mFlagMode.setImageResource(R.drawable.flag_deselect);
+                setImageDrawable(mFlagMode, R.raw.flag_deselect);
             }
         }
     }
@@ -234,11 +239,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         game = new OnePlayerGame(x, y, m);
 
         mTimer.setText("0");
-        mTimer.setTextColor(getResources().getColor(R.color.black));
-        mTimer.setTypeface(null, Typeface.NORMAL);
 
         timerHandler = new Handler();
-        sdf = new SimpleDateFormat("s");
 
         configureAdapters();
         configureHeader();
@@ -279,9 +281,15 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         public void run() {
             long time = System.currentTimeMillis() - startTime;
-            mTimer.setText("" + sdf.format(time));
+            mTimer.setText("" + (time / 1000));
 
             timerHandler.postDelayed(this, 1000);
         }
     };
+
+    private void setImageDrawable(ImageView view, int id) {
+        SVG svg = SVGParser.getSVGFromResource(layout.getResources(), id);
+
+        view.setImageDrawable(svg.createPictureDrawable());
+    }
 }
