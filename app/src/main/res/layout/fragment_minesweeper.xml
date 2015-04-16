@@ -56,7 +56,7 @@
             android:gravity="center"
             android:weightSum="3"
             android:orientation="horizontal" >
-            <ImageView
+            <com.raymondtieu.minesweeper.layouts.TimerImageView
                 android:id="@+id/timer_icon"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

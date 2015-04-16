@@ -26,6 +26,7 @@ import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
 import com.raymondtieu.minesweeper.layouts.FlagImageView;
 import com.raymondtieu.minesweeper.layouts.MinesTextView;
+import com.raymondtieu.minesweeper.layouts.TimerImageView;
 import com.raymondtieu.minesweeper.services.Game;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
@@ -39,9 +40,10 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     private OnePlayerGame game;
     private int x, y, m;
 
-    private ImageView minesIcon, timerIcon;
+    private ImageView minesIcon;
 
     private FlagImageView mFlagMode;
+    private TimerImageView timerIcon;
 
     private TextView mDifficulty, mTimer;
     private MinesTextView mMines;
@@ -85,18 +87,16 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         mMines = (MinesTextView) layout.findViewById(R.id.num_mines);
         minesIcon = (ImageView) layout.findViewById(R.id.num_mines_icon);
         mTimer = (TextView) layout.findViewById(R.id.timer);
-        timerIcon = (ImageView) layout.findViewById(R.id.timer_icon);
+        timerIcon = (TimerImageView) layout.findViewById(R.id.timer_icon);
         mFlagMode = (FlagImageView) layout.findViewById(R.id.flag_mode);
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
 
         // disable hardware acceleration
         minesIcon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        timerIcon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        mFlagMode.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         // set image icons
         setImageDrawable(minesIcon, R.raw.mine_toolbar);
-        setImageDrawable(timerIcon, R.raw.timer);
+        timerIcon.onValueChanged(0);
         mFlagMode.onValueChanged(0);
 
         Bundle args = getArguments();
@@ -169,6 +169,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
             game.revealAllMines();
 
             timerHandler.removeCallbacks(updateTime);
+            timerIcon.onValueChanged(1);
 
             endTime = System.currentTimeMillis();
 
@@ -185,6 +186,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         } else if (result == Game.Status.WIN) {
 
             timerHandler.removeCallbacks(updateTime);
+            timerIcon.onValueChanged(1);
 
             endTime = System.currentTimeMillis();
 
@@ -233,6 +235,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         game = new OnePlayerGame(x, y, m);
 
         mTimer.setText("0");
+        timerIcon.onValueChanged(0);
+        mFlagMode.onValueChanged(0);
 
         timerHandler = new Handler();
 

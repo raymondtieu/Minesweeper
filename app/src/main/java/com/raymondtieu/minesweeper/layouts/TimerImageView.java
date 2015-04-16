@@ -3,6 +3,8 @@ package com.raymondtieu.minesweeper.layouts;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.larvalabs.svgandroid.SVG;
@@ -13,11 +15,12 @@ import com.raymondtieu.minesweeper.services.ViewListener;
 /**
  * Created by raymond on 2015-04-16.
  */
-public class FlagImageView extends ImageView implements ViewListener {
+public class TimerImageView extends ImageView implements ViewListener {
 
     private Context mContext;
+    private Animation animation;
 
-    public FlagImageView(Context context) {
+    public TimerImageView(Context context) {
         super(context);
         this.mContext = context;
 
@@ -25,7 +28,7 @@ public class FlagImageView extends ImageView implements ViewListener {
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
-    public FlagImageView(Context context, AttributeSet attrs) {
+    public TimerImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
 
@@ -37,9 +40,15 @@ public class FlagImageView extends ImageView implements ViewListener {
     @Override
     public void onValueChanged(int newValue) {
         if (newValue == 1) {
-            setSVGImage(mContext, R.raw.flag_primary);
+            // start animation
+            animation = AnimationUtils.loadAnimation(mContext, R.anim.timer);
+
+            setSVGImage(mContext, R.raw.timer_red);
+
+            startAnimation(animation);
+
         } else {
-            setSVGImage(mContext, R.raw.flag_deselect);
+            setSVGImage(mContext, R.raw.timer);
         }
     }
 
