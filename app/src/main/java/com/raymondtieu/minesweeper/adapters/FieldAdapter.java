@@ -19,6 +19,7 @@ import com.larvalabs.svgandroid.SVGParser;
 import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
+import com.raymondtieu.minesweeper.services.Game;
 
 import java.util.HashMap;
 
@@ -153,7 +154,97 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         this.positionAdapter = adapter;
     }
 
-    public void notifyRevealed(int position) {
+
+    public void notifyChange(int position, Game.Notification notification) {
+        CellHolder cell = holders.get(position);
+
+        if (notification == Game.Notification.REVEAL)
+            notifyReveal(cell);
+        else if (notification == Game.Notification.FLAG)
+            notifyFlag(cell);
+        else if (notification == Game.Notification.UNFLAG)
+            notifyUnflag(cell);
+        else if (notification == Game.Notification.INVALID_HIDDEN)
+            notifyInvalidHidden(cell);
+        else if (notification == Game.Notification.INVALID_REVEAL)
+            notifyInvalidReveal(cell);
+    }
+
+    public void notifyReveal(final CellHolder cell) {
+        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                cell.background.setImageResource(android.R.color.transparent);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        cell.mines.startAnimation(animation);
+        cell.icon.startAnimation(animation);
+    }
+
+    public void notifyFlag(final CellHolder cell) {
+        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        cell.mines.startAnimation(animation);
+    }
+
+    public void notifyUnflag(final CellHolder cell) {
+        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        cell.mines.startAnimation(animation);
+    }
+
+
+
+
+
+    private void notifyRevealed(CellHolder cell) {
         this.notifyItemChanged(position);
 
         final CellHolder holder = holders.get(position);
@@ -180,7 +271,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         holder.icon.startAnimation(animation);
     }
 
-    public void notifyFlagged(final int position, final boolean isFlagged) {
+    private void notifyFlagged(final int position, final boolean isFlagged) {
         Animation animation;
 
         final FieldAdapter f = this;
@@ -217,7 +308,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
     }
 
-    public void notifyMine(int position) {
+    private void notifyMine(int position) {
         this.notifyItemChanged(position);
 
         CellHolder holder = holders.get(position);

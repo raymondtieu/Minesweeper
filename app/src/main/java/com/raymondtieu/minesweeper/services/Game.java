@@ -10,6 +10,10 @@ public interface Game {
         NO_CHANGE, WIN, LOSE
     }
 
+    public enum Notification {
+        REVEAL, FLAG, UNFLAG, INVALID_REVEAL, INVALID_HIDDEN, MINE
+    }
+
     public void startGame(int x, int y);
     public int reveal(int x, int y);
     public void flagCell(int x, int y, Cell.Status status);

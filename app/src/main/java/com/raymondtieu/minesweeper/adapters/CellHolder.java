@@ -14,9 +14,10 @@ import com.raymondtieu.minesweeper.R;
  */
 public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     public ImageView mines;
-    public ImageView fillMines;
     public ImageView icon;
     public ImageView background;
+
+    public int fillId;
 
     public FieldAdapter mAdapter;
 
@@ -28,18 +29,18 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
         mAdapter = adapter;
 
         mines = (ImageView) itemView.findViewById(R.id.cell_mines);
-        fillMines = (ImageView) itemView.findViewById(R.id.cell_fill);
         icon = (ImageView) itemView.findViewById(R.id.cell_icon);
         background = (ImageView) itemView.findViewById(R.id.cell_background);
 
         // disable hardware acceleration for image views
         mines.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        fillMines.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         icon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         background.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         itemView.getLayoutParams().width = size;
         itemView.getLayoutParams().height = size;
+
+        fillId = -1;
     }
 
     @Override
@@ -57,10 +58,7 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
         SVG svg = SVGParser.getSVGFromResource(context.getResources(), minesId);
         this.mines.setImageDrawable(svg.createPictureDrawable());
 
-        if (fillId != -1) {
-            SVG svgFill = SVGParser.getSVGFromResource(context.getResources(), fillId);
-            this.fillMines.setImageDrawable(svgFill.createPictureDrawable());
-        }
+        this.fillId = fillId;
     }
 
     public void setIcon(Context context, int id) {
@@ -73,6 +71,5 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
         SVG svg = SVGParser.getSVGFromResource(context.getResources(), id);
 
         this.background.setImageDrawable(svg.createPictureDrawable());
-        this.fillMines.setImageDrawable((svg.createPictureDrawable()));
     }
 }

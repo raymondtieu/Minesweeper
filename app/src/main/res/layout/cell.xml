@@ -17,11 +17,4 @@
         android:id="@+id/cell_mines"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <ImageView
-        android:id="@+id/cell_fill"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"/>
-
 </RelativeLayout>
