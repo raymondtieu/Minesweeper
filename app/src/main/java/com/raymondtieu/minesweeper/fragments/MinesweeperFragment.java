@@ -24,14 +24,13 @@ import com.raymondtieu.minesweeper.R;
 
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
+import com.raymondtieu.minesweeper.layouts.FlagImageView;
 import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.services.Game;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
 public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
-
-    private View layout;
 
     private FieldAdapter mFieldAdapter;
     private PositionPointAdapter mPositionAdapter;
@@ -40,7 +39,9 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     private OnePlayerGame game;
     private int x, y, m;
 
-    private ImageView mFlagMode, minesIcon, timerIcon;
+    private ImageView minesIcon, timerIcon;
+
+    private FlagImageView mFlagMode;
 
     private TextView mDifficulty, mTimer;
     private MinesTextView mMines;
@@ -76,7 +77,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        layout = inflater
+        final View layout = inflater
             .inflate(R.layout.fragment_minesweeper, container, false);
 
         // set all views
@@ -85,7 +86,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         minesIcon = (ImageView) layout.findViewById(R.id.num_mines_icon);
         mTimer = (TextView) layout.findViewById(R.id.timer);
         timerIcon = (ImageView) layout.findViewById(R.id.timer_icon);
-        mFlagMode = (ImageView) layout.findViewById(R.id.flag_mode);
+        mFlagMode = (FlagImageView) layout.findViewById(R.id.flag_mode);
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
 
         // disable hardware acceleration
@@ -96,7 +97,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         // set image icons
         setImageDrawable(minesIcon, R.raw.mine_toolbar);
         setImageDrawable(timerIcon, R.raw.timer);
-        setImageDrawable(mFlagMode, R.raw.flag_deselect);
+        mFlagMode.onValueChanged(0);
 
         Bundle args = getArguments();
         x = args.getInt("xDim", 16);
@@ -222,15 +223,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     }
 
     public void toggleFlagMode() {
-        if (!game.isFinished()) {
+        if (!game.isFinished())
             game.toggleFlag();
-
-            if (game.isFlagging()) {
-                setImageDrawable(mFlagMode, R.raw.flag_primary);
-            } else {
-                setImageDrawable(mFlagMode, R.raw.flag_deselect);
-            }
-        }
     }
 
     private void loadNewGame() {
@@ -263,6 +257,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         game.setFieldAdapter(mFieldAdapter);
         game.setPositionAdapter(mPositionAdapter);
         game.setMinesListener(mMines);
+        game.setFlagListener(mFlagMode);
 
         mFieldAdapter.notifyDataSetChanged();
     }
@@ -288,7 +283,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     };
 
     private void setImageDrawable(ImageView view, int id) {
-        SVG svg = SVGParser.getSVGFromResource(layout.getResources(), id);
+        SVG svg = SVGParser.getSVGFromResource(getResources(), id);
 
         view.setImageDrawable(svg.createPictureDrawable());
     }

@@ -1,9 +1,11 @@
 package com.raymondtieu.minesweeper.services;
 
 import android.graphics.Point;
+import android.util.Log;
 
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
+import com.raymondtieu.minesweeper.layouts.FlagImageView;
 import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
@@ -24,6 +26,7 @@ public class OnePlayerGame implements Game {
     private FieldAdapter fieldAdapter;
     private PositionPointAdapter positionAdapter;
     private MinesTextView minesListener;
+    private FlagImageView flagListener;
 
     public OnePlayerGame(int dimX, int dimY, int mines) {
         this.started = false;
@@ -60,6 +63,10 @@ public class OnePlayerGame implements Game {
     public void setMinesListener(MinesTextView minesListener) {
         this.minesListener = minesListener;
     }
+    
+    public void setFlagListener(FlagImageView flagListener) {
+        this.flagListener = flagListener;
+    }
 
     public void setPositionAdapter(PositionPointAdapter positionAdapter) {
         this.positionAdapter = positionAdapter;
@@ -75,6 +82,10 @@ public class OnePlayerGame implements Game {
 
     public void toggleFlag() {
         flagging = !flagging;
+
+        int value = (isFlagging())? 1 : 0;
+
+        flagListener.onValueChanged(value);
     }
 
     public Status onClick(int x, int y) {
@@ -84,24 +95,40 @@ public class OnePlayerGame implements Game {
         Cell cell = field.getCell(x, y);
         Cell.Status status = cell.getStatus();
 
-        // handle a click event if the cell is hidden
-        if (!isFlagging() && status == Cell.Status.HIDDEN) {
-            if (!isStarted()) {
-                startGame(x, y);
+        if (status == Cell.Status.HIDDEN) {
+            if (isFlagging()) {
+                // add flag
+                flagCell(x, y, Cell.Status.FLAGGED);
+            } else {
+                // start game if needed
+                if (!isStarted())
+                    startGame(x, y);
+
+                reveal(x, y);
+                return checkGameFinished(cell);
             }
 
-            reveal(x, y);
+        } else if (status == Cell.Status.REVEALED) {
+            // toggle flag mode on empty cell click
+            if (cell.getAdjacentMines() <= 0) {
+                toggleFlag();
 
-            return checkGameFinished(cell);
+                // reveal surrounding cells when cell is pressed
+            } else {
+                Status result = revealSurrounding(x, y);
 
-        } else if (isFlagging() && status != Cell.Status.REVEALED) {
-            // remove flag if there is already a flag
-            if (status == Cell.Status.FLAGGED)
+                // if a mine was not found, check to see if game is won
+                if (result != Status.LOSE)
+                    result = checkGameFinished(cell);
+
+                return result;
+            }
+
+        } else if (status == Cell.Status.FLAGGED) {
+            // remove flag if flagging is on
+            if (isFlagging())
                 flagCell(x, y, Cell.Status.HIDDEN);
-            else if (status == Cell.Status.HIDDEN)
-                flagCell(x, y, Cell.Status.FLAGGED);
         }
-
 
         return Status.NO_CHANGE;
     }
@@ -119,17 +146,6 @@ public class OnePlayerGame implements Game {
         } else if (cell.getStatus() == Cell.Status.HIDDEN) {
             // flag cell
             flagCell(x, y, Cell.Status.FLAGGED);
-        } else if (cell.getStatus() == Cell.Status.REVEALED) {
-            // reveal all surrounding cells
-            Status result = revealSurrounding(x, y);
-
-            // if a mine wasn't uncovered, check if there are any cells
-            // still hidden
-            if (result != Status.LOSE) {
-                result = checkGameFinished(cell);
-            }
-
-            return result;
         }
 
         return Status.NO_CHANGE;
@@ -223,11 +239,11 @@ public class OnePlayerGame implements Game {
 
             if (cell.getAdjacentMines() < 9) {
                 fieldAdapter.notifyChange(positionAdapter
-                            .pointToPosition(new Point(x, y)),
+                                .pointToPosition(new Point(x, y)),
                         Notification.REVEAL);
             } else {
                 fieldAdapter.notifyChange(positionAdapter
-                            .pointToPosition(new Point(x, y)),
+                                .pointToPosition(new Point(x, y)),
                         Notification.MINE);
             }
         }
@@ -266,7 +282,7 @@ public class OnePlayerGame implements Game {
 
                         fieldAdapter.notifyChange(positionAdapter
                                         .pointToPosition(new Point(i, j)),
-                                    Notification.FLAG);
+                                Notification.FLAG);
                     } else {
                         cell.setStatus(Cell.Status.REVEALED);
 
@@ -279,7 +295,7 @@ public class OnePlayerGame implements Game {
 
                     fieldAdapter.notifyChange(positionAdapter
                                     .pointToPosition(new Point(i, j)),
-                                Notification.FLAG);
+                            Notification.FLAG);
                 }
             }
         }
@@ -309,7 +325,7 @@ public class OnePlayerGame implements Game {
         if (flags != cell.getAdjacentMines()) {
             fieldAdapter.notifyChange(positionAdapter
                             .pointToPosition(new Point(x, y)),
-                        Notification.INVALID_REVEAL);
+                    Notification.INVALID_REVEAL);
 
             return status;
         }

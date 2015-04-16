@@ -73,7 +73,7 @@
                 android:text="0" />
         </LinearLayout>
 
-        <ImageView
+        <com.raymondtieu.minesweeper.layouts.FlagImageView
             android:id="@+id/flag_mode"
             android:layout_width="0dp"
             android:layout_height="match_parent"
