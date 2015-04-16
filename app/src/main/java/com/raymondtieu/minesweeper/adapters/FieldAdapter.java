@@ -1,8 +1,6 @@
 package com.raymondtieu.minesweeper.adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,10 +10,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 
-import com.larvalabs.svgandroid.SVG;
-import com.larvalabs.svgandroid.SVGParser;
 import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
@@ -78,8 +73,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
         // set holder to be a hidden cell
         holder.setBackground(mContext, R.raw.cell_bg);
-        holder.mines.setImageResource(android.R.color.transparent);
-        holder.icon.setImageResource(android.R.color.transparent);
 
         // return holder that was inflated
         return holder;
@@ -156,21 +149,23 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
 
     public void notifyChange(int position, Game.Notification notification) {
-        CellHolder cell = holders.get(position);
-
         if (notification == Game.Notification.REVEAL)
-            notifyReveal(cell);
+            notifyReveal(position);
         else if (notification == Game.Notification.FLAG)
-            notifyFlag(cell);
+            notifyFlag(position, true);
         else if (notification == Game.Notification.UNFLAG)
-            notifyUnflag(cell);
+            notifyFlag(position, false);
+        else if (notification == Game.Notification.MINE)
+            notifyMine(position);
         else if (notification == Game.Notification.INVALID_HIDDEN)
-            notifyInvalidHidden(cell);
+            notifyInvalid(position, true);
         else if (notification == Game.Notification.INVALID_REVEAL)
-            notifyInvalidReveal(cell);
+            notifyInvalid(position, false);
     }
 
-    public void notifyReveal(final CellHolder cell) {
+    private void notifyReveal(final int position) {
+        final CellHolder cell = holders.get(position);
+
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
 
         animation.setAnimationListener(new Animation.AnimationListener() {
@@ -190,110 +185,34 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             }
         });
 
+        this.notifyItemChanged(position);
         cell.mines.startAnimation(animation);
         cell.icon.startAnimation(animation);
     }
 
-    public void notifyFlag(final CellHolder cell) {
-        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
-
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        cell.mines.startAnimation(animation);
-    }
-
-    public void notifyUnflag(final CellHolder cell) {
-        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
-
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        cell.mines.startAnimation(animation);
-    }
-
-
-
-
-
-    private void notifyRevealed(CellHolder cell) {
-        this.notifyItemChanged(position);
-
-        final CellHolder holder = holders.get(position);
-
-        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
-
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                holder.background.setImageResource(android.R.color.transparent);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        holder.mines.startAnimation(animation);
-        holder.icon.startAnimation(animation);
-    }
-
-    private void notifyFlagged(final int position, final boolean isFlagged) {
+    private void notifyFlag(final int position, final boolean flag) {
+        CellHolder cell = holders.get(position);
         Animation animation;
 
         final FieldAdapter f = this;
 
-        if (isFlagged)
-            animation = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
-        else
+        if (flag)
             animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
+        else
+            animation = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
+
 
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                if (!isFlagged) {
+                if (flag)
                     f.notifyItemChanged(position);
-                }
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (isFlagged) {
+                if (!flag)
                     f.notifyItemChanged(position);
-                }
             }
 
             @Override
@@ -302,47 +221,49 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             }
         });
 
-        CellHolder holder = holders.get(position);
-
-        holder.mines.startAnimation(animation);
-
+        cell.mines.startAnimation(animation);
     }
 
-    private void notifyMine(int position) {
-        this.notifyItemChanged(position);
 
-        CellHolder holder = holders.get(position);
+    private void notifyMine(final int position) {
+        final CellHolder cell = holders.get(position);
 
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.mine);
-        holder.icon.startAnimation(animation);
+
+        this.notifyItemChanged(position);
+        cell.icon.startAnimation(animation);
     }
 
-    public void notifyInvalid(int position) {
-        final CellHolder holder = holders.get(position);
+    private void notifyInvalid(final int position, final boolean hidden) {
+        final CellHolder cell = holders.get(position);
 
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.invalid);
 
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                holder.mines.setVisibility(View.INVISIBLE);
-                holder.icon.setVisibility(View.INVISIBLE);
-                holder.background.setVisibility(View.INVISIBLE);
-                holder.fillMines.setVisibility(View.VISIBLE);
-            }
+        if (!hidden) {
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                holder.mines.setVisibility(View.VISIBLE);
-                holder.icon.setVisibility(View.VISIBLE);
-                holder.background.setVisibility(View.VISIBLE);
-                holder.fillMines.setVisibility(View.INVISIBLE);
-            }
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    cell.mines.setVisibility(View.INVISIBLE);
+                    cell.icon.setVisibility(View.INVISIBLE);
+                    cell.toggleFlash(mContext, true);
+                }
 
-            @Override
-            public void onAnimationRepeat(Animation animation) { }
-        });
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    cell.mines.setVisibility(View.VISIBLE);
+                    cell.icon.setVisibility(View.VISIBLE);
+                    cell.toggleFlash(mContext, false);
+                }
 
-        holder.fillMines.startAnimation(animation);
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+        }
+
+        this.notifyItemChanged(position);
+        cell.background.startAnimation(animation);
     }
 }

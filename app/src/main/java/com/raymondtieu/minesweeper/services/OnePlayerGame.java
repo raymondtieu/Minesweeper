@@ -184,25 +184,29 @@ public class OnePlayerGame implements Game {
     public void flagCell(int x, int y, Cell.Status status) {
         Cell cell = field.getCell(x, y);
 
+        // unflagging cell
         if (status == Cell.Status.HIDDEN) {
             numFlags--;
-
             cell.setStatus(status);
 
             fieldAdapter
-                .notifyFlagged(positionAdapter.pointToPosition(new Point(x, y)), true);
+                .notifyChange(positionAdapter.pointToPosition(new Point(x, y)),
+                        Notification.UNFLAG);
+
+        // flagging cell
         } else if (status == Cell.Status.FLAGGED) {
 
             if (numFlags < field.getMines()) {
                 numFlags++;
-
                 cell.setStatus(status);
 
                 fieldAdapter
-                    .notifyFlagged(positionAdapter.pointToPosition(new Point(x, y)), false);
+                        .notifyChange(positionAdapter.pointToPosition(new Point(x, y)),
+                                Notification.FLAG);
             } else {
                 fieldAdapter
-                    .notifyInvalid(positionAdapter.pointToPosition(new Point(x, y)));
+                        .notifyChange(positionAdapter.pointToPosition(new Point(x, y)),
+                                Notification.INVALID_HIDDEN);
             }
         }
 
@@ -217,8 +221,15 @@ public class OnePlayerGame implements Game {
             cell.setStatus(Cell.Status.REVEALED);
             cellsRemaining--;
 
-            fieldAdapter
-                .notifyRevealed(positionAdapter.pointToPosition(new Point(x, y)));
+            if (cell.getAdjacentMines() < 9) {
+                fieldAdapter.notifyChange(positionAdapter
+                            .pointToPosition(new Point(x, y)),
+                        Notification.REVEAL);
+            } else {
+                fieldAdapter.notifyChange(positionAdapter
+                            .pointToPosition(new Point(x, y)),
+                        Notification.MINE);
+            }
         }
     }
 
@@ -251,19 +262,24 @@ public class OnePlayerGame implements Game {
                     if (cell.getStatus() == Cell.Status.FLAGGED) {
                         cell.setStatus(Cell.Status.FLAG_CORRECT);
 
-                        fieldAdapter.notifyRevealed(positionAdapter
-                                .pointToPosition(new Point(i, j)));
+
+
+                        fieldAdapter.notifyChange(positionAdapter
+                                        .pointToPosition(new Point(i, j)),
+                                    Notification.FLAG);
                     } else {
                         cell.setStatus(Cell.Status.REVEALED);
 
-                        fieldAdapter.notifyMine(positionAdapter
-                                .pointToPosition(new Point(i, j)));
+                        fieldAdapter.notifyChange(positionAdapter
+                                        .pointToPosition(new Point(i, j)),
+                                    Notification.MINE);
                     }
                 } else if (cell.getStatus() == Cell.Status.FLAGGED) {
                     cell.setStatus(Cell.Status.FLAG_INCORRECT);
 
-                    fieldAdapter.notifyRevealed(positionAdapter
-                            .pointToPosition(new Point(i, j)));
+                    fieldAdapter.notifyChange(positionAdapter
+                                    .pointToPosition(new Point(i, j)),
+                                Notification.FLAG);
                 }
             }
         }
@@ -291,8 +307,9 @@ public class OnePlayerGame implements Game {
 
         // can't reveal surrounding cells if number of flags doesn't match
         if (flags != cell.getAdjacentMines()) {
-            fieldAdapter
-                .notifyInvalid(positionAdapter.pointToPosition(new Point(x, y)));
+            fieldAdapter.notifyChange(positionAdapter
+                            .pointToPosition(new Point(x, y)),
+                        Notification.INVALID_REVEAL);
 
             return status;
         }

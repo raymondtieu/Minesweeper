@@ -17,7 +17,7 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
     public ImageView icon;
     public ImageView background;
 
-    public int fillId;
+    private int fillId;
 
     public FieldAdapter mAdapter;
 
@@ -36,6 +36,12 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
         mines.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         icon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         background.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+
+        // blank cell
+        mines.setImageResource(android.R.color.transparent);
+        icon.setImageResource(android.R.color.transparent);
+        background.setImageResource(android.R.color.transparent);
 
         itemView.getLayoutParams().width = size;
         itemView.getLayoutParams().height = size;
@@ -71,5 +77,17 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
         SVG svg = SVGParser.getSVGFromResource(context.getResources(), id);
 
         this.background.setImageDrawable(svg.createPictureDrawable());
+    }
+
+    public void toggleFlash(Context context, boolean fill) {
+        if (fillId != -1) {
+            if (fill) {
+                SVG svg = SVGParser.getSVGFromResource(context.getResources(), fillId);
+
+                this.background.setImageDrawable(svg.createPictureDrawable());
+            } else {
+                this.background.setImageResource(android.R.color.transparent);
+            }
+        }
     }
 }
