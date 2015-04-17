@@ -1,11 +1,13 @@
 package com.raymondtieu.minesweeper.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 /**
  * Created by raymond on 2015-04-02.
  */
-public class Field {
+public class Field implements Parcelable {
 
     private int dimX;
     private int dimY;
@@ -87,8 +89,51 @@ public class Field {
     }
 
 
+    /* PARCELABLE METHODS */
 
+    protected Field(Parcel in) {
+        dimX = in.readInt();
+        dimY = in.readInt();
+        mines = in.readInt();
 
+        field = new Cell[dimX][dimY];
+
+        // read the field from parcel one row of cells at a time
+        for (int i = 0; i < dimX; i++) {
+            in.readTypedArray(field[i], Cell.CREATOR);
+        }
+
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(dimX);
+        dest.writeInt(dimY);
+        dest.writeInt(mines);
+
+        // write the field to dest one row of cells at a time
+        for (int i = 0; i < dimX; i++) {
+            dest.writeTypedArray(field[i], flags);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Field> CREATOR = new Parcelable.Creator<Field>() {
+        @Override
+        public Field createFromParcel(Parcel in) {
+            return new Field(in);
+        }
+
+        @Override
+        public Field[] newArray(int size) {
+            return new Field[size];
+        }
+    };
 }
 
 

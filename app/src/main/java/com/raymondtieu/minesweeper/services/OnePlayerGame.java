@@ -1,6 +1,8 @@
 package com.raymondtieu.minesweeper.services;
 
 import android.graphics.Point;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
@@ -13,7 +15,7 @@ import com.raymondtieu.minesweeper.models.Field;
 /**
  * Created by raymond on 2015-04-12.
  */
-public class OnePlayerGame implements Game {
+public class OnePlayerGame implements Game, Parcelable {
     private boolean started;
     private boolean finished;
     private boolean flagging;
@@ -33,10 +35,10 @@ public class OnePlayerGame implements Game {
         this.finished = false;
         this.flagging = false;
 
-        this.field = new Field(dimX, dimY, mines);
-
         this.numFlags = 0;
         this.cellsRemaining = field.getNumCells() - mines;
+
+        this.field = new Field(dimX, dimY, mines);
     }
 
 
@@ -353,4 +355,48 @@ public class OnePlayerGame implements Game {
 
         return status;
     }
+
+
+    /* PARCELABLE METHODS */
+
+    protected OnePlayerGame(Parcel in) {
+        started = in.readByte() != 0;
+        finished = in.readByte() != 0;
+        flagging = in.readByte() != 0;
+
+        numFlags = in.readInt();
+        cellsRemaining = in.readInt();
+
+        field = in.readParcelable(Field.class.getClassLoader());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte((byte) (started ? 1 : 0));
+        dest.writeByte((byte) (finished ? 1 : 0));
+        dest.writeByte((byte) (flagging ? 1 : 0));
+
+        dest.writeInt(numFlags);
+        dest.writeInt(cellsRemaining);
+
+        dest.writeParcelable(field, flags);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<OnePlayerGame> CREATOR = new Parcelable.Creator<OnePlayerGame>() {
+        @Override
+        public OnePlayerGame createFromParcel(Parcel in) {
+            return new OnePlayerGame(in);
+        }
+
+        @Override
+        public OnePlayerGame[] newArray(int size) {
+            return new OnePlayerGame[size];
+        }
+    };
 }

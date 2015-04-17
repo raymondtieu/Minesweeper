@@ -13,9 +13,9 @@
     <string name="med_mode">Intermediate (16x16, 40 mines)</string>
     <string name="hard_mode">Advanced (16x30, 99 mines)</string>
 
-    <string name="easy_title">Beginner</string>
-    <string name="medium_title">Intermediate</string>
-    <string name="hard_title">Advanced</string>
+    <string name="easy_title">BEGINNER</string>
+    <string name="medium_title">INTERMEDIATE</string>
+    <string name="hard_title">ADVANCED</string>
 
     <string name="lost_title">You Lost!</string>
     <string name="lost_message">Play again.</string>
