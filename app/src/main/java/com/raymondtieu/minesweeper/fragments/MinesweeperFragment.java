@@ -54,6 +54,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     private TimerController timerController;
 
     private static final String SAVED_GAME = "saved_game";
+    private static final String SAVED_TIME = "saved_time";
 
     public MinesweeperFragment() {
         // Required empty public constructor
@@ -248,6 +249,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         } else {
             Log.i("Fragment", "Loading a saved game");
             // load a previous instance of the game
+            timerController.setUpdatedTime(savedInstanceState.getLong(SAVED_TIME));
             game = savedInstanceState.getParcelable(SAVED_GAME);
         }
 
@@ -306,6 +308,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         // save the game if it has been started
         if (game.isStarted()) {
+            outState.putLong(SAVED_TIME, timerController.getUpdatedTime());
             outState.putParcelable(SAVED_GAME, game);
         }
     }

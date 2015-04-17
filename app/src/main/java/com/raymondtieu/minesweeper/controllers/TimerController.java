@@ -34,7 +34,15 @@ public class TimerController {
 
     public void init() {
         timerIcon.onValueChanged(0);
-        time.setText("0");
+        updateTextView();
+    }
+
+    public long getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(long t) {
+        updatedTime = t;
     }
 
     public void start() {
@@ -61,12 +69,15 @@ public class TimerController {
     private Runnable updateTimerThread = new Runnable() {
         public void run() {
             current = System.currentTimeMillis() - startTime;
-
             updatedTime = timeSwap + current;
 
-            time.setText("" + (updatedTime / 1000));
+            updateTextView();
 
             timerHandler.postDelayed(this, 1000);
         }
     };
+
+    private void updateTextView() {
+        time.setText("" + (updatedTime / 1000));
+    }
 }
