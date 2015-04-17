@@ -25,6 +25,7 @@ import com.raymondtieu.minesweeper.R;
 
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
+import com.raymondtieu.minesweeper.controllers.TimerController;
 import com.raymondtieu.minesweeper.layouts.FlagImageView;
 import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.layouts.TimerImageView;
@@ -50,8 +51,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     private MinesTextView mMines;
     private int cellWidth;
 
-    private Handler timerHandler;
-    private long startTime, endTime;
+    private TimerController timerController;
 
     private static final String SAVED_GAME = "saved_game";
 
@@ -122,6 +122,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         setViewDimensions(layout);
 
+        timerController = new TimerController(timerIcon, mTimer);
+
         return layout;
     }
 
@@ -155,8 +157,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         // start timer if game has just started
         if (game.isStarted() && !startedBeforeClick) {
-            startTime = System.currentTimeMillis();
-            timerHandler.postDelayed(updateTime, 0);
+            timerController.start();
         }
 
         handleGameOver(result);
@@ -182,10 +183,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         if (result == Game.Status.LOSE) {
             game.revealAllMines();
 
-            timerHandler.removeCallbacks(updateTime);
-            timerIcon.onValueChanged(1);
-
-            endTime = System.currentTimeMillis();
+            timerController.stop();
 
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.lost_title)
@@ -197,12 +195,9 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
                         }
                     })
                     .setNegativeButton(android.R.string.no, null).show();
+
         } else if (result == Game.Status.WIN) {
-
-            timerHandler.removeCallbacks(updateTime);
-            timerIcon.onValueChanged(1);
-
-            endTime = System.currentTimeMillis();
+            timerController.stop();
 
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.win_title)
@@ -256,11 +251,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
             game = savedInstanceState.getParcelable(SAVED_GAME);
         }
 
-        mTimer.setText("0");
-        timerIcon.onValueChanged(0);
+        timerController.init();
         mFlagMode.onValueChanged(0);
-
-        timerHandler = new Handler();
 
         configureAdapters();
         configureHeader();
@@ -298,15 +290,6 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         frameLayout.getLayoutParams().width = y * cellWidth;
     }
 
-    private Runnable updateTime = new Runnable() {
-
-        public void run() {
-            long time = System.currentTimeMillis() - startTime;
-            mTimer.setText("" + (time / 1000));
-
-            timerHandler.postDelayed(this, 1000);
-        }
-    };
 
     private void setImageDrawable(ImageView view, int id) {
         SVG svg = SVGParser.getSVGFromResource(getResources(), id);
@@ -325,5 +308,23 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         if (game.isStarted()) {
             outState.putParcelable(SAVED_GAME, game);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i("Fragment", "Pausing..");
+
+        if (game.isStarted() && !game.isFinished())
+            timerController.pause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Log.i("Fragment", "Resuming..");
+        if (game.isStarted() && !game.isFinished())
+            timerController.start();
     }
 }

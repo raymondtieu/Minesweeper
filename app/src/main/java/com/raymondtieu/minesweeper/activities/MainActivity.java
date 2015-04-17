@@ -1,7 +1,6 @@
 package com.raymondtieu.minesweeper.activities;
 
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
@@ -13,9 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 
 import com.raymondtieu.minesweeper.fragments.*;
 
@@ -39,11 +36,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.savedInstanceState = savedInstanceState;
-
-        if (savedInstanceState == null)
-            Log.i("MainActivity", "CREATING");
-        else
-            Log.i("MainActivity", "GOT SOMETHING");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -102,6 +94,7 @@ public class MainActivity extends ActionBarActivity {
         FragmentTransaction ft = fm.beginTransaction();
 
         if (savedInstanceState == null) {
+            Log.i("MainActivity", "no saved fragment");
 
             minesweeperFragment = new MinesweeperFragment();
 
@@ -116,6 +109,8 @@ public class MainActivity extends ActionBarActivity {
             ft.replace(R.id.fragment_minesweeper, minesweeperFragment, MS_FRAGMENT);
             ft.commit();
         } else {
+
+            Log.i("MainActivity", "Saved fragment");
             minesweeperFragment =
                 (MinesweeperFragment) fm.findFragmentByTag(MS_FRAGMENT);
         }
