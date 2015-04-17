@@ -22,5 +22,6 @@
 
     <string name="win_title">You Won!</string>
     <string name="win_message">Play again.</string>
+    <string name="title_activity_statistics">Statistics</string>
 
 </resources>

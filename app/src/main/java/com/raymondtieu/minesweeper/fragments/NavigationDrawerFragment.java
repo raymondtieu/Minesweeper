@@ -1,6 +1,7 @@
 package com.raymondtieu.minesweeper.fragments;
 
 
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.Fragment;
 
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.raymondtieu.minesweeper.R;
+import com.raymondtieu.minesweeper.activities.Statistics;
 import com.raymondtieu.minesweeper.models.NavBarData;
 import com.raymondtieu.minesweeper.adapters.NavBarAdapter;
 
@@ -26,7 +28,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NavigationDrawerFragment extends Fragment {
+public class NavigationDrawerFragment extends Fragment implements NavBarAdapter.ClickListener {
 
     public static final String PREF_FILE = "testpref";
     public static final String KEY_USER_LEARNED_DRAWER = "user_learned_drawer";
@@ -73,17 +75,21 @@ public class NavigationDrawerFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        adapter.setClickListener(this);
+
         return layout;
     }
 
 
     public static List<NavBarData> getData() {
         List<NavBarData> data = new ArrayList<>();
-        // int[] icons =
-        String[] titles = {"Home", "Settings", "About"};
+
+        String[] titles = {"Statistics", "Settings", "Help", "About"};
+        int[] icons = {R.drawable.numeric, R.drawable.settings,
+                R.drawable.help_circle, R.drawable.information};
 
         for (int i = 0; i < titles.length; i++) {
-            NavBarData n = new NavBarData(titles[i], 0);
+            NavBarData n = new NavBarData(titles[i], icons[i]);
 
             data.add(n);
         }
@@ -150,5 +156,19 @@ public class NavigationDrawerFragment extends Fragment {
         SharedPreferences sharedPreferences = context
                 .getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
         return sharedPreferences.getString(preferenceName, defaultValue);
+    }
+
+
+    @Override
+    public void itemClicked(View view, int position) {
+        // handle click event in the navigation drawer
+        switch(position) {
+            case 0:
+                startActivity(new Intent(getActivity(), Statistics.class));
+                break;
+
+            default:
+                break;
+        }
     }
 }
