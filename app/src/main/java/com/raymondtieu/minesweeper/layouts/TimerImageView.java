@@ -48,6 +48,7 @@ public class TimerImageView extends ImageView implements ViewListener {
             startAnimation(animation);
 
         } else {
+            clearAnimation();
             setSVGImage(mContext, R.raw.timer);
         }
     }

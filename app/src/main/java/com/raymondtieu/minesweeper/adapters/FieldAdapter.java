@@ -16,7 +16,6 @@ import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
 import com.raymondtieu.minesweeper.services.Game;
 
-import java.util.HashMap;
 
 /**
  * Created by raymond on 2015-04-04.
@@ -33,7 +32,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
     private PositionPointAdapter positionAdapter;
 
-    HashMap<Integer, CellHolder> holders = new HashMap<>();
+    CellHolder[] holders;
 
     Integer[] CELL_MINES = {
             R.raw.mine_1,
@@ -62,6 +61,8 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         this.mContext = context;
         this.field = field;
         this.cellDimensions = size;
+
+        holders = new CellHolder[field.getDimX() * field.getDimY()];
     }
 
     @Override
@@ -80,8 +81,8 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
     @Override
     public void onBindViewHolder(CellHolder holder, int position) {
-        if (!holders.containsKey(position)) {
-            holders.put(position, holder);
+        if (holders[position] == null) {
+            holders[position] = holder;
         }
 
         Point p = positionAdapter.positionToPoint(position);
@@ -164,7 +165,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     }
 
     private void notifyReveal(final int position) {
-        final CellHolder cell = holders.get(position);
+        final CellHolder cell = holders[position];
 
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
 
@@ -191,7 +192,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     }
 
     private void notifyFlag(final int position, final boolean flag) {
-        CellHolder cell = holders.get(position);
+        CellHolder cell = holders[position];
         Animation animation;
 
         final FieldAdapter f = this;
@@ -226,7 +227,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
 
     private void notifyMine(final int position) {
-        final CellHolder cell = holders.get(position);
+        final CellHolder cell = holders[position];
 
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.mine);
 
@@ -235,7 +236,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     }
 
     private void notifyInvalid(final int position, final boolean hidden) {
-        final CellHolder cell = holders.get(position);
+        final CellHolder cell = holders[position];
 
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.invalid);
 
