@@ -35,10 +35,10 @@ public class OnePlayerGame implements Game, Parcelable {
         this.finished = false;
         this.flagging = false;
 
+        this.field = new Field(dimX, dimY, mines);
+
         this.numFlags = 0;
         this.cellsRemaining = field.getNumCells() - mines;
-
-        this.field = new Field(dimX, dimY, mines);
     }
 
 

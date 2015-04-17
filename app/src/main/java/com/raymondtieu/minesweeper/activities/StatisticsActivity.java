@@ -9,7 +9,7 @@ import android.view.MenuItem;
 
 import com.raymondtieu.minesweeper.R;
 
-public class Statistics extends ActionBarActivity {
+public class StatisticsActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
 
@@ -46,7 +46,9 @@ public class Statistics extends ActionBarActivity {
         }
 
         if (id == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
+            finish();
+            return true;
+            //NavUtils.navigateUpFromSameTask(this);
         }
 
         return super.onOptionsItemSelected(item);

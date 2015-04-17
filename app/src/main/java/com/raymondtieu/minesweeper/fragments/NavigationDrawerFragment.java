@@ -18,7 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.raymondtieu.minesweeper.R;
-import com.raymondtieu.minesweeper.activities.Statistics;
+import com.raymondtieu.minesweeper.activities.StatisticsActivity;
 import com.raymondtieu.minesweeper.models.NavBarData;
 import com.raymondtieu.minesweeper.adapters.NavBarAdapter;
 
@@ -164,7 +164,7 @@ public class NavigationDrawerFragment extends Fragment implements NavBarAdapter.
         // handle click event in the navigation drawer
         switch(position) {
             case 0:
-                startActivity(new Intent(getActivity(), Statistics.class));
+                startActivity(new Intent(getActivity(), StatisticsActivity.class));
                 break;
 
             default:

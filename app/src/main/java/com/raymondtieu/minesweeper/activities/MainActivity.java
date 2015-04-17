@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,9 +32,19 @@ public class MainActivity extends ActionBarActivity {
     private final int[] HARD = {16, 30, 99};
 
     private MinesweeperFragment minesweeperFragment;
+    private static final String MS_FRAGMENT = "minesweeper_fragment";
+
+    private Bundle savedInstanceState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.savedInstanceState = savedInstanceState;
+
+        if (savedInstanceState == null)
+            Log.i("MainActivity", "CREATING");
+        else
+            Log.i("MainActivity", "GOT SOMETHING");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -90,18 +101,24 @@ public class MainActivity extends ActionBarActivity {
 
         FragmentTransaction ft = fm.beginTransaction();
 
-        minesweeperFragment = new MinesweeperFragment();
+        if (savedInstanceState == null) {
 
-        Bundle args = new Bundle();
+            minesweeperFragment = new MinesweeperFragment();
 
-        args.putInt("xDim", x);
-        args.putInt("yDim", y);
-        args.putInt("nMines", m);
+            Bundle args = new Bundle();
 
-        minesweeperFragment.setArguments(args);
+            args.putInt("xDim", x);
+            args.putInt("yDim", y);
+            args.putInt("nMines", m);
 
-        ft.replace(R.id.fragment_minesweeper, minesweeperFragment);
-        ft.commit();
+            minesweeperFragment.setArguments(args);
+
+            ft.replace(R.id.fragment_minesweeper, minesweeperFragment, MS_FRAGMENT);
+            ft.commit();
+        } else {
+            minesweeperFragment =
+                (MinesweeperFragment) fm.findFragmentByTag(MS_FRAGMENT);
+        }
     }
 
     @Override
@@ -122,6 +139,28 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             default:
                 return super.dispatchKeyEvent(event);
+        }
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Log.i("MainActivity" , "Saving");
+
+        getSupportFragmentManager().putFragment(outState, MS_FRAGMENT, minesweeperFragment);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        Log.i("MainActivity" , "Restoring");
+
+        if (savedInstanceState != null) {
+            minesweeperFragment = (MinesweeperFragment) getSupportFragmentManager()
+                    .getFragment(savedInstanceState, MS_FRAGMENT);
         }
     }
 }

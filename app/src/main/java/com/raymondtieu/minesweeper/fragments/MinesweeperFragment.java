@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     private Handler timerHandler;
     private long startTime, endTime;
 
+    private static final String SAVED_GAME = "saved_game";
+
     public MinesweeperFragment() {
         // Required empty public constructor
     }
@@ -78,6 +81,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         final View layout = inflater
             .inflate(R.layout.fragment_minesweeper, container, false);
@@ -107,9 +111,6 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         // calculate how large a cell should be to fit 10 per row on the screen
         cellWidth = calculateCellWidth();
 
-        // start a new game
-        loadNewGame();
-
         // the recycler view manager
         FixedGridLayoutManager manager = new FixedGridLayoutManager();
         manager.setTotalColumnCount(y);
@@ -123,6 +124,19 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         return layout;
     }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        setRetainInstance(true);
+
+        super.onActivityCreated(savedInstanceState);
+
+        // load the game
+        loadNewGame(savedInstanceState);
+
+    }
+
 
     // calculate the size of a cell based on screen dpi
     // try to fit 10 on the screen
@@ -179,7 +193,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {
-                            loadNewGame();
+                            loadNewGame(null);
                         }
                     })
                     .setNegativeButton(android.R.string.no, null).show();
@@ -196,7 +210,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {
-                            loadNewGame();
+                            loadNewGame(null);
                         }
                     })
                     .setNegativeButton(android.R.string.no, null).show();
@@ -229,10 +243,18 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
             game.toggleFlag();
     }
 
-    private void loadNewGame() {
+    private void loadNewGame(Bundle savedInstanceState) {
         cellWidth = calculateCellWidth();
 
-        game = new OnePlayerGame(x, y, m);
+        if (savedInstanceState == null) {
+            Log.i("Fragment", "Starting a new game");
+            // start a new game
+            game = new OnePlayerGame(x, y, m);
+        } else {
+            Log.i("Fragment", "Loading a saved game");
+            // load a previous instance of the game
+            game = savedInstanceState.getParcelable(SAVED_GAME);
+        }
 
         mTimer.setText("0");
         timerIcon.onValueChanged(0);
@@ -290,5 +312,18 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         SVG svg = SVGParser.getSVGFromResource(getResources(), id);
 
         view.setImageDrawable(svg.createPictureDrawable());
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Log.i("Fragment", "Saving instance state");
+
+        // save the game if it has been started
+        if (game.isStarted()) {
+            outState.putParcelable(SAVED_GAME, game);
+        }
     }
 }
