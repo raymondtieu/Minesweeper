@@ -1,5 +1,7 @@
 package com.raymondtieu.minesweeper.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -84,36 +86,59 @@ public class MainActivity extends ActionBarActivity {
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
     }
 
-    public void setUpField(int[] difficulty) {
+    public void setUpField(final int[] difficulty) {
+        FragmentManager fm = getSupportFragmentManager();
+
+        minesweeperFragment = (MinesweeperFragment) fm.findFragmentByTag(MS_FRAGMENT);
+
+        if (savedInstanceState == null && minesweeperFragment == null) {
+            Log.i("MainActivity", "no saved state or fragment");
+
+            replaceFieldFragment(difficulty);
+
+        } else if (savedInstanceState != null) {
+
+            Log.i("MainActivity", "Saved instance state");
+
+        } else if (minesweeperFragment != null) {
+            Log.i("MainActivity", "Saved fragment");
+
+            if (minesweeperFragment.getGameCtrl().isGameStarted()) {
+                new AlertDialog.Builder(this)
+                    .setTitle("New Game")
+                    .setMessage("Are you sure you want to quit this game and start a new one?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int button) {
+                            replaceFieldFragment(difficulty);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null).show();
+            } else {
+                replaceFieldFragment(difficulty);
+            }
+        }
+    }
+
+    private void replaceFieldFragment(int[] difficulty) {
         int x = difficulty[0];
         int y = difficulty[1];
         int m = difficulty[2];
 
         FragmentManager fm = getSupportFragmentManager();
-
         FragmentTransaction ft = fm.beginTransaction();
 
-        if (savedInstanceState == null) {
-            Log.i("MainActivity", "no saved fragment");
+        minesweeperFragment = new MinesweeperFragment();
 
-            minesweeperFragment = new MinesweeperFragment();
+        Bundle args = new Bundle();
+        args.putInt("xDim", x);
+        args.putInt("yDim", y);
+        args.putInt("nMines", m);
 
-            Bundle args = new Bundle();
+        minesweeperFragment.setArguments(args);
 
-            args.putInt("xDim", x);
-            args.putInt("yDim", y);
-            args.putInt("nMines", m);
-
-            minesweeperFragment.setArguments(args);
-
-            ft.replace(R.id.fragment_minesweeper, minesweeperFragment, MS_FRAGMENT);
-            ft.commit();
-        } else {
-
-            Log.i("MainActivity", "Saved fragment");
-            minesweeperFragment =
-                (MinesweeperFragment) fm.findFragmentByTag(MS_FRAGMENT);
-        }
+        ft.replace(R.id.fragment_minesweeper, minesweeperFragment, MS_FRAGMENT);
+        ft.commit();
     }
 
     @Override
@@ -124,12 +149,12 @@ public class MainActivity extends ActionBarActivity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    minesweeperFragment.toggleFlagMode();
+                    minesweeperFragment.getFlagCtrl().toggleFlag();
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    minesweeperFragment.toggleFlagMode();
+                    minesweeperFragment.getFlagCtrl().toggleFlag();
                 }
                 return true;
             default:

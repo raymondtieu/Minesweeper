@@ -90,6 +90,7 @@ public class OnePlayerGame implements Game, Parcelable {
         flagListener.onValueChanged(value);
     }
 
+    @Override
     public Status onClick(int x, int y) {
         if (isFinished())
             return Status.NO_CHANGE;
@@ -135,10 +136,10 @@ public class OnePlayerGame implements Game, Parcelable {
         return Status.NO_CHANGE;
     }
 
-
-    public Status onLongClick(int x, int y) {
+    @Override
+    public boolean onLongClick(int x, int y) {
         if (isFinished())
-            return Status.NO_CHANGE;
+            return true;
 
         Cell cell = field.getCell(x, y);
 
@@ -150,7 +151,7 @@ public class OnePlayerGame implements Game, Parcelable {
             flagCell(x, y, Cell.Status.FLAGGED);
         }
 
-        return Status.NO_CHANGE;
+        return true;
     }
 
     @Override

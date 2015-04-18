@@ -4,7 +4,6 @@ package com.raymondtieu.minesweeper.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Point;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 
 import android.os.Bundle;
@@ -25,33 +24,41 @@ import com.raymondtieu.minesweeper.R;
 
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
+import com.raymondtieu.minesweeper.controllers.FieldController;
+import com.raymondtieu.minesweeper.controllers.FlagController;
+import com.raymondtieu.minesweeper.controllers.GameController;
+import com.raymondtieu.minesweeper.controllers.MinesController;
 import com.raymondtieu.minesweeper.controllers.TimerController;
 import com.raymondtieu.minesweeper.layouts.FlagImageView;
 import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.layouts.TimerImageView;
 import com.raymondtieu.minesweeper.services.Game;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
-import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 
 public class MinesweeperFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private FieldAdapter mFieldAdapter;
     private PositionPointAdapter mPositionAdapter;
     private RecyclerView mRecyclerView;
+    private FrameLayout mMineField;
 
     private OnePlayerGame game;
     private int x, y, m;
 
     private ImageView minesIcon;
 
-    private FlagImageView mFlagMode;
+    private FlagImageView mFlag;
     private TimerImageView timerIcon;
 
     private TextView mDifficulty, mTimer;
     private MinesTextView mMines;
     private int cellWidth;
 
-    private TimerController timerController;
+    private FieldController fieldCtrl;
+    private TimerController timerCtrl;
+    private MinesController minesCtrl;
+    private FlagController flagCtrl;
+    private GameController gameCtrl;
 
     private static final String SAVED_GAME = "saved_game";
     private static final String SAVED_TIME = "saved_time";
@@ -87,43 +94,21 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         final View layout = inflater
             .inflate(R.layout.fragment_minesweeper, container, false);
 
+        // get arguments
+        Bundle args = getArguments();
+        x = args.getInt("xDim", 16);
+        y = args.getInt("yDim", 16);
+        m = args.getInt("nMines", 40);
+
         // set all views
         mDifficulty = (TextView) layout.findViewById(R.id.difficulty);
         mMines = (MinesTextView) layout.findViewById(R.id.num_mines);
         minesIcon = (ImageView) layout.findViewById(R.id.num_mines_icon);
         mTimer = (TextView) layout.findViewById(R.id.timer);
         timerIcon = (TimerImageView) layout.findViewById(R.id.timer_icon);
-        mFlagMode = (FlagImageView) layout.findViewById(R.id.flag_mode);
+        mFlag = (FlagImageView) layout.findViewById(R.id.flag_mode);
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
-
-        // disable hardware acceleration
-        minesIcon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-
-        // set image icons
-        setImageDrawable(minesIcon, R.raw.mine_toolbar);
-        timerIcon.onValueChanged(0);
-        mFlagMode.onValueChanged(0);
-
-        Bundle args = getArguments();
-        x = args.getInt("xDim", 16);
-        y = args.getInt("yDim", 16);
-        m = args.getInt("nMines", 40);
-
-        // calculate how large a cell should be to fit 10 per row on the screen
-        cellWidth = calculateCellWidth();
-
-        // the recycler view manager
-        FixedGridLayoutManager manager = new FixedGridLayoutManager();
-        manager.setTotalColumnCount(y);
-
-        mRecyclerView.setLayoutManager(manager);
-
-        // set up game information in header
-        configureHeader();
-
-        setViewDimensions(layout);
-
-        timerController = new TimerController(timerIcon, mTimer);
+        mMineField = (FrameLayout) layout.findViewById(R.id.minefield_container);
 
         return layout;
     }
@@ -132,14 +117,52 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         setRetainInstance(true);
-
         super.onActivityCreated(savedInstanceState);
 
-        // load the game
-        loadNewGame(savedInstanceState);
+        gameCtrl = new GameController(mDifficulty);
+        fieldCtrl = new FieldController(mRecyclerView, mMineField);
+        timerCtrl = new TimerController(timerIcon, mTimer);
+        minesCtrl = new MinesController(minesIcon, mMines, getActivity());
+        flagCtrl = new FlagController(mFlag);
 
+        if (savedInstanceState == null) {
+            Log.i("Fragment", "Starting a new game");
+            // start a new game
+            loadNewGame(x, y, m, null);
+        } else {
+            Log.i("Fragment", "Loading a saved game");
+            // load a previous instance of the game
+            timerCtrl.setUpdatedTime(savedInstanceState.getLong(SAVED_TIME));
+            game = savedInstanceState.getParcelable(SAVED_GAME);
+            loadNewGame(game.getField().getDimX(),
+                    game.getField().getDimY(),
+                    game.getField().getMines(),
+                    game);
+        }
     }
 
+    public void loadNewGame(int x, int y, int m, OnePlayerGame prevGame) {
+        if (prevGame == null) {
+            prevGame = new OnePlayerGame(x, y, m);
+            timerCtrl.setUpdatedTime(0L);
+        }
+
+        this.game = prevGame;
+
+        // calculate how large a cell should be to fit 10 per row on the screen
+        cellWidth = calculateCellWidth();
+
+        gameCtrl.setGame(game);
+
+        initFieldAdapter();
+        setGameAdapters();
+
+        fieldCtrl.setGameParams(cellWidth, x, y);
+        fieldCtrl.initViewSize(x, y);
+
+        minesCtrl.setGame(game);
+        flagCtrl.setGame(game);
+    }
 
     // calculate the size of a cell based on screen dpi
     // try to fit 10 on the screen
@@ -148,18 +171,45 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         return Math.round(display.widthPixels / ((float) 10.5));
     }
 
+    private void initFieldAdapter() {
+        // create adapter to convert positions to points and points to positions
+        mPositionAdapter = new PositionPointAdapter(x, y);
+
+        // create adapter to handle mine field
+        mFieldAdapter = new FieldAdapter(getActivity(), game.getField(), cellWidth);
+        mFieldAdapter.setPositionAdapter(mPositionAdapter);
+        mFieldAdapter.setOnItemClickListener(this);
+        mFieldAdapter.setOnItemLongClickListener(this);
+
+        mRecyclerView.swapAdapter(mFieldAdapter, true);
+
+        mFieldAdapter.notifyDataSetChanged();
+    }
+
+    private void setGameAdapters() {
+        gameCtrl.setFieldAdapter(mFieldAdapter);
+        gameCtrl.setPositionAdapter(mPositionAdapter);
+    }
+
+
+    public FlagController getFlagCtrl() {
+        return flagCtrl;
+    }
+
+    public GameController getGameCtrl() {
+        return gameCtrl;
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Point p = mPositionAdapter.positionToPoint(position);
-        boolean startedBeforeClick = game.isStarted();
+        boolean startedBeforeClick = gameCtrl.isGameStarted();
 
         // number of mines adjacent to cell at x, y
-        Game.Status result = game.onClick(p.x, p.y);
+        Game.Status result = gameCtrl.onClick(position);
 
         // start timer if game has just started
-        if (game.isStarted() && !startedBeforeClick) {
-            timerController.start();
-        }
+        if (gameCtrl.isGameStarted() && !startedBeforeClick)
+            timerCtrl.start();
 
         handleGameOver(result);
     }
@@ -170,13 +220,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         if (game.isFinished())
             return false;
 
-        Point p = mPositionAdapter.positionToPoint(position);
-
-        Game.Status result = game.onLongClick(p.x, p.y);
-
-        handleGameOver(result);
-
-        return true;
+        return gameCtrl.onLongClick(position);
     }
 
 
@@ -184,7 +228,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         if (result == Game.Status.LOSE) {
             game.revealAllMines();
 
-            timerController.stop();
+            timerCtrl.stop();
 
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.lost_title)
@@ -192,13 +236,13 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {
-                            loadNewGame(null);
+                            loadNewGame(x, y, m, null);
                         }
                     })
                     .setNegativeButton(android.R.string.no, null).show();
 
         } else if (result == Game.Status.WIN) {
-            timerController.stop();
+            timerCtrl.stop();
 
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.win_title)
@@ -206,97 +250,11 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {
-                            loadNewGame(null);
+                            loadNewGame(x, y, m, null);
                         }
                     })
                     .setNegativeButton(android.R.string.no, null).show();
         }
-    }
-
-
-    private void configureHeader() {
-
-        switch(y) {
-            case 9 : mDifficulty.setText(R.string.easy_title); break;
-            case 16: mDifficulty.setText(R.string.medium_title); break;
-            case 30: mDifficulty.setText(R.string.hard_title); break;
-        }
-
-        mMines.setText("" + m);
-
-        setImageDrawable(mFlagMode, R.raw.flag_deselect);
-        mFlagMode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleFlagMode();
-            }
-        });
-
-    }
-
-    public void toggleFlagMode() {
-        if (!game.isFinished())
-            game.toggleFlag();
-    }
-
-    private void loadNewGame(Bundle savedInstanceState) {
-        cellWidth = calculateCellWidth();
-
-        if (savedInstanceState == null) {
-            Log.i("Fragment", "Starting a new game");
-            // start a new game
-            game = new OnePlayerGame(x, y, m);
-        } else {
-            Log.i("Fragment", "Loading a saved game");
-            // load a previous instance of the game
-            timerController.setUpdatedTime(savedInstanceState.getLong(SAVED_TIME));
-            game = savedInstanceState.getParcelable(SAVED_GAME);
-        }
-
-        timerController.init();
-        mFlagMode.onValueChanged(0);
-
-        configureAdapters();
-        configureHeader();
-    }
-
-    private void configureAdapters() {
-
-        // create adapter to convert positions to points and points to positions
-        mPositionAdapter = new PositionPointAdapter(x, y);
-
-        // create adapter to handle mine field
-        mFieldAdapter = new FieldAdapter(getActivity(), game.getField(), cellWidth);
-        mFieldAdapter.setPositionAdapter(mPositionAdapter);
-        mFieldAdapter.setOnItemClickListener(this);
-        mFieldAdapter.setOnItemLongClickListener(this);
-
-        mRecyclerView.setAdapter(mFieldAdapter);
-
-        /// set adapter in the game to notify view for changes
-        game.setFieldAdapter(mFieldAdapter);
-        game.setPositionAdapter(mPositionAdapter);
-        game.setMinesListener(mMines);
-        game.setFlagListener(mFlagMode);
-
-        mFieldAdapter.notifyDataSetChanged();
-    }
-
-    private void setViewDimensions(View layout) {
-        // set appropriate size for view containers
-        mRecyclerView.getLayoutParams().height = x * cellWidth;
-        mRecyclerView.getLayoutParams().width = y * cellWidth;
-
-        FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.minefield_container);
-        frameLayout.getLayoutParams().height = x * cellWidth;
-        frameLayout.getLayoutParams().width = y * cellWidth;
-    }
-
-
-    private void setImageDrawable(ImageView view, int id) {
-        SVG svg = SVGParser.getSVGFromResource(getResources(), id);
-
-        view.setImageDrawable(svg.createPictureDrawable());
     }
 
 
@@ -308,7 +266,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         // save the game if it has been started
         if (game.isStarted()) {
-            outState.putLong(SAVED_TIME, timerController.getUpdatedTime());
+            outState.putLong(SAVED_TIME, timerCtrl.getUpdatedTime());
             outState.putParcelable(SAVED_GAME, game);
         }
     }
@@ -319,7 +277,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         Log.i("Fragment", "Pausing..");
 
         if (game.isStarted() && !game.isFinished())
-            timerController.pause();
+            timerCtrl.pause();
     }
 
     @Override
@@ -328,6 +286,6 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         Log.i("Fragment", "Resuming..");
         if (game.isStarted() && !game.isFinished())
-            timerController.start();
+            timerCtrl.start();
     }
 }

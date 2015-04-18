@@ -32,7 +32,7 @@ public class TimerController {
         timerHandler = new Handler();
     }
 
-    public void init() {
+    private void init() {
         timerIcon.onValueChanged(0);
         updateTextView();
     }
@@ -43,6 +43,8 @@ public class TimerController {
 
     public void setUpdatedTime(long t) {
         updatedTime = t;
+
+        init();
     }
 
     public void start() {

@@ -18,4 +18,7 @@ public interface Game {
     public int reveal(int x, int y);
     public void flagCell(int x, int y, Cell.Status status);
     public Status checkGameFinished(Cell cell);
+
+    public Status onClick(int x, int y);
+    public boolean onLongClick(int x, int y);
 }
