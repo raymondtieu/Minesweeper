@@ -2,9 +2,12 @@ package com.raymondtieu.minesweeper.services;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.raymondtieu.minesweeper.models.Statistic;
 
 /**
  * Created by raymond on 2015-04-18.
@@ -81,6 +84,45 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public Statistic getStatistics(Game.Difficulty difficulty) {
+        Statistic stat = new Statistic();
+        String table = TABLE_INTERMEDIATE;
 
+        if (difficulty == Game.Difficulty.BEGINNER)
+            table = TABLE_BEGINNER;
+        else if (difficulty == Game.Difficulty.ADVANCED)
+            table = TABLE_ADVANCED;
 
+        stat.setGamesPlayed(getGamesPlayed(table));
+        stat.setGamesWon(getGamesWon(table));
+
+        return stat;
+    }
+
+    public int getGamesPlayed(String table) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + table;
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        int gamesPlayed = cursor.getCount();
+
+        cursor.close();
+
+        return gamesPlayed;
+    }
+
+    public int getGamesWon(String table) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + table
+                + " WHERE " + KEY_TIME + " IS NOT NULL";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        int gamesWon = cursor.getCount();
+
+        cursor.close();
+
+        return gamesWon;
+    }
 }

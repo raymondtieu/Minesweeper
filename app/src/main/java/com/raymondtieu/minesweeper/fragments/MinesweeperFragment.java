@@ -41,6 +41,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
     private OnePlayerGame game;
     private int x, y, m;
+    private Game.Difficulty difficulty;
 
     private ImageView minesIcon;
 
@@ -96,6 +97,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         x = args.getInt("xDim", 16);
         y = args.getInt("yDim", 16);
         m = args.getInt("nMines", 40);
+        difficulty = (Game.Difficulty) args.get("difficulty");
 
         // set all views
         mDifficulty = (TextView) layout.findViewById(R.id.difficulty);
@@ -116,7 +118,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         setRetainInstance(true);
         super.onActivityCreated(savedInstanceState);
 
-        gameCtrl = new GameController(mDifficulty, getActivity());
+        gameCtrl = new GameController(mDifficulty, difficulty, getActivity());
         fieldCtrl = new FieldController(mRecyclerView, mMineField);
         timerCtrl = new TimerController(timerIcon, mTimer);
         minesCtrl = new MinesController(minesIcon, mMines, getActivity());

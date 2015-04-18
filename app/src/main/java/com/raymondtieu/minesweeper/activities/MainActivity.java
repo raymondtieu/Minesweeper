@@ -19,6 +19,7 @@ import android.widget.Button;
 import com.raymondtieu.minesweeper.fragments.*;
 
 import com.raymondtieu.minesweeper.R;
+import com.raymondtieu.minesweeper.services.Game;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -26,9 +27,9 @@ public class MainActivity extends ActionBarActivity {
 
     private Button easyMode, mediumMode, hardMode;
 
-    private final int[] EASY = {9, 9, 10};
-    private final int[] MEDIUM = {16, 16, 40};
-    private final int[] HARD = {16, 30, 99};
+    private final int[] BEGINNER = {9, 9, 10};
+    private final int[] INTERMEDIATE = {16, 16, 40};
+    private final int[] ADVANCED = {16, 30, 99};
 
     private MinesweeperFragment minesweeperFragment;
     private static final String MS_FRAGMENT = "minesweeper_fragment";
@@ -44,7 +45,7 @@ public class MainActivity extends ActionBarActivity {
 
         setUpToolbar();
 
-        setUpField(MEDIUM);
+        setUpField(INTERMEDIATE, Game.Difficulty.INTERMEDIATE);
     }
 
     @Override
@@ -63,11 +64,11 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_easy) {
-            setUpField(EASY);
+            setUpField(BEGINNER, Game.Difficulty.BEGINNER);
         } else if (id == R.id.action_medium) {
-            setUpField(MEDIUM);
+            setUpField(INTERMEDIATE, Game.Difficulty.INTERMEDIATE);
         } else if (id == R.id.action_hard) {
-            setUpField(HARD);
+            setUpField(ADVANCED, Game.Difficulty.ADVANCED);
         }
 
         return super.onOptionsItemSelected(item);
@@ -86,7 +87,7 @@ public class MainActivity extends ActionBarActivity {
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
     }
 
-    public void setUpField(final int[] difficulty) {
+    public void setUpField(final int[] mode, final Game.Difficulty difficulty) {
         FragmentManager fm = getSupportFragmentManager();
 
         minesweeperFragment = (MinesweeperFragment) fm.findFragmentByTag(MS_FRAGMENT);
@@ -94,7 +95,7 @@ public class MainActivity extends ActionBarActivity {
         if (savedInstanceState == null && minesweeperFragment == null) {
             Log.i("MainActivity", "no saved state or fragment");
 
-            replaceFieldFragment(difficulty);
+            replaceFieldFragment(mode, difficulty);
 
         } else if (savedInstanceState != null) {
 
@@ -114,20 +115,20 @@ public class MainActivity extends ActionBarActivity {
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {
-                            replaceFieldFragment(difficulty);
+                            replaceFieldFragment(mode, difficulty);
                         }
                     })
                     .setNegativeButton(android.R.string.no, null).show();
             } else {
-                replaceFieldFragment(difficulty);
+                replaceFieldFragment(mode, difficulty);
             }
         }
     }
 
-    private void replaceFieldFragment(int[] difficulty) {
-        int x = difficulty[0];
-        int y = difficulty[1];
-        int m = difficulty[2];
+    private void replaceFieldFragment(int[] mode, Game.Difficulty difficulty) {
+        int x = mode[0];
+        int y = mode[1];
+        int m = mode[2];
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -138,6 +139,7 @@ public class MainActivity extends ActionBarActivity {
         args.putInt("xDim", x);
         args.putInt("yDim", y);
         args.putInt("nMines", m);
+        args.putSerializable("difficulty", difficulty);
 
         minesweeperFragment.setArguments(args);
 

@@ -28,8 +28,6 @@ public class StatisticsActivity extends ActionBarActivity {
     private ViewPager mPager;
     private SlidingTabLayout mTabs;
 
-    private DatabaseHandler minesweeperDB;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +54,6 @@ public class StatisticsActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.grey);
             }
         });
-
-        minesweeperDB = new DatabaseHandler(this);
     }
 
 

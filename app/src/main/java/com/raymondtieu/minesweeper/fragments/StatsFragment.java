@@ -8,18 +8,24 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.raymondtieu.minesweeper.R;
+import com.raymondtieu.minesweeper.models.Statistic;
 
 /**
  * Created by raymond on 2015-04-18.
  */
 public class StatsFragment extends Fragment {
 
-    public static StatsFragment getInstance(int position) {
+    private static final String STATISTIC = "statistic";
+
+    private TextView bestTime, gamesPlayed, gamesWon, winPercentage;
+    private TextView winStreak, loseStreak, streak;
+
+    public static StatsFragment getInstance(Statistic statistic) {
         StatsFragment statsFragment = new StatsFragment();
 
         Bundle args = new Bundle();
 
-        args.putInt("pos", position);
+        args.putParcelable(STATISTIC, statistic);
         statsFragment.setArguments(args);
 
         return statsFragment;
@@ -30,11 +36,24 @@ public class StatsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_stats, container, false);
 
-        TextView tv = (TextView) layout.findViewById(R.id.stats_page);
+        bestTime = (TextView) layout.findViewById(R.id.best_time);
+        gamesPlayed = (TextView) layout.findViewById(R.id.games_played);
+        gamesWon = (TextView) layout.findViewById(R.id.games_won);
+        winPercentage = (TextView) layout.findViewById(R.id.win_perc);
+        winStreak = (TextView) layout.findViewById(R.id.win_streak);
+        loseStreak = (TextView) layout.findViewById(R.id.lose_streak);
+        streak = (TextView) layout.findViewById(R.id.streak);
 
+        Statistic s = null;
         Bundle bundle = getArguments();
+
         if (bundle != null)
-            tv.setText("This is page #" + bundle.getInt("pos"));
+            s = bundle.getParcelable(STATISTIC);
+
+        if (s != null) {
+            gamesPlayed.setText(String.valueOf(s.getGamesPlayed()));
+            gamesWon.setText(String.valueOf(s.getGamesWon()));
+        }
 
         return layout;
     }

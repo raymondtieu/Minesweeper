@@ -1,14 +1,145 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.raymondtieu.minesweeper.StatsFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.raymondtieu.minesweeper.StatsFragment"
+    android:orientation="vertical"
+    android:weightSum="7">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/stats_page"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"/>
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/best_time_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Best Time: "/>
+
+        <TextView
+            android:id="@+id/best_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/best_time_label" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/games_played_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Games Played: "/>
+
+        <TextView
+            android:id="@+id/games_played"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/games_played_label" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/games_won_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Games Won: "/>
+
+        <TextView
+            android:id="@+id/games_won"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/games_won_label" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/win_perc_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Win Percentage: "/>
+
+        <TextView
+            android:id="@+id/win_perc"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/win_perc_label" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/win_streak_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Longest Winning Streak: "/>
+
+        <TextView
+            android:id="@+id/win_streak"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/win_streak_label" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/lose_streak_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Longest Losing Streak: "/>
+
+        <TextView
+            android:id="@+id/lose_streak"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/lose_streak_label" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/streak_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Current Streak: "/>
+
+        <TextView
+            android:id="@+id/streak"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/streak_label" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>
