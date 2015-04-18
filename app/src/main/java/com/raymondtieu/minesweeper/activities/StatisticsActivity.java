@@ -1,6 +1,11 @@
 package com.raymondtieu.minesweeper.activities;
 
+import android.graphics.Color;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -8,10 +13,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.raymondtieu.minesweeper.R;
+import com.raymondtieu.minesweeper.adapters.StatsPagerAdapter;
+import com.raymondtieu.minesweeper.fragments.StatsFragment;
+import com.raymondtieu.minesweeper.layouts.SlidingTabLayout;
 
 public class StatisticsActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
+    private ViewPager mPager;
+    private SlidingTabLayout mTabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +33,22 @@ public class StatisticsActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        mPager = (ViewPager) findViewById(R.id.stats_pager);
+        mTabs = (SlidingTabLayout) findViewById(R.id.stats_tabs);
+
+        mPager.setAdapter(new StatsPagerAdapter(getSupportFragmentManager(),
+                this));
+
+        mTabs.setViewPager(mPager);
+
+        mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.grey);
+            }
+        });
     }
 
 
@@ -39,11 +65,6 @@ public class StatisticsActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         if (id == android.R.id.home) {
             finish();

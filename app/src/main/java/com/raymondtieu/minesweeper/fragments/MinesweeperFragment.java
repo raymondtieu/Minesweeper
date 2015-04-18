@@ -3,7 +3,6 @@ package com.raymondtieu.minesweeper.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Point;
 import android.support.v4.app.Fragment;
 
 import android.os.Bundle;
@@ -18,8 +17,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.larvalabs.svgandroid.SVG;
-import com.larvalabs.svgandroid.SVGParser;
 import com.raymondtieu.minesweeper.R;
 
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;

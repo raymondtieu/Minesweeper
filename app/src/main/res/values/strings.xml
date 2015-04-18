@@ -24,4 +24,10 @@
     <string name="win_message">Play again.</string>
     <string name="title_activity_statistics">Statistics</string>
 
+    <string-array name="stats_tabs">
+        <item>BEGINNER</item>
+        <item>INTERMEDIATE</item>
+        <item>ADVANCED</item>
+    </string-array>
+
 </resources>
