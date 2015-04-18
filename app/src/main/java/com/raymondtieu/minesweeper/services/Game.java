@@ -6,6 +6,10 @@ import com.raymondtieu.minesweeper.models.Cell;
  * Created by raymond on 2015-04-02.
  */
 public interface Game {
+    public enum Difficulty {
+        BEGINNER, INTERMEDIATE, ADVANCED
+    }
+
     public enum Status {
         NO_CHANGE, WIN, LOSE
     }

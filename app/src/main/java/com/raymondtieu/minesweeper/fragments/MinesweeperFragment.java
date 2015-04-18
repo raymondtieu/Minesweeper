@@ -116,7 +116,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         setRetainInstance(true);
         super.onActivityCreated(savedInstanceState);
 
-        gameCtrl = new GameController(mDifficulty);
+        gameCtrl = new GameController(mDifficulty, getActivity());
         fieldCtrl = new FieldController(mRecyclerView, mMineField);
         timerCtrl = new TimerController(timerIcon, mTimer);
         minesCtrl = new MinesController(minesIcon, mMines, getActivity());
@@ -227,6 +227,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
             timerCtrl.stop();
 
+            gameCtrl.addRecord(null);
+
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.lost_title)
                     .setMessage(R.string.lost_message)
@@ -240,6 +242,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         } else if (result == Game.Status.WIN) {
             timerCtrl.stop();
+
+            gameCtrl.addRecord(timerCtrl.getUpdatedTime());
 
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.win_title)

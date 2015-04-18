@@ -1,5 +1,6 @@
 package com.raymondtieu.minesweeper.activities;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -16,12 +18,17 @@ import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.adapters.StatsPagerAdapter;
 import com.raymondtieu.minesweeper.fragments.StatsFragment;
 import com.raymondtieu.minesweeper.layouts.SlidingTabLayout;
+import com.raymondtieu.minesweeper.services.DatabaseHandler;
+
+import java.io.File;
 
 public class StatisticsActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
     private ViewPager mPager;
     private SlidingTabLayout mTabs;
+
+    private DatabaseHandler minesweeperDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +56,8 @@ public class StatisticsActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.grey);
             }
         });
+
+        minesweeperDB = new DatabaseHandler(this);
     }
 
 
