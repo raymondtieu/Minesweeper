@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -165,6 +166,7 @@ public class NavigationDrawerFragment extends Fragment implements NavBarAdapter.
         switch(position) {
             case 0:
                 startActivity(new Intent(getActivity(), StatisticsActivity.class));
+                mDrawerLayout.closeDrawer(Gravity.START);
                 break;
 
             default:

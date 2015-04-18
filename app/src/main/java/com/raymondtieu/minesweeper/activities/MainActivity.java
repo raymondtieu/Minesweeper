@@ -103,7 +103,11 @@ public class MainActivity extends ActionBarActivity {
         } else if (minesweeperFragment != null) {
             Log.i("MainActivity", "Saved fragment");
 
-            if (minesweeperFragment.getGameCtrl().isGameStarted()) {
+            boolean started = minesweeperFragment.getGameCtrl().isGameStarted();
+            boolean finished = minesweeperFragment.getGameCtrl().isGameFinished();
+
+            // prompt to quit unfinished game
+            if (started && !finished) {
                 new AlertDialog.Builder(this)
                     .setTitle("New Game")
                     .setMessage("Are you sure you want to quit this game and start a new one?")

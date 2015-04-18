@@ -58,4 +58,8 @@ public class GameController {
     public boolean isGameStarted() {
         return game.isStarted();
     }
+
+    public boolean isGameFinished() {
+        return game.isFinished();
+    }
 }
