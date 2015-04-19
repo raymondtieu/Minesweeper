@@ -1,5 +1,7 @@
 package com.raymondtieu.minesweeper.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
@@ -21,12 +23,14 @@ import com.raymondtieu.minesweeper.layouts.SlidingTabLayout;
 import com.raymondtieu.minesweeper.services.DatabaseHandler;
 
 import java.io.File;
+import java.util.List;
 
 public class StatisticsActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
     private ViewPager mPager;
     private SlidingTabLayout mTabs;
+    private StatsPagerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,17 +47,19 @@ public class StatisticsActivity extends ActionBarActivity {
         mPager = (ViewPager) findViewById(R.id.stats_pager);
         mTabs = (SlidingTabLayout) findViewById(R.id.stats_tabs);
 
-        mPager.setAdapter(new StatsPagerAdapter(getSupportFragmentManager(),
-                this));
+        mAdapter = new StatsPagerAdapter(getSupportFragmentManager(), this);
+
+        mPager.setAdapter(mAdapter);
 
         mTabs.setViewPager(mPager);
 
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.grey);
+                return getResources().getColor(R.color.black);
             }
         });
+
     }
 
 
@@ -75,6 +81,20 @@ public class StatisticsActivity extends ActionBarActivity {
             finish();
             return true;
             //NavUtils.navigateUpFromSameTask(this);
+        }
+
+        if (id == R.id.action_delete) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete")
+                    .setMessage("Are you sure you want to delete records?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int button) {
+                            mAdapter.deleteAll();
+                            finish();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null).show();
         }
 
         return super.onOptionsItemSelected(item);

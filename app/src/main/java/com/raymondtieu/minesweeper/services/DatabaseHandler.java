@@ -85,7 +85,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public Statistic getStatistics(Game.Difficulty difficulty) {
-        Statistic stat = new Statistic();
+        Statistic statistic = new Statistic();
         String table = TABLE_INTERMEDIATE;
 
         if (difficulty == Game.Difficulty.BEGINNER)
@@ -93,13 +93,41 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         else if (difficulty == Game.Difficulty.ADVANCED)
             table = TABLE_ADVANCED;
 
-        stat.setGamesPlayed(getGamesPlayed(table));
-        stat.setGamesWon(getGamesWon(table));
+        setBestRecords(table, statistic);
+        setGamesPlayed(table, statistic);
+        setGamesWon(table, statistic);
+        statistic.calculateWinPercentage();
+        setGameStreaks(table, statistic);
 
-        return stat;
+        return statistic;
     }
 
-    public int getGamesPlayed(String table) {
+
+    public void setBestRecords(String table, Statistic statistic) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + table
+                + " WHERE " + KEY_TIME + " IS NOT NULL "
+                + " ORDER BY " + KEY_TIME + " ASC LIMIT 5";
+
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        Statistic.Record[] records = new Statistic.Record[5];
+
+        if (cursor.moveToFirst()) {
+            int i = 0;
+            do {
+                records[i] = new Statistic.Record(cursor.getLong(DATE), cursor.getLong(TIME));
+                i++;
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        statistic.setBestRecords(records);
+    }
+
+    public void setGamesPlayed(String table, Statistic statistic) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + table;
 
@@ -109,10 +137,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         cursor.close();
 
-        return gamesPlayed;
+        statistic.setGamesPlayed(gamesPlayed);
     }
 
-    public int getGamesWon(String table) {
+    public void setGamesWon(String table, Statistic statistic) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + table
                 + " WHERE " + KEY_TIME + " IS NOT NULL";
@@ -123,6 +151,85 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         cursor.close();
 
-        return gamesWon;
+        statistic.setGamesWon(gamesWon);
+    }
+
+    public void setGameStreaks(String table, Statistic statistic) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + table
+                + " ORDER BY " + KEY_DATE + " DESC";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        int winStreak = 0;
+        int loseStreak = 0;
+        int currentStreak = 0;
+        boolean isWinStreak = false;
+
+        if (cursor.moveToFirst()) {
+
+            int currentWin = 0;
+            int currentLose = 0;
+            boolean endStreak = false;
+
+            do {
+                // lose if time is null
+                if (cursor.isNull(TIME)) {
+                    currentLose++;
+                    currentWin = 0;
+
+                    if (!endStreak) {
+                        if (currentStreak == 0)
+                            isWinStreak = false;
+
+                        if (!isWinStreak)
+                            currentStreak++;
+                        else
+                            endStreak = true;
+                    }
+                } else {
+                    currentWin++;
+                    currentLose = 0;
+
+                    if (!endStreak) {
+                        if (currentStreak == 0)
+                            isWinStreak = true;
+
+                        if (isWinStreak)
+                            currentStreak++;
+                        else
+                            endStreak = true;
+                    }
+                }
+
+                if (currentWin > winStreak)
+                    winStreak = currentWin;
+
+                if (currentLose > loseStreak)
+                    loseStreak = currentLose;
+
+            } while (cursor.moveToNext());
+        }
+
+        statistic.setWinStreak(winStreak);
+        statistic.setLoseStreak(loseStreak);
+
+        if (currentStreak == 0)
+            statistic.setStreak("0");
+        else
+            if (isWinStreak)
+                statistic.setStreak("" + currentStreak + " W");
+            else
+                statistic.setStreak("" + currentStreak + " L");
+    }
+
+    public void deleteAll() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(TABLE_BEGINNER, null, null);
+        db.delete(TABLE_INTERMEDIATE, null, null);
+        db.delete(TABLE_ADVANCED, null, null);
+
+        db.close();
     }
 }

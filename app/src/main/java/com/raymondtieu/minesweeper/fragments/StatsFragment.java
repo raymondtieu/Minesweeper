@@ -42,7 +42,7 @@ public class StatsFragment extends Fragment {
         winPercentage = (TextView) layout.findViewById(R.id.win_perc);
         winStreak = (TextView) layout.findViewById(R.id.win_streak);
         loseStreak = (TextView) layout.findViewById(R.id.lose_streak);
-        streak = (TextView) layout.findViewById(R.id.streak);
+        streak = (TextView) layout.findViewById(R.id.current_streak);
 
         Statistic s = null;
         Bundle bundle = getArguments();
@@ -51,8 +51,13 @@ public class StatsFragment extends Fragment {
             s = bundle.getParcelable(STATISTIC);
 
         if (s != null) {
-            gamesPlayed.setText(String.valueOf(s.getGamesPlayed()));
-            gamesWon.setText(String.valueOf(s.getGamesWon()));
+            bestTime.setText(s.getBestRecords());
+            gamesPlayed.setText(s.getGamesPlayed());
+            gamesWon.setText(s.getGamesWon());
+            winPercentage.setText(s.getWinPercentage());
+            winStreak.setText(s.getWinStreak());
+            loseStreak.setText(s.getLoseStreak());
+            streak.setText(s.getStreak());
         }
 
         return layout;

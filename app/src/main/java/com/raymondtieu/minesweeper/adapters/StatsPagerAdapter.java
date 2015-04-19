@@ -27,6 +27,10 @@ public class StatsPagerAdapter extends FragmentPagerAdapter {
         minesweeperDB = new DatabaseHandler(context);
     }
 
+    public void deleteAll() {
+        minesweeperDB.deleteAll();
+    }
+
     @Override
     public CharSequence getPageTitle(int position) {
         return tabs[position];
