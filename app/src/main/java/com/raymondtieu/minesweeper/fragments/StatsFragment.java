@@ -36,7 +36,7 @@ public class StatsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_stats, container, false);
 
-        bestTime = (TextView) layout.findViewById(R.id.best_time);
+        bestTime = (TextView) layout.findViewById(R.id.best_times);
         gamesPlayed = (TextView) layout.findViewById(R.id.games_played);
         gamesWon = (TextView) layout.findViewById(R.id.games_won);
         winPercentage = (TextView) layout.findViewById(R.id.win_perc);
