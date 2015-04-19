@@ -43,6 +43,7 @@ public class TimerController {
 
     public void setUpdatedTime(long t) {
         updatedTime = t;
+        timeSwap = t;
 
         init();
     }

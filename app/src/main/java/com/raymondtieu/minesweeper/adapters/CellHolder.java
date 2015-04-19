@@ -13,7 +13,6 @@ import com.raymondtieu.minesweeper.R;
  * Created by raymond on 2015-04-04.
  */
 public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-    public ImageView mines;
     public ImageView icon;
     public ImageView background;
 
@@ -28,18 +27,15 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
         mAdapter = adapter;
 
-        mines = (ImageView) itemView.findViewById(R.id.cell_mines);
         icon = (ImageView) itemView.findViewById(R.id.cell_icon);
         background = (ImageView) itemView.findViewById(R.id.cell_background);
 
         // disable hardware acceleration for image views
-        mines.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         icon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         background.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
 
         // blank cell
-        mines.setImageResource(android.R.color.transparent);
         icon.setImageResource(android.R.color.transparent);
         background.setImageResource(android.R.color.transparent);
 
@@ -60,17 +56,12 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
         return true;
     }
 
-    public void setMines(Context context, int minesId, int fillId) {
-        SVG svg = SVGParser.getSVGFromResource(context.getResources(), minesId);
-        this.mines.setImageDrawable(svg.createPictureDrawable());
-
-        this.fillId = fillId;
-    }
-
-    public void setIcon(Context context, int id) {
+    public void setIcon(Context context, int id, int fillId) {
         SVG svg = SVGParser.getSVGFromResource(context.getResources(), id);
 
         this.icon.setImageDrawable(svg.createPictureDrawable());
+
+        this.fillId = fillId;
     }
 
     public void setBackground(Context context, int id) {

@@ -161,6 +161,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         minesCtrl.setGame(game);
         flagCtrl.setGame(game);
+
+        mFieldAdapter.notifyDataSetChanged();
     }
 
     // calculate the size of a cell based on screen dpi
@@ -180,9 +182,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         mFieldAdapter.setOnItemClickListener(this);
         mFieldAdapter.setOnItemLongClickListener(this);
 
-        mRecyclerView.swapAdapter(mFieldAdapter, true);
-
-        mFieldAdapter.notifyDataSetChanged();
+        mRecyclerView.setAdapter(mFieldAdapter);
     }
 
     private void setGameAdapters() {

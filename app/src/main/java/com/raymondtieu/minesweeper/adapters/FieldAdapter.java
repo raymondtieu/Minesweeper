@@ -35,6 +35,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     CellHolder[] holders;
 
     Integer[] CELL_MINES = {
+            R.raw.mine_0,
             R.raw.mine_1,
             R.raw.mine_2,
             R.raw.mine_3,
@@ -93,25 +94,22 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         if (status == Cell.Status.REVEALED) {
             int n = cell.getAdjacentMines();
 
-            holder.mines.setImageResource(android.R.color.transparent);
-
             if (n < 9) {
-                holder.setIcon(mContext, R.raw.cell_outline);
-
                 if (n > 0)
-                    holder.setMines(mContext, CELL_MINES[n - 1], CELL_MINES_FILLED[n - 1]);
+                    holder.setIcon(mContext, CELL_MINES[n], CELL_MINES_FILLED[n - 1]);
+                else
+                    holder.setIcon(mContext, CELL_MINES[n], -1);
             } else {
                 // set icon to be a mine
-                holder.setIcon(mContext, R.raw.mine_red);
+                holder.setIcon(mContext, R.raw.mine_red, -1);
             }
         } else if (status == Cell.Status.FLAGGED) {
-            holder.setMines(mContext, R.raw.flag_primary, -1);
+            holder.setIcon(mContext, R.raw.flag_primary, -1);
         } else if (status == Cell.Status.FLAG_CORRECT) {
-            holder.setMines(mContext, R.raw.flag_correct, -1);
+            holder.setIcon(mContext, R.raw.flag_correct, -1);
         } else if (status == Cell.Status.FLAG_INCORRECT) {
-            holder.setMines(mContext, R.raw.flag_incorrect, -1);
+            holder.setIcon(mContext, R.raw.flag_incorrect, -1);
         } else if (status == Cell.Status.HIDDEN) {
-            holder.mines.setImageResource(android.R.color.transparent);
             holder.icon.setImageResource(android.R.color.transparent);
         }
     }
@@ -187,7 +185,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         });
 
         this.notifyItemChanged(position);
-        cell.mines.startAnimation(animation);
         cell.icon.startAnimation(animation);
     }
 
@@ -222,7 +219,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             }
         });
 
-        cell.mines.startAnimation(animation);
+        cell.icon.startAnimation(animation);
     }
 
 
@@ -245,14 +242,12 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    cell.mines.setVisibility(View.INVISIBLE);
                     cell.icon.setVisibility(View.INVISIBLE);
                     cell.toggleFlash(mContext, true);
                 }
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    cell.mines.setVisibility(View.VISIBLE);
                     cell.icon.setVisibility(View.VISIBLE);
                     cell.toggleFlash(mContext, false);
                 }
