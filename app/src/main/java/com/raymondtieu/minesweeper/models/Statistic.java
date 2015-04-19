@@ -71,7 +71,9 @@ public class Statistic implements Parcelable {
 
         for (Record record : bestRecords) {
             if (record != null)
-                str += record.toString() + "\n";
+                str += record.toString();
+
+            str +=  "\n";
         }
 
         return str;
