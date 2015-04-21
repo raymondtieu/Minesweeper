@@ -2,6 +2,7 @@ package com.raymondtieu.minesweeper.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -14,7 +15,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 
 import com.raymondtieu.minesweeper.fragments.*;
 
@@ -25,14 +25,17 @@ public class MainActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
 
-    private Button easyMode, mediumMode, hardMode;
-
     private final int[] BEGINNER = {9, 9, 10};
     private final int[] INTERMEDIATE = {16, 16, 40};
     private final int[] ADVANCED = {16, 30, 99};
 
+    private final static String PREF_FILE = "minesweeper_pref";
+    private final static String KEY_NUM_MINES = "num_mines";
+
     private MinesweeperFragment minesweeperFragment;
     private static final String MS_FRAGMENT = "minesweeper_fragment";
+
+    SharedPreferences sharedPreferences;
 
     private Bundle savedInstanceState;
 
@@ -45,7 +48,16 @@ public class MainActivity extends ActionBarActivity {
 
         setUpToolbar();
 
-        setUpField(INTERMEDIATE, Game.Difficulty.INTERMEDIATE);
+        sharedPreferences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
+
+        int n = sharedPreferences.getInt(KEY_NUM_MINES, 40);
+
+        if (n == 10)
+            setUpField(BEGINNER, Game.Difficulty.BEGINNER);
+        else if (n == 40)
+            setUpField(INTERMEDIATE, Game.Difficulty.INTERMEDIATE);
+        else
+            setUpField(ADVANCED, Game.Difficulty.ADVANCED);
     }
 
     @Override
@@ -145,6 +157,12 @@ public class MainActivity extends ActionBarActivity {
 
         ft.replace(R.id.fragment_minesweeper, minesweeperFragment, MS_FRAGMENT);
         ft.commit();
+
+
+        // put the number of mines in shared preferences
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(KEY_NUM_MINES, mode[2]);
+        editor.commit();
     }
 
     @Override
