@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
         if (savedInstanceState == null) {
             Log.i(TAG, "No saved instance, creating new fragment");
 
-            setUpMinesweeper();
+            setUpMinesweeper(null);
 
         } else {
             Log.i(TAG, "Saved instance state found");
@@ -86,14 +86,11 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_easy) {
-            difficulty = Game.Difficulty.BEGINNER;
-            setUpMinesweeper();
+            setUpMinesweeper(Game.Difficulty.BEGINNER);
         } else if (id == R.id.action_medium) {
-            difficulty = Game.Difficulty.INTERMEDIATE;
-            setUpMinesweeper();
+            setUpMinesweeper(Game.Difficulty.INTERMEDIATE);
         } else if (id == R.id.action_hard) {
-            difficulty = Game.Difficulty.ADVANCED;
-            setUpMinesweeper();
+            setUpMinesweeper(Game.Difficulty.ADVANCED);
         }
 
         return super.onOptionsItemSelected(item);
@@ -113,7 +110,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    public void setUpMinesweeper() {
+    public void setUpMinesweeper(final Game.Difficulty d) {
 
         boolean started = sharedPreferences.getBoolean(KEY_STARTED, false);
         boolean finished = sharedPreferences.getBoolean(KEY_FINISHED, false);
@@ -156,11 +153,15 @@ public class MainActivity extends ActionBarActivity {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                             public void onClick(DialogInterface dialog, int button) {
+                                // change difficulty from menu
+                                difficulty = d;
                                 setUpNewGame();
                             }
                         })
                         .setNegativeButton(android.R.string.no, null).show();
             } else {
+                // change difficulty from menu
+                difficulty = d;
                 setUpNewGame();
             }
         }
