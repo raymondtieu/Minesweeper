@@ -285,10 +285,10 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
 
-        Log.i(TAG, "Destroying");
+        Log.i(TAG, "Stopping");
 
         // put the number of mines in shared preferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -307,5 +307,14 @@ public class MainActivity extends ActionBarActivity {
         }
 
         editor.commit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.i(TAG, "Destroying");
+
+
     }
 }
