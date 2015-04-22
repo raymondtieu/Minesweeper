@@ -38,7 +38,28 @@ public class OnePlayerGame implements Game, Parcelable {
         this.field = new Field(dimX, dimY, mines);
 
         this.numFlags = 0;
-        this.cellsRemaining = field.getNumCells() - mines;
+        this.cellsRemaining = field.getNumCells() - field.getMines();
+    }
+
+    /* Create a game given a field from a save state */
+    public OnePlayerGame(Field field) {
+        this.field = field;
+        started = true;
+        finished = false;
+        flagging = false;
+
+        numFlags = 0;
+        cellsRemaining = field.getNumCells() - field.getMines();
+
+        for (int i = 0; i < field.getDimX(); i++) {
+            for (int j = 0; j < field.getDimY(); j++) {
+                Cell.Status status  = field.getCell(i, j).getStatus();
+                if (status == Cell.Status.REVEALED)
+                    cellsRemaining--;
+                else if (status == Cell.Status.FLAGGED)
+                    numFlags++;
+            }
+        }
     }
 
 

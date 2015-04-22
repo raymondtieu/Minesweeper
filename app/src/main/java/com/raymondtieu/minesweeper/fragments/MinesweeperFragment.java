@@ -40,7 +40,6 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     private FrameLayout mMineField;
 
     private OnePlayerGame game;
-    private int x, y, m;
     private Game.Difficulty difficulty;
 
     private ImageView minesIcon;
@@ -58,19 +57,22 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     private FlagController flagCtrl;
     private GameController gameCtrl;
 
-    private static final String SAVED_GAME = "saved_game";
-    private static final String SAVED_TIME = "saved_time";
+    private static final String TAG = "Fragment";
+
+    private static final String KEY_MINESWEEPER = "minesweeper";
+    private static final String KEY_TIME = "time";
+
+    private Long time;
 
     public MinesweeperFragment() {
         // Required empty public constructor
     }
 
-    public static MinesweeperFragment newInstance(int x, int y, int m) {
+    public static MinesweeperFragment newInstance(OnePlayerGame minesweeper, Long time) {
         Bundle args = new Bundle();
 
-        args.putInt("xDim", x);
-        args.putInt("yDim", y);
-        args.putInt("nMines", m);
+        args.putParcelable(KEY_MINESWEEPER, minesweeper);
+        args.putLong(KEY_TIME, time);
 
         MinesweeperFragment f = new MinesweeperFragment();
 
@@ -92,13 +94,6 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         final View layout = inflater
             .inflate(R.layout.fragment_minesweeper, container, false);
 
-        // get arguments
-        Bundle args = getArguments();
-        x = args.getInt("xDim", 16);
-        y = args.getInt("yDim", 16);
-        m = args.getInt("nMines", 40);
-        difficulty = (Game.Difficulty) args.get("difficulty");
-
         // set all views
         mDifficulty = (TextView) layout.findViewById(R.id.difficulty);
         mMines = (MinesTextView) layout.findViewById(R.id.num_mines);
@@ -118,6 +113,13 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         setRetainInstance(true);
         super.onActivityCreated(savedInstanceState);
 
+        // get arguments
+        Bundle args = getArguments();
+
+        game = args.getParcelable(KEY_MINESWEEPER);
+        time = args.getLong(KEY_TIME, 0L);
+        difficulty = (Game.Difficulty) args.get("difficulty");
+
         gameCtrl = new GameController(mDifficulty, difficulty, getActivity());
         fieldCtrl = new FieldController(mRecyclerView, mMineField);
         timerCtrl = new TimerController(timerIcon, mTimer);
@@ -125,28 +127,23 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         flagCtrl = new FlagController(mFlag);
 
         if (savedInstanceState == null) {
-            Log.i("Fragment", "Starting a new game");
+            Log.i(TAG, "Starting a new game");
             // start a new game
-            loadNewGame(x, y, m, null);
+            loadNewGame();
         } else {
-            Log.i("Fragment", "Loading a saved game");
+            Log.i(TAG, "Loading a saved game");
             // load a previous instance of the game
-            timerCtrl.setUpdatedTime(savedInstanceState.getLong(SAVED_TIME));
-            game = savedInstanceState.getParcelable(SAVED_GAME);
-            loadNewGame(game.getField().getDimX(),
-                    game.getField().getDimY(),
-                    game.getField().getMines(),
-                    game);
+            time = savedInstanceState.getLong(KEY_TIME);
+            //timerCtrl.setUpdatedTime(savedInstanceState.getLong(KEY_TIME));
+            game = savedInstanceState.getParcelable(KEY_MINESWEEPER);
+
+            loadNewGame();
         }
     }
 
-    public void loadNewGame(int x, int y, int m, OnePlayerGame prevGame) {
-        if (prevGame == null) {
-            prevGame = new OnePlayerGame(x, y, m);
-            timerCtrl.setUpdatedTime(0L);
-        }
+    public void loadNewGame() {
 
-        this.game = prevGame;
+        timerCtrl.setUpdatedTime(time);
 
         // calculate how large a cell should be to fit 10 per row on the screen
         cellWidth = calculateCellWidth();
@@ -156,8 +153,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         initFieldAdapter();
         setGameAdapters();
 
-        fieldCtrl.setGameParams(cellWidth, x, y);
-        fieldCtrl.initViewSize(x, y);
+        fieldCtrl.setGameParams(cellWidth, game.getField().getDimX(), game.getField().getDimY());
+        fieldCtrl.initViewSize(game.getField().getDimX(), game.getField().getDimY());
 
         minesCtrl.setGame(game);
         flagCtrl.setGame(game);
@@ -174,7 +171,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
     private void initFieldAdapter() {
         // create adapter to convert positions to points and points to positions
-        mPositionAdapter = new PositionPointAdapter(x, y);
+        mPositionAdapter = new PositionPointAdapter(game.getField().getDimX(), game.getField().getDimY());
 
         // create adapter to handle mine field
         mFieldAdapter = new FieldAdapter(getActivity(), game.getField(), cellWidth);
@@ -198,6 +195,8 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     public GameController getGameCtrl() {
         return gameCtrl;
     }
+
+    public TimerController getTimerCtrl() { return timerCtrl; }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -237,7 +236,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {
-                            loadNewGame(x, y, m, null);
+                            loadNewGame();
                         }
                     })
                     .setNegativeButton(android.R.string.no, null).show();
@@ -253,7 +252,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {
-                            loadNewGame(x, y, m, null);
+                            loadNewGame();
                         }
                     })
                     .setNegativeButton(android.R.string.no, null).show();
@@ -265,19 +264,18 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        Log.i("Fragment", "Saving instance state");
+        Log.i(TAG, "Saving instance state");
 
-        // save the game if it has been started
-        if (game.isStarted()) {
-            outState.putLong(SAVED_TIME, timerCtrl.getUpdatedTime());
-            outState.putParcelable(SAVED_GAME, game);
-        }
+        // save game when screen is rotated
+
+        outState.putLong(KEY_TIME, timerCtrl.getUpdatedTime());
+        outState.putParcelable(KEY_MINESWEEPER, game);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.i("Fragment", "Pausing..");
+        Log.i(TAG, "Pausing..");
 
         if (game.isStarted() && !game.isFinished())
             timerCtrl.pause();
@@ -287,8 +285,16 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     public void onResume() {
         super.onResume();
 
-        Log.i("Fragment", "Resuming..");
+        Log.i(TAG, "Resuming..");
         if (game.isStarted() && !game.isFinished())
             timerCtrl.start();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        Log.i(TAG, "Destroying..");
+
     }
 }

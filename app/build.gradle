@@ -17,6 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    repositories {
+        mavenCentral()
+    }
 }
 
 dependencies {
@@ -24,4 +27,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.android.support:recyclerview-v7:21.0.0'
     compile files('libs/svg-android.jar')
+    compile 'com.google.code.gson:gson:2.3.1'
 }
