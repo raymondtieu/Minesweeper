@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.raymondtieu.minesweeper.R;
 
+import com.raymondtieu.minesweeper.activities.MainActivity;
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
 import com.raymondtieu.minesweeper.controllers.FieldController;
@@ -61,6 +62,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
     private static final String KEY_MINESWEEPER = "minesweeper";
     private static final String KEY_TIME = "time";
+    private static final String KEY_DIFFICULTY = "difficulty";
 
     private Long time;
 
@@ -68,11 +70,13 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         // Required empty public constructor
     }
 
-    public static MinesweeperFragment newInstance(OnePlayerGame minesweeper, Long time) {
+    public static MinesweeperFragment newInstance(OnePlayerGame minesweeper,
+                                      Long time, Game.Difficulty difficulty) {
         Bundle args = new Bundle();
 
         args.putParcelable(KEY_MINESWEEPER, minesweeper);
         args.putLong(KEY_TIME, time);
+        args.putSerializable(KEY_DIFFICULTY, difficulty);
 
         MinesweeperFragment f = new MinesweeperFragment();
 
@@ -118,7 +122,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         game = args.getParcelable(KEY_MINESWEEPER);
         time = args.getLong(KEY_TIME, 0L);
-        difficulty = (Game.Difficulty) args.get("difficulty");
+        difficulty = (Game.Difficulty) args.get(KEY_DIFFICULTY);
 
         gameCtrl = new GameController(mDifficulty, difficulty, getActivity());
         fieldCtrl = new FieldController(mRecyclerView, mMineField);
@@ -129,7 +133,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         if (savedInstanceState == null) {
             Log.i(TAG, "Starting a new game");
             // start a new game
-            loadNewGame();
+            loadGame();
         } else {
             Log.i(TAG, "Loading a saved game");
             // load a previous instance of the game
@@ -137,11 +141,11 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
             //timerCtrl.setUpdatedTime(savedInstanceState.getLong(KEY_TIME));
             game = savedInstanceState.getParcelable(KEY_MINESWEEPER);
 
-            loadNewGame();
+            loadGame();
         }
     }
 
-    public void loadNewGame() {
+    public void loadGame() {
 
         timerCtrl.setUpdatedTime(time);
 
@@ -230,32 +234,16 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
             gameCtrl.addRecord(null);
 
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.lost_title)
-                    .setMessage(R.string.lost_message)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int button) {
-                            loadNewGame();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, null).show();
+            MainActivity activity = (MainActivity) getActivity();
+            activity.promptNewGame(R.string.lost_title, R.string.lost_message);
 
         } else if (result == Game.Status.WIN) {
             timerCtrl.stop();
 
             gameCtrl.addRecord(timerCtrl.getUpdatedTime());
 
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.win_title)
-                    .setMessage(R.string.win_message)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int button) {
-                            loadNewGame();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, null).show();
+            MainActivity activity = (MainActivity) getActivity();
+            activity.promptNewGame(R.string.win_title, R.string.win_message);
         }
     }
 
