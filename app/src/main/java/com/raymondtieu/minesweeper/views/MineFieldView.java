@@ -14,4 +14,8 @@ public interface MineFieldView {
     public void setUpMineField(Field field, GameUtils gameUtils);
 
     public void updateField(Notification type, int position);
+
+    public void onWin();
+
+    public void onLose();
 }

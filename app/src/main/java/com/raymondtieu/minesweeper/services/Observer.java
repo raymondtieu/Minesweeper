@@ -8,4 +8,5 @@ import com.raymondtieu.minesweeper.utils.Notification;
 public interface Observer {
 
     public void update(Notification type, int value);
+
 }

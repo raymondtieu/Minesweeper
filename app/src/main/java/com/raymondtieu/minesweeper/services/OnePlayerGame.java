@@ -7,12 +7,14 @@ import android.util.Log;
 import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
 import com.raymondtieu.minesweeper.utils.GameUtils;
-import com.raymondtieu.minesweeper.utils.Notification;
 
 /**
  * Created by raymond on 2015-04-12.
  */
 public class OnePlayerGame extends Observable implements Game, Parcelable {
+
+    private static final String TAG = "1PGAME";
+
     private boolean started;
     private boolean finished;
     private boolean flagging;
@@ -26,43 +28,14 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
 
     private static OnePlayerGame minesweeper;
 
-    public static OnePlayerGame getInstance(int dimX, int dimY, int mines, boolean newGame) {
-        if (minesweeper == null) {
 
-            Log.i("ONEPLAYERGAME", "creating a new instance for game");
-            minesweeper = new OnePlayerGame(dimX, dimY, mines);
-        } else {
-            Log.i("ONEPLAYERGAME", "instance already existed");
-        }
-
-        return minesweeper;
-    }
-
-    public OnePlayerGame getInstance(Field field, boolean newGame) {
-        if (minesweeper == null) {
-            minesweeper = new OnePlayerGame(field);
-        }
-
-        return minesweeper;
-    }
-
-    protected OnePlayerGame(int dimX, int dimY, int mines) {
-        this.started = false;
-        this.finished = false;
-        this.flagging = false;
-
-        this.field = new Field(dimX, dimY, mines);
-
-        this.numFlags = 0;
-        this.cellsRemaining = field.getNumCells() - field.getMines();
-
-        gameUtils = new GameUtils(dimX, dimY);
-
-        notifyObservers(Notification.NUM_MINES, field.getMines() - numFlags);
+    protected OnePlayerGame(GameUtils gameUtils) {
+        this.gameUtils = gameUtils;
+        initializeNewGame();
     }
 
     /* Create a game given a field from a save state */
-    protected OnePlayerGame(Field field) {
+    protected OnePlayerGame(Field field, String difficulty) {
         this.field = field;
         started = true;
         finished = false;
@@ -81,9 +54,46 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
             }
         }
 
-        gameUtils = new GameUtils(field.getDimX(), field.getDimY());
+        gameUtils = new GameUtils(difficulty);
 
-        notifyObservers(Notification.NUM_MINES, getNumMines());
+        notifynMines(getNumMines());
+    }
+
+    public static OnePlayerGame getInstance() {
+        return minesweeper;
+    }
+
+    public static OnePlayerGame getInstance(GameUtils gameUtils, boolean newGame) {
+        if (minesweeper == null || newGame) {
+            Log.i(TAG, "Creating new instance");
+            minesweeper = new OnePlayerGame(gameUtils);
+        } else
+            Log.i(TAG, "instance exists");
+
+        return minesweeper;
+    }
+
+    public static OnePlayerGame getInstance(Field field, String difficulty) {
+        if (minesweeper == null) {
+            Log.i(TAG, "Creating new instance with field");
+            minesweeper = new OnePlayerGame(field, difficulty);
+        } else
+            Log.i(TAG, "Instance with field already exists");
+
+        return minesweeper;
+    }
+
+
+    private void initializeNewGame() {
+        setStarted(false);
+        setFinished(false);
+        flagging = false;
+        numFlags = 0;
+        cellsRemaining = gameUtils.getNumCells() - gameUtils.getnMines();
+
+        field = new Field(gameUtils.getDimX(), gameUtils.getDimY(), gameUtils.getnMines());
+
+        notifynMines(getNumMines());
     }
 
 
@@ -95,7 +105,7 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
         this.started = started;
 
         if (this.started)
-            notifyObservers(Notification.START_TIME, 1);
+            notifyStartTime();
     }
 
     public boolean isFinished() {
@@ -106,7 +116,7 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
         this.finished = finished;
 
         if (this.finished)
-            notifyObservers(Notification.STOP_TIME, 1);
+            notifyStopTime();
     }
 
     public boolean isFlagging() {
@@ -114,7 +124,7 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
     }
 
     public int getNumMines() {
-        return field.getMines() - numFlags;
+        return gameUtils.getnMines() - numFlags;
     }
 
     public Field getField() {
@@ -130,14 +140,11 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
 
         int value = (isFlagging())? 1 : 0;
 
-        notifyObservers(Notification.TOGGLE_FLAG, value);
+        notifyToggleFlag(value);
     }
 
     @Override
-    public Status onClick(int x, int y) {
-        if (isFinished())
-            return Status.NO_CHANGE;
-
+    public void onClick(int x, int y) {
         Cell cell = field.getCell(x, y);
         Cell.Status status = cell.getStatus();
 
@@ -151,7 +158,8 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
                     startGame(x, y);
 
                 reveal(x, y);
-                return checkGameFinished(cell);
+
+                checkGameFinished(cell);
             }
 
         } else if (status == Cell.Status.REVEALED) {
@@ -161,13 +169,11 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
 
                 // reveal surrounding cells when cell is pressed
             } else {
-                Status result = revealSurrounding(x, y);
+                revealSurrounding(x, y);
 
                 // if a mine was not found, check to see if game is won
-                if (result != Status.LOSE)
-                    result = checkGameFinished(cell);
-
-                return result;
+                if (!isFinished())
+                    checkGameFinished(cell);
             }
 
         } else if (status == Cell.Status.FLAGGED) {
@@ -175,26 +181,26 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
             if (isFlagging())
                 flagCell(x, y, Cell.Status.HIDDEN);
         }
-
-        return Status.NO_CHANGE;
     }
 
     @Override
     public boolean onLongClick(int x, int y) {
-        if (isFinished())
-            return true;
-
         Cell cell = field.getCell(x, y);
 
         if (cell.getStatus() == Cell.Status.FLAGGED) {
             // unflag cell
             flagCell(x, y, Cell.Status.HIDDEN);
+
+            return true;
+
         } else if (cell.getStatus() == Cell.Status.HIDDEN) {
             // flag cell
             flagCell(x, y, Cell.Status.FLAGGED);
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override
@@ -206,10 +212,8 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
     }
 
     @Override
-    public int reveal(int x, int y) {
+    public void reveal(int x, int y) {
         revealAdjacent(x, y, true);
-
-        return 0;
     }
 
     public void revealAdjacent(int x, int y, boolean ignoreFlag) {
@@ -251,8 +255,7 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
             numFlags--;
             cell.setStatus(status);
 
-            notifyObservers(Notification.UNFLAG,
-                            gameUtils.getPosition(x, y));
+            notifyUnflag(gameUtils.getPosition(x, y));
 
         // flagging cell
         } else if (status == Cell.Status.FLAGGED) {
@@ -261,15 +264,13 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
                 numFlags++;
                 cell.setStatus(status);
 
-                notifyObservers(Notification.FLAG,
-                                gameUtils.getPosition(x, y));
+                notifyFlagged(gameUtils.getPosition(x, y));
             } else {
-                notifyObservers(Notification.INVALID_HIDDEN,
-                                gameUtils.getPosition(x, y));
+                notifyInvalidHidden(gameUtils.getPosition(x, y));
             }
         }
 
-        notifyObservers(Notification.NUM_MINES, getNumMines());
+        notifynMines(getNumMines());
     }
 
 
@@ -281,33 +282,26 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
             cellsRemaining--;
 
             if (cell.getAdjacentMines() < 9) {
-                notifyObservers(Notification.REVEAL,
-                                gameUtils.getPosition(x, y));
+                notifyRevealed(gameUtils.getPosition(x, y));
             } else {
-                notifyObservers(Notification.MINE,
-                                gameUtils.getPosition(x, y));
+                notifyMine(gameUtils.getPosition(x, y));
             }
         }
     }
 
 
     @Override
-    public Status checkGameFinished(Cell cell) {
+    public void checkGameFinished(Cell cell) {
 
         // revealed a mine
         if (cell.getAdjacentMines() >= 9) {
             setFinished(true);
-
-            return Status.LOSE;
-
+            notifyLose();
         // no more hidden cells
         } else if (cellsRemaining == 0) {
             setFinished(true);
-
-            return Status.WIN;
+            notifyWin();
         }
-
-        return Status.NO_CHANGE;
     }
 
     public void revealAllMines() {
@@ -319,28 +313,23 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
                     if (cell.getStatus() == Cell.Status.FLAGGED) {
                         cell.setStatus(Cell.Status.FLAG_CORRECT);
 
-                        notifyObservers(Notification.FLAG,
-                                        gameUtils.getPosition(i, j));
+                        notifyFlagged(gameUtils.getPosition(i, j));
                     } else {
                         cell.setStatus(Cell.Status.REVEALED);
 
-                        notifyObservers(Notification.MINE,
-                                        gameUtils.getPosition(i, j));
+                        notifyMine(gameUtils.getPosition(i, j));
                     }
                 } else if (cell.getStatus() == Cell.Status.FLAGGED) {
                     cell.setStatus(Cell.Status.FLAG_INCORRECT);
 
-                    notifyObservers(Notification.FLAG,
-                                    gameUtils.getPosition(i, j));
+                    notifyFlagged(gameUtils.getPosition(i, j));
                 }
             }
         }
     }
 
-    public Status revealSurrounding(int x, int y) {
+    public void revealSurrounding(int x, int y) {
         Cell cell = field.getCell(x, y);
-
-        Status status = Status.NO_CHANGE;
 
         // count number of adjacent flags
         int flags = 0;
@@ -359,34 +348,30 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
 
         // can't reveal surrounding cells if number of flags doesn't match
         if (flags != cell.getAdjacentMines()) {
-            notifyObservers(Notification.INVALID_REVEAL,
-                            gameUtils.getPosition(x, y));
+            notifyInvalidRevealed(gameUtils.getPosition(x, y));
 
-            return status;
-        }
+        } else {
+            // reveal all surrounding cells
+            // only ones immediately surrounding can be mines
+            for (int i = -1; i <= 1; i++) {
+                for (int j = -1; j <= 1; j++) {
+                    int v = x + i;
+                    int w = y + j;
 
-        // reveal all surrounding cells
-        // only ones immediately surrounding can be mines
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                int v = x + i;
-                int w = y + j;
+                    if (v >= 0 && v < field.getDimX() &&
+                            w >= 0 && w < field.getDimY() &&
+                            field.getCell(v, w).getStatus() == Cell.Status.HIDDEN) {
 
-                if (v >= 0 && v < field.getDimX() &&
-                        w >= 0 && w < field.getDimY() &&
-                        field.getCell(v, w).getStatus() == Cell.Status.HIDDEN) {
+                        if (field.getCell(v, w).getAdjacentMines() >= 9) {
+                            setFinished(true);
+                            notifyLose();
+                        }
 
-                    if (field.getCell(v, w).getAdjacentMines() >= 9) {
-                        status = Status.LOSE;
-                        setFinished(true);
+                        revealAdjacent(v, w, false);
                     }
-
-                    revealAdjacent(v, w, false);
                 }
             }
         }
-
-        return status;
     }
 
 
@@ -401,8 +386,7 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
         cellsRemaining = in.readInt();
 
         field = in.readParcelable(Field.class.getClassLoader());
-
-        gameUtils = new GameUtils(field.getDimX(), field.getDimY());
+        gameUtils = in.readParcelable(GameUtils.class.getClassLoader());
     }
 
     @Override
@@ -420,6 +404,7 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
         dest.writeInt(cellsRemaining);
 
         dest.writeParcelable(field, flags);
+        dest.writeParcelable(gameUtils, flags);
     }
 
     @SuppressWarnings("unused")

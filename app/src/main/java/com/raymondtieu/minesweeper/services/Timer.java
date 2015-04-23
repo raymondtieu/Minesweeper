@@ -1,22 +1,15 @@
-package com.raymondtieu.minesweeper.controllers;
+package com.raymondtieu.minesweeper.services;
 
 import android.os.Handler;
-import android.os.SystemClock;
 import android.widget.TextView;
 
-import com.raymondtieu.minesweeper.layouts.TimerImageView;
-
-import java.util.Timer;
-import java.util.TimerTask;
+import com.raymondtieu.minesweeper.views.HeaderView;
 
 /**
- * Created by raymond on 2015-04-17.
+ * Created by raymond on 2015-04-23.
  */
-public class TimerController {
-
-    private final TextView time;
-    private final TimerImageView timerIcon;
-
+public class Timer {
+    private final TextView mTimerTextView;
     private Handler timerHandler;
 
     private long startTime = 0L;
@@ -24,16 +17,10 @@ public class TimerController {
     private long timeSwap = 0L;
     private long current = 0L;
 
-    public TimerController(TimerImageView timerIcon, TextView time) {
-        this.timerIcon = timerIcon;
-        this.time = time;
-
+    public Timer(TextView mTimerTextView) {
         timerHandler = new Handler();
-    }
-
-    private void init() {
-        timerIcon.onValueChanged(false);
-        updateTextView();
+        
+        this.mTimerTextView = mTimerTextView;
     }
 
     public long getUpdatedTime() {
@@ -44,7 +31,7 @@ public class TimerController {
         updatedTime = t;
         timeSwap = t;
 
-        init();
+        updateTextView();
     }
 
     public void start() {
@@ -53,9 +40,6 @@ public class TimerController {
     }
 
     public long stop() {
-        // start icon animation
-        timerIcon.onValueChanged(true);
-
         // stop timer
         pause();
 
@@ -80,6 +64,6 @@ public class TimerController {
     };
 
     private void updateTextView() {
-        time.setText("" + (updatedTime / 1000));
+        mTimerTextView.setText("" + (updatedTime / 1000));
     }
 }

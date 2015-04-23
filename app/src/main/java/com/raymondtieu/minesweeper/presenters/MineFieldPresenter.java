@@ -2,8 +2,6 @@ package com.raymondtieu.minesweeper.presenters;
 
 import android.os.Bundle;
 
-import com.raymondtieu.minesweeper.services.Game;
-
 /**
  * Created by raymond on 2015-04-22.
  */
@@ -15,11 +13,13 @@ public interface MineFieldPresenter {
 
     public void onResume();
 
-    public Game.Status onClick(int position);
+    public void onClick(int position);
 
     public boolean onLongClick(int position);
 
     public void onFinish();
 
     public void initialize();
+
+    public void startNewGame();
 }

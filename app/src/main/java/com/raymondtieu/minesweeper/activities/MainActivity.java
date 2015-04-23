@@ -24,6 +24,7 @@ import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.models.Field;
 import com.raymondtieu.minesweeper.services.Game;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
+import com.raymondtieu.minesweeper.utils.GameUtils;
 import com.raymondtieu.minesweeper.views.fragments.HeaderFragment;
 import com.raymondtieu.minesweeper.views.fragments.MineFieldFragment;
 
@@ -39,7 +40,7 @@ public class MainActivity extends ActionBarActivity {
     private final static String KEY_MINESWEEPER = "minesweeper";
     private final static String KEY_TIME = "time";
 
-    private final static String KEY_MINESWEEPER_BUNDLE = "minesweeper_bundle";
+    private final static String ARG_KEY_MINESWEEPER = "arg_minesweeper";
 
     private SharedPreferences sharedPreferences;
 
@@ -49,7 +50,6 @@ public class MainActivity extends ActionBarActivity {
 
     private OnePlayerGame minesweeper;
     private Long gameTime = 0L;
-    private Game.Difficulty difficulty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +64,8 @@ public class MainActivity extends ActionBarActivity {
 
 
         Log.i(TAG, "Starting new game");
-        minesweeper = OnePlayerGame.getInstance(16, 16, 40, false);
+        GameUtils gameUtils = new GameUtils(GameUtils.BEGINNER);
+        minesweeper = OnePlayerGame.getInstance(gameUtils, true);
 
         Log.i(TAG, "Setting up fragments");
 
@@ -111,11 +112,11 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_easy) {
-            setUpMinesweeper(Game.Difficulty.BEGINNER);
+            //setUpMinesweeper(Game.Difficulty.BEGINNER);
         } else if (id == R.id.action_medium) {
-            setUpMinesweeper(Game.Difficulty.INTERMEDIATE);
+            //setUpMinesweeper(Game.Difficulty.INTERMEDIATE);
         } else if (id == R.id.action_hard) {
-            setUpMinesweeper(Game.Difficulty.ADVANCED);
+            //setUpMinesweeper(Game.Difficulty.ADVANCED);
         }
 
         return super.onOptionsItemSelected(item);
@@ -135,7 +136,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    public void setUpMinesweeper(final Game.Difficulty d) {
+    public void setUpMinesweeper() {
 
         boolean started = sharedPreferences.getBoolean(KEY_STARTED, false);
         boolean finished = sharedPreferences.getBoolean(KEY_FINISHED, false);
@@ -266,27 +267,23 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        /*
         int action = event.getAction();
         int keyCode = event.getKeyCode();
 
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    minesweeperFragment.getFlagCtrl().toggleFlag();
+                    minesweeper.toggleFlag();
                 }
                 return true;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (action == KeyEvent.ACTION_DOWN) {
-                    minesweeperFragment.getFlagCtrl().toggleFlag();
+                    minesweeper.toggleFlag();
                 }
                 return true;
             default:
                 return super.dispatchKeyEvent(event);
         }
-        */
-
-        return false;
     }
 
 

@@ -2,6 +2,7 @@ package com.raymondtieu.minesweeper.views.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.layouts.TimerImageView;
 import com.raymondtieu.minesweeper.presenters.HeaderPresenter;
 import com.raymondtieu.minesweeper.presenters.HeaderPresenterImpl;
+import com.raymondtieu.minesweeper.services.Timer;
 import com.raymondtieu.minesweeper.views.HeaderView;
 
 /**
@@ -23,7 +25,11 @@ import com.raymondtieu.minesweeper.views.HeaderView;
  */
 public class HeaderFragment extends Fragment implements HeaderView {
 
+    private static final String TAG = "HEADER";
+
     private HeaderPresenter presenter;
+
+    private TextView mDifficulty;
 
     private TextView mMinesTextView;
     private ImageView mMinesImageView;
@@ -32,6 +38,8 @@ public class HeaderFragment extends Fragment implements HeaderView {
 
     private TimerImageView mTimerImageView;
     private TextView mTimerTextView;
+
+    private Timer timer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,11 +50,15 @@ public class HeaderFragment extends Fragment implements HeaderView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Log.i(TAG, "Create view");
+
         // Inflate the layout for this fragment
         final View layout = inflater
                 .inflate(R.layout.fragment_header, container, false);
 
         // set views
+        mDifficulty = (TextView) layout.findViewById(R.id.difficulty);
+
         mMinesTextView = (TextView) layout.findViewById(R.id.mines);
         mMinesImageView = (ImageView) layout.findViewById(R.id.mines_icon);
 
@@ -76,8 +88,17 @@ public class HeaderFragment extends Fragment implements HeaderView {
         SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.mine_toolbar);
         mMinesImageView.setImageDrawable(svg.createPictureDrawable());
 
-        // *** temp set icon for timer ***
-        mTimerImageView.onValueChanged(false);
+        mFlagImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onToggleFlag();
+            }
+        });
+    }
+
+    @Override
+    public void setDifficulty(String difficulty) {
+        mDifficulty.setText(difficulty.toUpperCase());
     }
 
     @Override
@@ -88,5 +109,59 @@ public class HeaderFragment extends Fragment implements HeaderView {
     @Override
     public void setFlag(boolean flag) {
         mFlagImageView.onValueChanged(flag);
+    }
+
+    @Override
+    public void setTimer(Long time) {
+        // initialize timer
+        mTimerImageView.onValueChanged(false);
+        timer = new Timer(mTimerTextView);
+
+        timer.setUpdatedTime(time);
+    }
+
+    @Override
+    public void startTimer() {
+        timer.start();
+    }
+
+    @Override
+    public void resumeTimer() {
+
+    }
+
+    @Override
+    public void pauseTimer() {
+        timer.pause();
+    }
+
+    @Override
+    public Long stopTimer() {
+        mTimerImageView.onValueChanged(true);
+
+        return timer.stop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.onResume();
+
+        Log.i(TAG, "Resume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        presenter.onPause();
+
+        Log.i(TAG, "Pause");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Log.i(TAG, "Save Instance State");
     }
 }

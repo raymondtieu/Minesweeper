@@ -8,5 +8,8 @@ public enum Notification {
     REVEAL, FLAG, UNFLAG, INVALID_REVEAL, INVALID_HIDDEN, MINE,
 
     // header related
-    NUM_MINES, TOGGLE_FLAG, START_TIME, STOP_TIME
+    NUM_MINES, TOGGLE_FLAG, START_TIME, STOP_TIME,
+
+    // game related
+    WIN, LOSE
 }

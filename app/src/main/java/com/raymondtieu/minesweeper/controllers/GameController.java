@@ -27,11 +27,8 @@ public class GameController {
 
     private DatabaseHandler minesweeperDB;
 
-    private Game.Difficulty difficulty;
-
-    public GameController(TextView header, Game.Difficulty difficulty, Context context) {
+    public GameController(TextView header, Context context) {
         this.header = header;
-        this.difficulty = difficulty;
 
         minesweeperDB = new DatabaseHandler(context);
     }
@@ -39,17 +36,11 @@ public class GameController {
     public void setGame(OnePlayerGame game) {
         this.game = game;
 
-        if (difficulty == Game.Difficulty.BEGINNER)
-            header.setText(R.string.easy_title);
-        else if (difficulty == Game.Difficulty.INTERMEDIATE)
-            header.setText(R.string.medium_title);
-        else if (difficulty == Game.Difficulty.ADVANCED)
-            header.setText(R.string.hard_title);
     }
 
-    public Game.Status onClick(int position) {
+    public void onClick(int position) {
         Point p = positionAdapter.positionToPoint(position);
-        return game.onClick(p.x, p.y);
+        game.onClick(p.x, p.y);
     }
 
     public boolean onLongClick(int position) {
@@ -79,6 +70,6 @@ public class GameController {
         Date date = new Date();
 
         // a null value for time means game was a loss
-        minesweeperDB.addTime(difficulty, date.getTime(), time);
+        minesweeperDB.addTime("beginner", date.getTime(), time);
     }
 }

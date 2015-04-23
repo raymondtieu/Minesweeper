@@ -9,25 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
-import com.raymondtieu.minesweeper.controllers.FieldController;
-import com.raymondtieu.minesweeper.controllers.FlagController;
-import com.raymondtieu.minesweeper.controllers.GameController;
-import com.raymondtieu.minesweeper.controllers.MinesController;
-import com.raymondtieu.minesweeper.controllers.TimerController;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
-import com.raymondtieu.minesweeper.layouts.FlagImageView;
-import com.raymondtieu.minesweeper.layouts.MinesTextView;
-import com.raymondtieu.minesweeper.layouts.TimerImageView;
 import com.raymondtieu.minesweeper.models.Field;
 import com.raymondtieu.minesweeper.presenters.MineFieldPresenter;
 import com.raymondtieu.minesweeper.presenters.MineFieldPresenterImpl;
-import com.raymondtieu.minesweeper.services.Game;
-import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.utils.GameUtils;
 import com.raymondtieu.minesweeper.utils.Notification;
 import com.raymondtieu.minesweeper.views.MineFieldView;
@@ -36,6 +24,8 @@ import com.raymondtieu.minesweeper.views.MineFieldView;
  * Created by raymond on 2015-04-22.
  */
 public class MineFieldFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, MineFieldView {
+
+    private static final String TAG = "MINEFIELD";
 
     private MineFieldPresenter presenter;
 
@@ -126,6 +116,16 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     @Override
+    public void onWin() {
+
+    }
+
+    @Override
+    public void onLose() {
+
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         presenter.onClick(position);
     }
@@ -133,5 +133,28 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         return presenter.onLongClick(position);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.onResume();
+
+        Log.i(TAG, "Resume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //presenter.onPause();
+
+        Log.i(TAG, "Pause");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Log.i(TAG, "Save Instance State");
     }
 }

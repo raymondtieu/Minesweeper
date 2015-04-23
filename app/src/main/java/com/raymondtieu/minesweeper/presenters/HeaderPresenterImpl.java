@@ -1,6 +1,7 @@
 package com.raymondtieu.minesweeper.presenters;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.raymondtieu.minesweeper.services.Observer;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
@@ -12,15 +13,18 @@ import com.raymondtieu.minesweeper.views.HeaderView;
  */
 public class HeaderPresenterImpl implements HeaderPresenter, Observer {
 
+    private static final String TAG = "HEADERPRESENTER";
 
     private HeaderView headerView;
     private OnePlayerGame minesweeper;
+
+    private Long currentTime = 0L;
 
     public HeaderPresenterImpl(HeaderView view) {
         this.headerView = view;
 
         //init the game
-        this.minesweeper = OnePlayerGame.getInstance(16, 16, 40, false);
+        this.minesweeper = OnePlayerGame.getInstance();
         this.minesweeper.attach(this);
     }
 
@@ -30,41 +34,47 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
 
 
         // update the views
+        headerView.setDifficulty(minesweeper.getGameUtils().getDifficulty());
         headerView.updateMines(minesweeper.getNumMines());
         headerView.setFlag(minesweeper.isFlagging());
         // init the timer
-
+        headerView.setTimer(currentTime);
 
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-
+        // get the time from bundle
     }
 
     @Override
     public void onResume() {
-
+        if (minesweeper.isStarted() && !minesweeper.isFinished())
+            headerView.startTimer();
     }
 
     @Override
     public void onPause() {
-
+        if (minesweeper.isStarted() && !minesweeper.isFinished())
+            headerView.pauseTimer();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
 
+        // save the time in here and put it back onresume
     }
 
     @Override
     public void onFinish() {
 
+        // stop listening to game
+        minesweeper.detach(this);
     }
 
     @Override
     public void onToggleFlag() {
-
+        minesweeper.toggleFlag();
     }
 
     @Override
@@ -80,11 +90,24 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
         }
 
         if (type == Notification.START_TIME) {
-            // start timer
+            Log.i(TAG, "Start timer");
+            headerView.startTimer();
         }
 
         if (type == Notification.STOP_TIME) {
-            // stop timer
+            currentTime = headerView.stopTimer();
+
+            Log.i(TAG, "Stop timer " + currentTime);
+        }
+
+        if (type == Notification.WIN) {
+            Log.i(TAG, "Game is won");
+            onFinish();
+        }
+
+        if (type == Notification.LOSE) {
+            Log.i(TAG, "Game is lost");
+            onFinish();
         }
     }
 }

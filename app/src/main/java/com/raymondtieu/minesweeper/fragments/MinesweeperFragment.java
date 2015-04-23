@@ -41,7 +41,6 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     private FrameLayout mMineField;
 
     private OnePlayerGame game;
-    private Game.Difficulty difficulty;
 
     private ImageView minesIcon;
 
@@ -71,12 +70,11 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     }
 
     public static MinesweeperFragment newInstance(OnePlayerGame minesweeper,
-                                      Long time, Game.Difficulty difficulty) {
+                                      Long time) {
         Bundle args = new Bundle();
 
         args.putParcelable(KEY_MINESWEEPER, minesweeper);
         args.putLong(KEY_TIME, time);
-        args.putSerializable(KEY_DIFFICULTY, difficulty);
 
         MinesweeperFragment f = new MinesweeperFragment();
 
@@ -122,9 +120,9 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         game = args.getParcelable(KEY_MINESWEEPER);
         time = args.getLong(KEY_TIME, 0L);
-        difficulty = (Game.Difficulty) args.get(KEY_DIFFICULTY);
 
-        gameCtrl = new GameController(mDifficulty, difficulty, getActivity());
+
+        //gameCtrl = new GameController(mDifficulty, difficulty, getActivity());
         fieldCtrl = new FieldController(mRecyclerView, mMineField);
         timerCtrl = new TimerController(timerIcon, mTimer);
         minesCtrl = new MinesController(minesIcon, mMines, getActivity());
@@ -207,13 +205,11 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
         boolean startedBeforeClick = gameCtrl.isGameStarted();
 
         // number of mines adjacent to cell at x, y
-        Game.Status result = gameCtrl.onClick(position);
 
         // start timer if game has just started
         if (gameCtrl.isGameStarted() && !startedBeforeClick)
             timerCtrl.start();
 
-        handleGameOver(result);
     }
 
 
@@ -226,26 +222,6 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
     }
 
 
-    public void handleGameOver(Game.Status result) {
-        if (result == Game.Status.LOSE) {
-            game.revealAllMines();
-
-            timerCtrl.stop();
-
-            gameCtrl.addRecord(null);
-
-            MainActivity activity = (MainActivity) getActivity();
-            activity.promptNewGame(R.string.lost_title, R.string.lost_message);
-
-        } else if (result == Game.Status.WIN) {
-            timerCtrl.stop();
-
-            gameCtrl.addRecord(timerCtrl.getUpdatedTime());
-
-            MainActivity activity = (MainActivity) getActivity();
-            activity.promptNewGame(R.string.win_title, R.string.win_message);
-        }
-    }
 
 
     @Override

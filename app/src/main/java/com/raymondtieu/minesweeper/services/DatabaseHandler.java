@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.raymondtieu.minesweeper.models.Statistic;
+import com.raymondtieu.minesweeper.utils.GameUtils;
 
 /**
  * Created by raymond on 2015-04-18.
@@ -63,7 +64,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public void addTime(Game.Difficulty difficulty, Long date, Long time) {
+    public void addTime(String difficulty, Long date, Long time) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -74,23 +75,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_TIME, time);
 
         // insert into table
-        if (difficulty == Game.Difficulty.BEGINNER)
+        if (difficulty == GameUtils.BEGINNER)
             db.insert(TABLE_BEGINNER, null, values);
-        else if (difficulty == Game.Difficulty.INTERMEDIATE)
+        else if (difficulty == GameUtils.INTERMEDIATE)
             db.insert(TABLE_INTERMEDIATE, null, values);
-        else if (difficulty == Game.Difficulty.ADVANCED)
+        else if (difficulty == GameUtils.ADVANCED)
             db.insert(TABLE_ADVANCED, null, values);
 
         db.close();
     }
 
-    public Statistic getStatistics(Game.Difficulty difficulty) {
+    public Statistic getStatistics(String difficulty) {
         Statistic statistic = new Statistic();
         String table = TABLE_INTERMEDIATE;
 
-        if (difficulty == Game.Difficulty.BEGINNER)
+        if (difficulty == GameUtils.BEGINNER)
             table = TABLE_BEGINNER;
-        else if (difficulty == Game.Difficulty.ADVANCED)
+        else if (difficulty == GameUtils.ADVANCED)
             table = TABLE_ADVANCED;
 
         setBestRecords(table, statistic);

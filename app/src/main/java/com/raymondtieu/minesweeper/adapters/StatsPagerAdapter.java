@@ -10,6 +10,7 @@ import com.raymondtieu.minesweeper.fragments.StatsFragment;
 import com.raymondtieu.minesweeper.models.Statistic;
 import com.raymondtieu.minesweeper.services.DatabaseHandler;
 import com.raymondtieu.minesweeper.services.Game;
+import com.raymondtieu.minesweeper.utils.GameUtils;
 
 /**
  * Created by raymond on 2015-04-18.
@@ -41,11 +42,11 @@ public class StatsPagerAdapter extends FragmentPagerAdapter {
         Statistic s = null;
 
         if (position == 0)
-            s = minesweeperDB.getStatistics(Game.Difficulty.BEGINNER);
+            s = minesweeperDB.getStatistics(GameUtils.BEGINNER);
         else if (position == 1)
-            s = minesweeperDB.getStatistics(Game.Difficulty.INTERMEDIATE);
+            s = minesweeperDB.getStatistics(GameUtils.INTERMEDIATE);
         else if (position == 2)
-            s = minesweeperDB.getStatistics(Game.Difficulty.ADVANCED);
+            s = minesweeperDB.getStatistics(GameUtils.ADVANCED);
 
         StatsFragment statsFragment = StatsFragment.getInstance(s);
 
