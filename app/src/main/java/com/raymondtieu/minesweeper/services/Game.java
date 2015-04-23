@@ -14,7 +14,7 @@ public interface Game {
         NO_CHANGE, WIN, LOSE
     }
 
-    public enum Notification {
+    public enum NotificationT {
         REVEAL, FLAG, UNFLAG, INVALID_REVEAL, INVALID_HIDDEN, MINE
     }
 

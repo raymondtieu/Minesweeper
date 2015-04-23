@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/info_bar"
+    android:orientation="horizontal"
+    android:weightSum="5">
+
+    <TextView
+        android:id="@+id/difficulty"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:textStyle="bold"
+        android:text="@string/medium_title"
+        android:gravity="center"
+        android:capitalize="characters"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:weightSum="3"
+        android:orientation="horizontal" >
+        <ImageView
+            android:id="@+id/num_mines_icon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="@null" />
+
+        <com.raymondtieu.minesweeper.layouts.MinesTextView
+            android:id="@+id/num_mines"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="40" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:weightSum="3"
+        android:orientation="horizontal" >
+        <com.raymondtieu.minesweeper.layouts.TimerImageView
+            android:id="@+id/timer_icon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="@null"/>
+
+        <TextView
+            android:id="@+id/timer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:paddingLeft="10dp"
+            android:gravity="center_vertical"
+            android:text="0" />
+    </LinearLayout>
+
+    <com.raymondtieu.minesweeper.layouts.FlagImageView
+        android:id="@+id/flag_mode"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="5dp"
+        android:contentDescription="@null"/>
+
+</LinearLayout>

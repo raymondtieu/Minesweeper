@@ -1,21 +1,18 @@
 package com.raymondtieu.minesweeper.services;
 
-import android.graphics.Point;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.raymondtieu.minesweeper.adapters.FieldAdapter;
-import com.raymondtieu.minesweeper.adapters.PositionPointAdapter;
-import com.raymondtieu.minesweeper.layouts.FlagImageView;
-import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
+import com.raymondtieu.minesweeper.utils.GameUtils;
+import com.raymondtieu.minesweeper.utils.Notification;
 
 /**
  * Created by raymond on 2015-04-12.
  */
-public class OnePlayerGame implements Game, Parcelable {
+public class OnePlayerGame extends Observable implements Game, Parcelable {
     private boolean started;
     private boolean finished;
     private boolean flagging;
@@ -25,12 +22,27 @@ public class OnePlayerGame implements Game, Parcelable {
     private int numFlags;
     private int cellsRemaining;
 
-    private FieldAdapter fieldAdapter;
-    private PositionPointAdapter positionAdapter;
-    private MinesTextView minesListener;
-    private FlagImageView flagListener;
+    private GameUtils gameUtils;
 
-    public OnePlayerGame(int dimX, int dimY, int mines) {
+    private static OnePlayerGame minesweeper;
+
+    public static OnePlayerGame getInstance(int dimX, int dimY, int mines, boolean newGame) {
+        if (minesweeper == null) {
+            minesweeper = new OnePlayerGame(dimX, dimY, mines);
+        }
+
+        return minesweeper;
+    }
+
+    public OnePlayerGame getInstance(Field field, boolean newGame) {
+        if (minesweeper == null) {
+            minesweeper = new OnePlayerGame(field);
+        }
+
+        return minesweeper;
+    }
+
+    protected OnePlayerGame(int dimX, int dimY, int mines) {
         this.started = false;
         this.finished = false;
         this.flagging = false;
@@ -39,10 +51,12 @@ public class OnePlayerGame implements Game, Parcelable {
 
         this.numFlags = 0;
         this.cellsRemaining = field.getNumCells() - field.getMines();
+
+        gameUtils = new GameUtils(dimX, dimY);
     }
 
     /* Create a game given a field from a save state */
-    public OnePlayerGame(Field field) {
+    protected OnePlayerGame(Field field) {
         this.field = field;
         started = true;
         finished = false;
@@ -60,6 +74,8 @@ public class OnePlayerGame implements Game, Parcelable {
                     numFlags++;
             }
         }
+
+        gameUtils = new GameUtils(field.getDimX(), field.getDimY());
     }
 
 
@@ -69,6 +85,9 @@ public class OnePlayerGame implements Game, Parcelable {
 
     public void setStarted(boolean started) {
         this.started = started;
+
+        if (this.started)
+            notifyObservers(Notification.START_TIME, 1);
     }
 
     public boolean isFinished() {
@@ -77,30 +96,21 @@ public class OnePlayerGame implements Game, Parcelable {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+
+        if (this.finished)
+            notifyObservers(Notification.STOP_TIME, 1);
     }
 
     public boolean isFlagging() {
         return flagging;
     }
 
-    public void setMinesListener(MinesTextView minesListener) {
-        this.minesListener = minesListener;
-    }
-    
-    public void setFlagListener(FlagImageView flagListener) {
-        this.flagListener = flagListener;
-    }
-
-    public void setPositionAdapter(PositionPointAdapter positionAdapter) {
-        this.positionAdapter = positionAdapter;
-    }
-
-    public void setFieldAdapter(FieldAdapter fieldAdapter) {
-        this.fieldAdapter = fieldAdapter;
-    }
-
     public Field getField() {
         return this.field;
+    }
+
+    public GameUtils getGameUtils() {
+        return this.gameUtils;
     }
 
     public void toggleFlag() {
@@ -108,7 +118,7 @@ public class OnePlayerGame implements Game, Parcelable {
 
         int value = (isFlagging())? 1 : 0;
 
-        flagListener.onValueChanged(value);
+        notifyObservers(Notification.TOGGLE_FLAG, value);
     }
 
     @Override
@@ -229,9 +239,8 @@ public class OnePlayerGame implements Game, Parcelable {
             numFlags--;
             cell.setStatus(status);
 
-            fieldAdapter
-                .notifyChange(positionAdapter.pointToPosition(new Point(x, y)),
-                        Notification.UNFLAG);
+            notifyObservers(Notification.UNFLAG,
+                            gameUtils.getPosition(x, y));
 
         // flagging cell
         } else if (status == Cell.Status.FLAGGED) {
@@ -240,17 +249,16 @@ public class OnePlayerGame implements Game, Parcelable {
                 numFlags++;
                 cell.setStatus(status);
 
-                fieldAdapter
-                        .notifyChange(positionAdapter.pointToPosition(new Point(x, y)),
-                                Notification.FLAG);
+                notifyObservers(Notification.FLAG,
+                                gameUtils.getPosition(x, y));
             } else {
-                fieldAdapter
-                        .notifyChange(positionAdapter.pointToPosition(new Point(x, y)),
-                                Notification.INVALID_HIDDEN);
+                notifyObservers(Notification.INVALID_HIDDEN,
+                                gameUtils.getPosition(x, y));
             }
         }
 
-        minesListener.onValueChanged(field.getMines() - numFlags);
+        notifyObservers(Notification.NUM_MINES,
+                        field.getMines() - numFlags);
     }
 
 
@@ -262,13 +270,11 @@ public class OnePlayerGame implements Game, Parcelable {
             cellsRemaining--;
 
             if (cell.getAdjacentMines() < 9) {
-                fieldAdapter.notifyChange(positionAdapter
-                                .pointToPosition(new Point(x, y)),
-                        Notification.REVEAL);
+                notifyObservers(Notification.REVEAL,
+                                gameUtils.getPosition(x, y));
             } else {
-                fieldAdapter.notifyChange(positionAdapter
-                                .pointToPosition(new Point(x, y)),
-                        Notification.MINE);
+                notifyObservers(Notification.MINE,
+                                gameUtils.getPosition(x, y));
             }
         }
     }
@@ -302,24 +308,19 @@ public class OnePlayerGame implements Game, Parcelable {
                     if (cell.getStatus() == Cell.Status.FLAGGED) {
                         cell.setStatus(Cell.Status.FLAG_CORRECT);
 
-
-
-                        fieldAdapter.notifyChange(positionAdapter
-                                        .pointToPosition(new Point(i, j)),
-                                Notification.FLAG);
+                        notifyObservers(Notification.FLAG,
+                                        gameUtils.getPosition(i, j));
                     } else {
                         cell.setStatus(Cell.Status.REVEALED);
 
-                        fieldAdapter.notifyChange(positionAdapter
-                                        .pointToPosition(new Point(i, j)),
-                                    Notification.MINE);
+                        notifyObservers(Notification.MINE,
+                                        gameUtils.getPosition(i, j));
                     }
                 } else if (cell.getStatus() == Cell.Status.FLAGGED) {
                     cell.setStatus(Cell.Status.FLAG_INCORRECT);
 
-                    fieldAdapter.notifyChange(positionAdapter
-                                    .pointToPosition(new Point(i, j)),
-                            Notification.FLAG);
+                    notifyObservers(Notification.FLAG,
+                                    gameUtils.getPosition(i, j));
                 }
             }
         }
@@ -347,9 +348,8 @@ public class OnePlayerGame implements Game, Parcelable {
 
         // can't reveal surrounding cells if number of flags doesn't match
         if (flags != cell.getAdjacentMines()) {
-            fieldAdapter.notifyChange(positionAdapter
-                            .pointToPosition(new Point(x, y)),
-                    Notification.INVALID_REVEAL);
+            notifyObservers(Notification.INVALID_REVEAL,
+                            gameUtils.getPosition(x, y));
 
             return status;
         }
@@ -390,6 +390,8 @@ public class OnePlayerGame implements Game, Parcelable {
         cellsRemaining = in.readInt();
 
         field = in.readParcelable(Field.class.getClassLoader());
+
+        gameUtils = new GameUtils(field.getDimX(), field.getDimY());
     }
 
     @Override
