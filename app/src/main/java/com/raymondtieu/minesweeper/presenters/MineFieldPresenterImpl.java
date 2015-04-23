@@ -30,9 +30,15 @@ public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
-        gameUtils = minesweeper.getGameUtils();
+    }
 
+    @Override
+    public void initialize() {
+        gameUtils = minesweeper.getGameUtils();
         mineFieldView.setUpMineField(minesweeper.getField(), gameUtils);
+
+        mineFieldView.setMineFieldViewSize(minesweeper.getField().getDimX(),
+                minesweeper.getField().getDimY());
     }
 
     @Override

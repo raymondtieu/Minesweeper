@@ -28,7 +28,11 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
 
     public static OnePlayerGame getInstance(int dimX, int dimY, int mines, boolean newGame) {
         if (minesweeper == null) {
+
+            Log.i("ONEPLAYERGAME", "creating a new instance for game");
             minesweeper = new OnePlayerGame(dimX, dimY, mines);
+        } else {
+            Log.i("ONEPLAYERGAME", "instance already existed");
         }
 
         return minesweeper;
@@ -53,6 +57,8 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
         this.cellsRemaining = field.getNumCells() - field.getMines();
 
         gameUtils = new GameUtils(dimX, dimY);
+
+        notifyObservers(Notification.NUM_MINES, field.getMines() - numFlags);
     }
 
     /* Create a game given a field from a save state */
@@ -76,6 +82,8 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
         }
 
         gameUtils = new GameUtils(field.getDimX(), field.getDimY());
+
+        notifyObservers(Notification.NUM_MINES, getNumMines());
     }
 
 
@@ -103,6 +111,10 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
 
     public boolean isFlagging() {
         return flagging;
+    }
+
+    public int getNumMines() {
+        return field.getMines() - numFlags;
     }
 
     public Field getField() {
@@ -257,8 +269,7 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
             }
         }
 
-        notifyObservers(Notification.NUM_MINES,
-                        field.getMines() - numFlags);
+        notifyObservers(Notification.NUM_MINES, getNumMines());
     }
 
 

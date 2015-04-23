@@ -25,19 +25,18 @@
         android:weightSum="3"
         android:orientation="horizontal" >
         <ImageView
-            android:id="@+id/num_mines_icon"
+            android:id="@+id/mines_icon"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:contentDescription="@null" />
 
-        <com.raymondtieu.minesweeper.layouts.MinesTextView
-            android:id="@+id/num_mines"
+        <TextView
+            android:id="@+id/mines"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="40" />
+            android:gravity="center" />
     </LinearLayout>
 
     <LinearLayout
@@ -65,7 +64,7 @@
     </LinearLayout>
 
     <com.raymondtieu.minesweeper.layouts.FlagImageView
-        android:id="@+id/flag_mode"
+        android:id="@+id/flag"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

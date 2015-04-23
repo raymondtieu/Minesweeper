@@ -59,12 +59,12 @@ public class GameController {
 
     public void setPositionAdapter(PositionPointAdapter positionAdapter) {
         this.positionAdapter = positionAdapter;
-        game.setPositionAdapter(positionAdapter);
+      //  game.setPositionAdapter(positionAdapter);
     }
 
     public void setFieldAdapter(FieldAdapter fieldAdapter) {
         this.fieldAdapter = fieldAdapter;
-        game.setFieldAdapter(fieldAdapter);
+       // game.setFieldAdapter(fieldAdapter);
     }
 
     public boolean isGameStarted() {

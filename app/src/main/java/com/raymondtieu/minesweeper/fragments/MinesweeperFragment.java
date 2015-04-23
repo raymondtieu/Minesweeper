@@ -179,7 +179,7 @@ public class MinesweeperFragment extends Fragment implements AdapterView.OnItemC
 
         // create adapter to handle mine field
         mFieldAdapter = new FieldAdapter(getActivity(), game.getField(), cellWidth);
-        mFieldAdapter.setPositionAdapter(mPositionAdapter);
+        //mFieldAdapter.setPositionAdapter(mPositionAdapter);
         mFieldAdapter.setOnItemClickListener(this);
         mFieldAdapter.setOnItemLongClickListener(this);
 

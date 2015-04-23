@@ -25,6 +25,19 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
     }
 
     @Override
+    public void initialize() {
+        // init the game?
+
+
+        // update the views
+        headerView.updateMines(minesweeper.getNumMines());
+        headerView.setFlag(minesweeper.isFlagging());
+        // init the timer
+
+
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
     }

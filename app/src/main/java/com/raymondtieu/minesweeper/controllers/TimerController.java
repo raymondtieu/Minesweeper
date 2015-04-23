@@ -33,7 +33,7 @@ public class TimerController {
     }
 
     private void init() {
-        timerIcon.onValueChanged(0);
+        timerIcon.onValueChanged(false);
         updateTextView();
     }
 
@@ -55,7 +55,7 @@ public class TimerController {
 
     public long stop() {
         // start icon animation
-        timerIcon.onValueChanged(1);
+        timerIcon.onValueChanged(true);
 
         // stop timer
         pause();

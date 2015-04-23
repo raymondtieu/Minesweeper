@@ -43,15 +43,11 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
     private FieldAdapter mAdapter;
     private FrameLayout mFrameLayout;
 
+    // read this from shared preferences
     private int cellDimen = 90;
 
-    public static MineFieldFragment newInstance(OnePlayerGame minesweeper,
-                                                  Long time, Game.Difficulty difficulty) {
+    public static MineFieldFragment newInstance() {
         Bundle args = new Bundle();
-
-        args.putParcelable(KEY_MINESWEEPER, minesweeper);
-        args.putLong(KEY_TIME, time);
-        args.putSerializable(KEY_DIFFICULTY, difficulty);
 
         MineFieldFragment f = new MineFieldFragment();
 
@@ -77,8 +73,7 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.minefield);
         mFrameLayout = (FrameLayout) layout.findViewById(R.id.minefield_container);
 
-        if (presenter == null)
-            presenter = new MineFieldPresenterImpl(this);
+        initialize();
 
         return layout;
     }
@@ -89,33 +84,24 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
         setRetainInstance(true);
         super.onActivityCreated(savedInstanceState);
         presenter.onActivityCreated(savedInstanceState);
+    }
 
-        // get arguments
-        Bundle args = getArguments();
 
-        game = args.getParcelable(KEY_MINESWEEPER);
-        time = args.getLong(KEY_TIME, 0L);
-        difficulty = (Game.Difficulty) args.get(KEY_DIFFICULTY);
+    private void initialize() {
+        if (presenter == null)
+            presenter = new MineFieldPresenterImpl(this);
 
-        gameCtrl = new GameController(mDifficulty, difficulty, getActivity());
-        fieldCtrl = new FieldController(mRecyclerView, mMineField);
-        timerCtrl = new TimerController(timerIcon, mTimer);
-        minesCtrl = new MinesController(minesIcon, mMines, getActivity());
-        flagCtrl = new FlagController(mFlag);
+        // initialize views
+        presenter.initialize();
+    }
 
-        if (savedInstanceState == null) {
-            Log.i(TAG, "Starting a new game");
-            // start a new game
-            loadGame();
-        } else {
-            Log.i(TAG, "Loading a saved game");
-            // load a previous instance of the game
-            time = savedInstanceState.getLong(KEY_TIME);
-            //timerCtrl.setUpdatedTime(savedInstanceState.getLong(KEY_TIME));
-            game = savedInstanceState.getParcelable(KEY_MINESWEEPER);
+    @Override
+    public void setMineFieldViewSize(int x, int y) {
+        mRecyclerView.getLayoutParams().height = x * cellDimen;
+        mRecyclerView.getLayoutParams().width = y * cellDimen;
 
-            loadGame();
-        }
+        mFrameLayout.getLayoutParams().height = x * cellDimen;
+        mFrameLayout.getLayoutParams().width = y * cellDimen;
     }
 
     @Override
@@ -132,12 +118,11 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
 
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(mAdapter);
-
     }
 
     @Override
     public void updateField(Notification type, int position) {
-
+        mAdapter.notifyChange(position, type);
     }
 
     @Override

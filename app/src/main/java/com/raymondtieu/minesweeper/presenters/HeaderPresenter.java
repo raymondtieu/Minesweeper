@@ -18,4 +18,6 @@ public interface HeaderPresenter {
     public void onFinish();
 
     public void onToggleFlag();
+
+    public void initialize();
 }

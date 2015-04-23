@@ -31,8 +31,8 @@ public class FlagController {
 
     public void setGame(OnePlayerGame game) {
         this.game = game;
-        this.game.setFlagListener(flag);
+        //this.game.setFlagListener(flag);
 
-        this.flag.onValueChanged(0);
+        this.flag.onValueChanged(false);
     }
 }

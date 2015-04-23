@@ -15,6 +15,8 @@ import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
 import com.raymondtieu.minesweeper.services.Game;
+import com.raymondtieu.minesweeper.utils.GameUtils;
+import com.raymondtieu.minesweeper.utils.Notification;
 
 
 /**
@@ -30,7 +32,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
     private int cellDimensions;
 
-    private PositionPointAdapter positionAdapter;
+    private GameUtils gameUtils;
 
     CellHolder[] holders;
 
@@ -86,7 +88,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             holders[position] = holder;
         }
 
-        Point p = positionAdapter.positionToPoint(position);
+        Point p = gameUtils.getPoint(position);
 
         Cell cell = field.getCell(p.x, p.y);
         Cell.Status status = cell.getStatus();
@@ -142,23 +144,23 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         }
     }
 
-    public void setPositionAdapter(PositionPointAdapter adapter) {
-        this.positionAdapter = adapter;
+    public void setPositionAdapter(GameUtils gameUtils) {
+        this.gameUtils = gameUtils;
     }
 
 
-    public void notifyChange(int position, Game.Notification notification) {
-        if (notification == Game.Notification.REVEAL)
+    public void notifyChange(int position, Notification notification) {
+        if (notification == Notification.REVEAL)
             notifyReveal(position);
-        else if (notification == Game.Notification.FLAG)
+        else if (notification == Notification.FLAG)
             notifyFlag(position, true);
-        else if (notification == Game.Notification.UNFLAG)
+        else if (notification == Notification.UNFLAG)
             notifyFlag(position, false);
-        else if (notification == Game.Notification.MINE)
+        else if (notification == Notification.MINE)
             notifyMine(position);
-        else if (notification == Game.Notification.INVALID_HIDDEN)
+        else if (notification == Notification.INVALID_HIDDEN)
             notifyInvalid(position, true);
-        else if (notification == Game.Notification.INVALID_REVEAL)
+        else if (notification == Notification.INVALID_REVEAL)
             notifyInvalid(position, false);
     }
 

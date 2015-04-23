@@ -24,6 +24,8 @@ import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.models.Field;
 import com.raymondtieu.minesweeper.services.Game;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
+import com.raymondtieu.minesweeper.views.fragments.HeaderFragment;
+import com.raymondtieu.minesweeper.views.fragments.MineFieldFragment;
 
 public class MainActivity extends ActionBarActivity {
     private static final String TAG = "MainActivity";
@@ -60,6 +62,28 @@ public class MainActivity extends ActionBarActivity {
         setUpToolbar();
         sharedPreferences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
+
+        Log.i(TAG, "Starting new game");
+        minesweeper = OnePlayerGame.getInstance(16, 16, 40, false);
+
+        Log.i(TAG, "Setting up fragments");
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        Bundle args = new Bundle();
+
+        MineFieldFragment mineFieldFragment = new MineFieldFragment();
+        HeaderFragment headerFragment = new HeaderFragment();
+
+        ft.replace(R.id.fragment_header, headerFragment);
+        ft.replace(R.id.fragment_minefield, mineFieldFragment, MS_FRAGMENT);
+        ft.commit();
+
+
+
+
+        /*
         if (savedInstanceState == null) {
             Log.i(TAG, "No saved instance, creating new fragment");
 
@@ -68,6 +92,7 @@ public class MainActivity extends ActionBarActivity {
         } else {
             Log.i(TAG, "Saved instance state found");
         }
+        */
     }
 
     @Override
@@ -114,7 +139,7 @@ public class MainActivity extends ActionBarActivity {
 
         boolean started = sharedPreferences.getBoolean(KEY_STARTED, false);
         boolean finished = sharedPreferences.getBoolean(KEY_FINISHED, false);
-
+/*
         if (minesweeper == null) {
             if (started && !finished) {
                 Log.i(TAG, "Loading saved game");
@@ -165,6 +190,7 @@ public class MainActivity extends ActionBarActivity {
                 setUpNewGame();
             }
         }
+        */
     }
 
     public void promptNewGame(int title, int message) {
@@ -181,6 +207,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void setUpNewGame() {
+
+        /*
         Log.i(TAG, "Setting up a new game");
 
         int[] diff;
@@ -204,10 +232,11 @@ public class MainActivity extends ActionBarActivity {
         editor.commit();
 
         setUpFragment();
+        */
     }
 
     public void setUpFragment() {
-
+/*
         Log.i(TAG, "Setting up fragment");
 
         FragmentManager fm = getSupportFragmentManager();
@@ -231,10 +260,13 @@ public class MainActivity extends ActionBarActivity {
         // put the difficulty of last loaded fragment into preferences
         editor.putInt(KEY_DIFFICULTY, difficulty.ordinal());
         editor.commit();
+
+        */
     }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        /*
         int action = event.getAction();
         int keyCode = event.getKeyCode();
 
@@ -252,13 +284,16 @@ public class MainActivity extends ActionBarActivity {
             default:
                 return super.dispatchKeyEvent(event);
         }
+        */
+
+        return false;
     }
 
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
+/*
         Log.i(TAG , "Saving");
 
         // save fragment
@@ -266,12 +301,14 @@ public class MainActivity extends ActionBarActivity {
 
         // save game
         outState.putParcelable(KEY_MINESWEEPER_BUNDLE, minesweeper);
+
+        */
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
+/*
         Log.i(TAG , "Restoring");
 
         if (savedInstanceState != null) {
@@ -282,12 +319,13 @@ public class MainActivity extends ActionBarActivity {
 
             minesweeper = savedInstanceState.getParcelable(KEY_MINESWEEPER_BUNDLE);
         }
+        */
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
+/*
         Log.i(TAG, "Stopping");
 
         // put the number of mines in shared preferences
@@ -307,6 +345,8 @@ public class MainActivity extends ActionBarActivity {
         }
 
         editor.commit();
+
+        */
     }
 
     @Override
@@ -314,7 +354,5 @@ public class MainActivity extends ActionBarActivity {
         super.onDestroy();
 
         Log.i(TAG, "Destroying");
-
-
     }
 }

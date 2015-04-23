@@ -9,6 +9,8 @@ import com.raymondtieu.minesweeper.utils.Notification;
  */
 public interface MineFieldView {
 
+    public void setMineFieldViewSize(int x, int y);
+
     public void setUpMineField(Field field, GameUtils gameUtils);
 
     public void updateField(Notification type, int position);

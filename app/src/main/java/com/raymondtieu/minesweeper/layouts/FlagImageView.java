@@ -13,7 +13,7 @@ import com.raymondtieu.minesweeper.services.ViewListener;
 /**
  * Created by raymond on 2015-04-16.
  */
-public class FlagImageView extends ImageView implements ViewListener {
+public class FlagImageView extends ImageView {
 
     private Context mContext;
 
@@ -33,10 +33,8 @@ public class FlagImageView extends ImageView implements ViewListener {
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
-
-    @Override
-    public void onValueChanged(int newValue) {
-        if (newValue == 1) {
+    public void onValueChanged(boolean flag) {
+        if (flag) {
             setSVGImage(mContext, R.raw.flag_primary);
         } else {
             setSVGImage(mContext, R.raw.flag_deselect);

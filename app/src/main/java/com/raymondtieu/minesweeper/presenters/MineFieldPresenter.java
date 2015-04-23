@@ -20,4 +20,6 @@ public interface MineFieldPresenter {
     public boolean onLongClick(int position);
 
     public void onFinish();
+
+    public void initialize();
 }

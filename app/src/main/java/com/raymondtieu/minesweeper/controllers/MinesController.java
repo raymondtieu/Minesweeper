@@ -37,7 +37,7 @@ public class MinesController {
     public void setGame(OnePlayerGame game) {
         this.game = game;
 
-        this.game.setMinesListener(mines);
+       // this.game.setMinesListener(mines);
         this.mines.setText("" + game.getField().getMines());
     }
 }
