@@ -4,7 +4,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.raymondtieu.minesweeper.services.Game;
 import com.raymondtieu.minesweeper.services.Observer;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.utils.GameUtils;

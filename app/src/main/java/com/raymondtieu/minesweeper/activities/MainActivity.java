@@ -70,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
         if (savedInstanceState == null) {
             Log.i(TAG, "Setting activity up");
 
-            setUpMinesweeper(difficulty, false);
+            setUpMinesweeper(difficulty, true);
         } else {
             Log.i(TAG, "ROTATING");
         }
