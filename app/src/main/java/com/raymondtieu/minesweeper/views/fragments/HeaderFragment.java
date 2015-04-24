@@ -17,6 +17,7 @@ import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.layouts.TimerImageView;
 import com.raymondtieu.minesweeper.presenters.HeaderPresenter;
 import com.raymondtieu.minesweeper.presenters.HeaderPresenterImpl;
+import com.raymondtieu.minesweeper.services.DatabaseHandler;
 import com.raymondtieu.minesweeper.services.Timer;
 import com.raymondtieu.minesweeper.views.HeaderView;
 
@@ -40,6 +41,8 @@ public class HeaderFragment extends Fragment implements HeaderView {
     private TextView mTimerTextView;
 
     private Timer timer;
+
+    private DatabaseHandler minesweeperDb;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -148,6 +151,18 @@ public class HeaderFragment extends Fragment implements HeaderView {
         mTimerImageView.onValueChanged(true);
 
         return timer.stop();
+    }
+
+    @Override
+    public void initDatabase() {
+        minesweeperDb = new DatabaseHandler(getActivity());
+    }
+
+    @Override
+    public void insertDatabase(String difficulty, long date, Long time) {
+        if (time != null)
+            time = timer.getUpdatedTime();
+        minesweeperDb.addTime(difficulty, date, time);
     }
 
     @Override

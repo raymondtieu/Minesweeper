@@ -3,10 +3,13 @@ package com.raymondtieu.minesweeper.presenters;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.raymondtieu.minesweeper.services.DatabaseHandler;
 import com.raymondtieu.minesweeper.services.Observer;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.utils.Notification;
 import com.raymondtieu.minesweeper.views.HeaderView;
+
+import java.util.Date;
 
 /**
  * Created by raymond on 2015-04-22.
@@ -24,8 +27,8 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
 
     public HeaderPresenterImpl(HeaderView view) {
         this.headerView = view;
+        this.headerView.initDatabase();
     }
-
 
     private void initialize() {
         // init the game
@@ -121,11 +124,21 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
         if (type == Notification.WIN) {
             Log.i(TAG, "Game is won");
             onFinish();
+
+            Date date = new Date();
+
+            headerView.insertDatabase(minesweeper.getGameUtils().getDifficulty(),
+                    date.getTime(), 0L);
         }
 
         if (type == Notification.LOSE) {
             Log.i(TAG, "Game is lost");
             onFinish();
+
+            Date date = new Date();
+
+            headerView.insertDatabase(minesweeper.getGameUtils().getDifficulty(),
+                    date.getTime(), null);
         }
     }
 }

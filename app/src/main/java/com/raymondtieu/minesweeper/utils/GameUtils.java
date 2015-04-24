@@ -34,11 +34,13 @@ public class GameUtils implements Parcelable {
                 dimX = 16;
                 dimY = 30;
                 nMines = 99;
+                break;
             default:
                 this.difficulty = INTERMEDIATE;
                 dimX = 16;
                 dimY = 16;
                 nMines = 40;
+                break;
         }
     }
 

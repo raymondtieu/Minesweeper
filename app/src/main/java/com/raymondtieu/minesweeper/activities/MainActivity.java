@@ -170,6 +170,7 @@ public class MainActivity extends ActionBarActivity {
 
         // start a new game
         } else {
+            Log.i(TAG, "Starting a new game: " + difficulty);
 
             GameUtils gameUtils = new GameUtils(difficulty);
 

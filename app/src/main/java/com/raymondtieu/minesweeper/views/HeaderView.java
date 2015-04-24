@@ -17,4 +17,8 @@ public interface HeaderView {
     public void pauseTimer();
 
     public Long stopTimer();
+
+    public void initDatabase();
+
+    public void insertDatabase(String difficulty, long date, Long time);
 }
