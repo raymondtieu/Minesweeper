@@ -10,11 +10,9 @@ public interface HeaderView {
 
     public void setFlag(boolean flag);
 
-    public void setTimer(Long time);
+    public void setTimer(Long time, boolean blink);
 
     public void startTimer();
-
-    public void resumeTimer();
 
     public void pauseTimer();
 

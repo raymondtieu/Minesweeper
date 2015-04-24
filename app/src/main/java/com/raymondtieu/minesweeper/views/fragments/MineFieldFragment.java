@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 
 import com.raymondtieu.minesweeper.R;
+import com.raymondtieu.minesweeper.activities.MainActivity;
 import com.raymondtieu.minesweeper.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 import com.raymondtieu.minesweeper.models.Field;
@@ -84,7 +85,7 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
             presenter = new MineFieldPresenterImpl(this);
 
         // initialize views
-        presenter.initialize();
+        //presenter.initialize();
     }
 
     @Override
@@ -155,6 +156,13 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         return presenter.onLongClick(position);
+    }
+
+    @Override
+    public void newGame() {
+        /* temporary */
+        MainActivity activity = (MainActivity) getActivity();
+        activity.newGameHeader();
     }
 
     @Override

@@ -67,7 +67,13 @@ public class MainActivity extends ActionBarActivity {
         sharedPreferences = getSharedPreferences(GameUtils.PREF_FILE, MODE_PRIVATE);
         difficulty = sharedPreferences.getString(KEY_DIFFICULTY, GameUtils.INTERMEDIATE);
 
-        setUpMinesweeper(difficulty);
+        if (savedInstanceState == null) {
+            Log.i(TAG, "Setting activity up");
+
+            setUpMinesweeper(difficulty, false);
+        } else {
+            Log.i(TAG, "ROTATING");
+        }
 /*
 
         Log.i(TAG, "Starting new game");
@@ -119,11 +125,11 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_easy) {
-            //setUpMinesweeper(Game.Difficulty.BEGINNER);
+            promptNewGame(GameUtils.BEGINNER);
         } else if (id == R.id.action_medium) {
-            //setUpMinesweeper(Game.Difficulty.INTERMEDIATE);
+            promptNewGame(GameUtils.INTERMEDIATE);
         } else if (id == R.id.action_hard) {
-            //setUpMinesweeper(Game.Difficulty.ADVANCED);
+            promptNewGame(GameUtils.ADVANCED);;
         }
 
         return super.onOptionsItemSelected(item);
@@ -143,20 +149,20 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    public void setUpMinesweeper(String difficulty) {
+    public void setUpMinesweeper(String difficulty, boolean newGame) {
 
         GameUtils gameUtils = new GameUtils(difficulty);
 
-        minesweeper = OnePlayerGame.getInstance(gameUtils, false);
+        minesweeper = OnePlayerGame.getInstance(gameUtils, newGame);
 
-        if (mineFieldFragment == null && headerFragment == null)
-            setUpFragments();
+        setUpFragments();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         // put the difficulty of last loaded fragment into preferences
         editor.putString(KEY_DIFFICULTY, gameUtils.getDifficulty());
         editor.apply();
+
     }
 
 
@@ -176,6 +182,25 @@ public class MainActivity extends ActionBarActivity {
         ft.replace(R.id.fragment_minefield, mineFieldFragment, MF_FRAGMENT);
         ft.commit();
 
+    }
+
+    public void promptNewGame(final String difficulty) {
+        minesweeper = OnePlayerGame.getInstance();
+
+        if (minesweeper.isStarted() && !minesweeper.isFinished()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("NEW GAME")
+                    .setMessage("ARE you sure?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int button) {
+                            setUpMinesweeper(difficulty, true);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null).show();
+        } else {
+            setUpMinesweeper(difficulty, true);
+        }
     }
 
     public void setUpMinesweeper() {
@@ -340,7 +365,7 @@ public class MainActivity extends ActionBarActivity {
         getSupportFragmentManager().putFragment(outState, HEADER_FRAGMENT, headerFragment);
 
         // save game
-        //outState.putParcelable(KEY_MINESWEEPER_BUNDLE, minesweeper);
+        outState.putParcelable(KEY_MINESWEEPER, minesweeper);
 
     }
 
@@ -359,7 +384,7 @@ public class MainActivity extends ActionBarActivity {
             headerFragment = (HeaderFragment) getSupportFragmentManager()
                     .getFragment(savedInstanceState, HEADER_FRAGMENT);
 
-            //minesweeper = savedInstanceState.getParcelable(KEY_MINESWEEPER_BUNDLE);
+            minesweeper = savedInstanceState.getParcelable(KEY_MINESWEEPER);
         }
     }
 
@@ -395,5 +420,10 @@ public class MainActivity extends ActionBarActivity {
         super.onDestroy();
 
         Log.i(TAG, "Destroying");
+    }
+
+
+    public void newGameHeader() {
+        headerFragment.newGame();
     }
 }

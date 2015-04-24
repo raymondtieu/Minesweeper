@@ -19,7 +19,5 @@ public interface MineFieldPresenter {
 
     public void onFinish();
 
-    public void initialize();
-
     public void startNewGame();
 }

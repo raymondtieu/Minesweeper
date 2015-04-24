@@ -19,7 +19,5 @@ public interface HeaderPresenter {
 
     public void onToggleFlag();
 
-    public void initialize();
-
     public void startNewGame();
 }

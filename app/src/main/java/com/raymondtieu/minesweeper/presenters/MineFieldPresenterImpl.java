@@ -27,18 +27,18 @@ public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
 
     public MineFieldPresenterImpl(MineFieldView view) {
         this.mineFieldView = view;
-
-        this.minesweeper = OnePlayerGame.getInstance();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
+        initialize();
     }
 
-    @Override
-    public void initialize() {
-        this.minesweeper.attach(this);
+    private void initialize() {
+        minesweeper = OnePlayerGame.getInstance();
+        minesweeper.attach(this);
+
         gameUtils = minesweeper.getGameUtils();
         mineFieldView.setUpMineField(minesweeper.getField(), gameUtils);
 
@@ -50,10 +50,9 @@ public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
     public void startNewGame() {
         minesweeper = OnePlayerGame.getInstance(gameUtils, true);
 
-        // notify the header that a new game has started
+        // notify the header that a new game has started, make call back to activity
         // ** temporary solution
-        HeaderPresenter header = HeaderPresenterImpl.getInstance();
-        header.startNewGame();
+        mineFieldView.newGame();
 
         initialize();
     }

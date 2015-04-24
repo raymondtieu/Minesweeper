@@ -22,26 +22,12 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
 
     private Long currentTime = 0L;
 
-    private static HeaderPresenterImpl headerPresenter;
-
-    protected HeaderPresenterImpl(HeaderView view) {
+    public HeaderPresenterImpl(HeaderView view) {
         this.headerView = view;
     }
 
-    public static HeaderPresenterImpl getInstance(HeaderView view) {
-        if (headerPresenter == null) {
-            headerPresenter = new HeaderPresenterImpl(view);
-        }
 
-        return headerPresenter;
-    }
-
-    public static HeaderPresenterImpl getInstance() {
-        return headerPresenter;
-    }
-
-    @Override
-    public void initialize() {
+    private void initialize() {
         // init the game
         minesweeper = OnePlayerGame.getInstance();
         minesweeper.attach(this);
@@ -50,14 +36,23 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
         headerView.setDifficulty(minesweeper.getGameUtils().getDifficulty());
         headerView.updateMines(minesweeper.getNumMines());
         headerView.setFlag(minesweeper.isFlagging());
+
         // init the timer
-        headerView.setTimer(currentTime);
+        if (minesweeper.isFinished())
+            headerView.setTimer(currentTime, true);
+        else
+            headerView.setTimer(currentTime, false);
 
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         // get the time from bundle
+        if (savedInstanceState != null) {
+            currentTime = savedInstanceState.getLong(KEY_TIME);
+        }
+
+        initialize();
     }
 
     @Override

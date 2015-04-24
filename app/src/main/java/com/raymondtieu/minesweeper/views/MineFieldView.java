@@ -18,4 +18,6 @@ public interface MineFieldView {
     public void onWin();
 
     public void onLose();
+
+    public void newGame();
 }
