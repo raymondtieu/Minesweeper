@@ -151,22 +151,43 @@ public class MainActivity extends ActionBarActivity {
 
     public void setUpMinesweeper(String difficulty, boolean newGame) {
 
-        GameUtils gameUtils = new GameUtils(difficulty);
+        // check for previous unfinished game first
+        boolean started = sharedPreferences.getBoolean(KEY_STARTED, false);
+        boolean finished = sharedPreferences.getBoolean(KEY_FINISHED, false);
 
-        minesweeper = OnePlayerGame.getInstance(gameUtils, newGame);
+        // load previous game
+        if (started && !finished && minesweeper == null) {
+            Log.i(TAG, "Loading a saved game");
 
-        setUpFragments();
+            Gson gson = new Gson();
+            Long time = sharedPreferences.getLong(KEY_TIME, 0L);
+            String jsonField = sharedPreferences.getString(KEY_MINESWEEPER, null);
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+            Field field = gson.fromJson(jsonField, Field.class);
+            minesweeper = OnePlayerGame.getInstance(field, difficulty);
 
-        // put the difficulty of last loaded fragment into preferences
-        editor.putString(KEY_DIFFICULTY, gameUtils.getDifficulty());
-        editor.apply();
+            setUpFragments(time);
+
+        // start a new game
+        } else {
+
+            GameUtils gameUtils = new GameUtils(difficulty);
+
+            minesweeper = OnePlayerGame.getInstance(gameUtils, newGame);
+
+            setUpFragments(0L);
+
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            // put the difficulty of last loaded fragment into preferences
+            editor.putString(KEY_DIFFICULTY, gameUtils.getDifficulty());
+            editor.apply();
+        }
 
     }
 
 
-    public void setUpFragments() {
+    public void setUpFragments(Long time) {
 
         Log.i(TAG, "Setting up fragments");
 
@@ -175,13 +196,16 @@ public class MainActivity extends ActionBarActivity {
 
         Bundle args = new Bundle();
 
-        mineFieldFragment = new MineFieldFragment();
+        args.putLong(KEY_TIME, time);
+
         headerFragment = new HeaderFragment();
-
+        headerFragment.setArguments(args);
         ft.replace(R.id.fragment_header, headerFragment, HEADER_FRAGMENT);
-        ft.replace(R.id.fragment_minefield, mineFieldFragment, MF_FRAGMENT);
-        ft.commit();
 
+        mineFieldFragment = new MineFieldFragment();
+        ft.replace(R.id.fragment_minefield, mineFieldFragment, MF_FRAGMENT);
+
+        ft.commit();
     }
 
     public void promptNewGame(final String difficulty) {
@@ -391,7 +415,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
-/*
+
         Log.i(TAG, "Stopping");
 
         // put the number of mines in shared preferences
@@ -400,30 +424,29 @@ public class MainActivity extends ActionBarActivity {
         editor.putBoolean(KEY_FINISHED, minesweeper.isFinished());
 
         if (minesweeper.isStarted() && !minesweeper.isFinished()) {
+            Log.i(TAG, "Saving game to preferences");
+
             Gson gson = new Gson();
             String jsonField = gson.toJson(minesweeper.getField());
-            Long time = minesweeperFragment.getTimerCtrl().getUpdatedTime();
+            Long time = headerFragment.getCurrentTime();
 
-            Log.i(TAG, "JSON GAME: " + jsonField);
+            Log.i(TAG, "JSON FIELD: " + jsonField);
+            Log.i(TAG, "TIME: " + time);
 
             editor.putString(KEY_MINESWEEPER, jsonField);
             editor.putLong(KEY_TIME, time);
+        } else {
+            editor.remove(KEY_MINESWEEPER);
+            editor.remove(KEY_TIME);
         }
 
         editor.commit();
-
-        */
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        Log.i(TAG, "Destroying");
     }
 
 
     public void newGameHeader() {
         headerFragment.newGame();
+
+        minesweeper = OnePlayerGame.getInstance();
     }
 }

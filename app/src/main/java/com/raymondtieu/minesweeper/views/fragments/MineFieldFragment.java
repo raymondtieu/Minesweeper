@@ -169,16 +169,6 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
     public void onResume() {
         super.onResume();
         presenter.onResume();
-
-        Log.i(TAG, "Resume");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        //presenter.onPause();
-
-        Log.i(TAG, "Pause");
     }
 
     @Override

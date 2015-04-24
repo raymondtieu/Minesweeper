@@ -7,15 +7,13 @@ import android.os.Bundle;
  */
 public interface HeaderPresenter {
 
-    public void onActivityCreated(Bundle savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState, Bundle args);
 
     public void onResume();
 
     public void onPause();
 
     public void onSaveInstanceState(Bundle outState, Long time);
-
-    public void onFinish();
 
     public void onToggleFlag();
 

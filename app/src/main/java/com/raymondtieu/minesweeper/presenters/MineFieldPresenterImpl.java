@@ -65,6 +65,7 @@ public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
     @Override
     public void onResume() {
         // redraw with values from preferences
+
     }
 
     @Override
@@ -81,8 +82,7 @@ public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
         return minesweeper.onLongClick(p.x, p.y);
     }
 
-    @Override
-    public void onFinish() {
+    private void onFinish() {
 
         // stop listening to game
         minesweeper.detach(this);

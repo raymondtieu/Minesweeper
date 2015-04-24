@@ -15,7 +15,7 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
 
     private static final String TAG = "HEADERPRESENTER";
 
-    private static final String KEY_TIME = "current_time";
+    private static final String KEY_TIME = "time";
 
     private HeaderView headerView;
     private OnePlayerGame minesweeper;
@@ -42,11 +42,14 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
             headerView.setTimer(currentTime, true);
         else
             headerView.setTimer(currentTime, false);
-
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState, Bundle args) {
+
+        // get arguments from bundle
+        currentTime = args.getLong(KEY_TIME, 0L);
+
         // get the time from bundle
         if (savedInstanceState != null) {
             currentTime = savedInstanceState.getLong(KEY_TIME);
@@ -80,8 +83,7 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
             minesweeper.toggleFlag();
     }
 
-    @Override
-    public void onFinish() {
+    private void onFinish() {
 
         // stop listening to game
         minesweeper.detach(this);

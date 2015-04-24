@@ -49,9 +49,6 @@ public class HeaderFragment extends Fragment implements HeaderView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        Log.i(TAG, "Create view");
-
         // Inflate the layout for this fragment
         final View layout = inflater
                 .inflate(R.layout.fragment_header, container, false);
@@ -74,10 +71,13 @@ public class HeaderFragment extends Fragment implements HeaderView {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Log.i(TAG, "On activity created");
         setRetainInstance(true);
         super.onActivityCreated(savedInstanceState);
-        presenter.onActivityCreated(savedInstanceState);
+
+        // get arguments
+        Bundle args = getArguments();
+
+        presenter.onActivityCreated(savedInstanceState, args);
     }
 
 
@@ -86,7 +86,6 @@ public class HeaderFragment extends Fragment implements HeaderView {
             presenter = new HeaderPresenterImpl(this);
 
         // initialize image views
-
         // disable hardware acceleration
         mMinesImageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
@@ -107,6 +106,10 @@ public class HeaderFragment extends Fragment implements HeaderView {
 
     public void newGame() {
         presenter.startNewGame();
+    }
+
+    public Long getCurrentTime() {
+        return timer.getUpdatedTime();
     }
 
     @Override
@@ -151,16 +154,12 @@ public class HeaderFragment extends Fragment implements HeaderView {
     public void onResume() {
         super.onResume();
         presenter.onResume();
-
-        Log.i(TAG, "Resume");
     }
 
     @Override
     public void onPause() {
         super.onPause();
         presenter.onPause();
-
-        Log.i(TAG, "Pause");
     }
 
     @Override
