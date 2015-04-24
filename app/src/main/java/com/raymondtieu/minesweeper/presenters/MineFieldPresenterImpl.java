@@ -36,7 +36,9 @@ public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
 
     private void initialize() {
         minesweeper = OnePlayerGame.getInstance();
-        minesweeper.attach(this);
+
+        if (!minesweeper.isFinished())
+            minesweeper.attach(this);
 
         gameUtils = minesweeper.getGameUtils();
         mineFieldView.setUpMineField(minesweeper.getField(), gameUtils);

@@ -32,7 +32,9 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
     private void initialize() {
         // init the game
         minesweeper = OnePlayerGame.getInstance();
-        minesweeper.attach(this);
+
+        if (!minesweeper.isFinished())
+            minesweeper.attach(this);
 
         // update the views
         headerView.setDifficulty(minesweeper.getGameUtils().getDifficulty());
