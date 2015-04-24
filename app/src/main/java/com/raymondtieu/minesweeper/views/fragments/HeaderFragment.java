@@ -74,10 +74,7 @@ public class HeaderFragment extends Fragment implements HeaderView {
 
 
     private void initialize() {
-        if (presenter == null)
-            presenter = new HeaderPresenterImpl(this);
-
-        presenter.initialize();
+        presenter = HeaderPresenterImpl.getInstance(this);
 
         // initialize image views
 
@@ -94,6 +91,11 @@ public class HeaderFragment extends Fragment implements HeaderView {
                 presenter.onToggleFlag();
             }
         });
+
+        // initialize timer
+        timer = new Timer(mTimerTextView);
+
+        presenter.initialize();
     }
 
     @Override
@@ -113,11 +115,9 @@ public class HeaderFragment extends Fragment implements HeaderView {
 
     @Override
     public void setTimer(Long time) {
-        // initialize timer
-        mTimerImageView.onValueChanged(false);
-        timer = new Timer(mTimerTextView);
-
         timer.setUpdatedTime(time);
+
+        mTimerImageView.onValueChanged(false);
     }
 
     @Override
@@ -161,6 +161,7 @@ public class HeaderFragment extends Fragment implements HeaderView {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        presenter.onSaveInstanceState(outState, timer.getUpdatedTime());
 
         Log.i(TAG, "Save Instance State");
     }

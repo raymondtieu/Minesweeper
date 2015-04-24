@@ -29,27 +29,30 @@ import com.raymondtieu.minesweeper.views.fragments.HeaderFragment;
 import com.raymondtieu.minesweeper.views.fragments.MineFieldFragment;
 
 public class MainActivity extends ActionBarActivity {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MAINACTIVITY";
 
-    private final static String PREF_FILE = "minesweeper_pref";
-    private final static String MS_FRAGMENT = "minesweeper_fragment";
+    private static final String MF_FRAGMENT = "minefield_fragment";
+    private static final String HEADER_FRAGMENT = "header_fragment";
 
-    private final static String KEY_STARTED = "started";
-    private final static String KEY_FINISHED = "finished";
-    private final static String KEY_DIFFICULTY = "difficulty";
-    private final static String KEY_MINESWEEPER = "minesweeper";
-    private final static String KEY_TIME = "time";
+    private static final String KEY_STARTED = "started";
+    private static final String KEY_FINISHED = "finished";
+    private static final String KEY_DIFFICULTY = "difficulty";
+    private static final String KEY_MINESWEEPER = "minesweeper";
+    private static final String KEY_TIME = "time";
 
-    private final static String ARG_KEY_MINESWEEPER = "arg_minesweeper";
+    private static final String ARG_KEY_MINESWEEPER = "arg_minesweeper";
 
     private SharedPreferences sharedPreferences;
 
     private Toolbar toolbar;
 
-    private MinesweeperFragment minesweeperFragment;
+    private MineFieldFragment mineFieldFragment;
+    private HeaderFragment headerFragment;
 
     private OnePlayerGame minesweeper;
     private Long gameTime = 0L;
+
+    private String difficulty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +60,15 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
 
-        Log.i(TAG, "OnCreate");
+        Log.i(TAG, "On Create");
 
         setUpToolbar();
-        sharedPreferences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
+        sharedPreferences = getSharedPreferences(GameUtils.PREF_FILE, MODE_PRIVATE);
+        difficulty = sharedPreferences.getString(KEY_DIFFICULTY, GameUtils.INTERMEDIATE);
+
+        setUpMinesweeper(difficulty);
+/*
 
         Log.i(TAG, "Starting new game");
         GameUtils gameUtils = new GameUtils(GameUtils.BEGINNER);
@@ -80,7 +87,7 @@ public class MainActivity extends ActionBarActivity {
         ft.replace(R.id.fragment_header, headerFragment);
         ft.replace(R.id.fragment_minefield, mineFieldFragment, MS_FRAGMENT);
         ft.commit();
-
+*/
 
 
 
@@ -135,6 +142,41 @@ public class MainActivity extends ActionBarActivity {
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
     }
 
+
+    public void setUpMinesweeper(String difficulty) {
+
+        GameUtils gameUtils = new GameUtils(difficulty);
+
+        minesweeper = OnePlayerGame.getInstance(gameUtils, false);
+
+        if (mineFieldFragment == null && headerFragment == null)
+            setUpFragments();
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // put the difficulty of last loaded fragment into preferences
+        editor.putString(KEY_DIFFICULTY, gameUtils.getDifficulty());
+        editor.apply();
+    }
+
+
+    public void setUpFragments() {
+
+        Log.i(TAG, "Setting up fragments");
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        Bundle args = new Bundle();
+
+        mineFieldFragment = new MineFieldFragment();
+        headerFragment = new HeaderFragment();
+
+        ft.replace(R.id.fragment_header, headerFragment, HEADER_FRAGMENT);
+        ft.replace(R.id.fragment_minefield, mineFieldFragment, MF_FRAGMENT);
+        ft.commit();
+
+    }
 
     public void setUpMinesweeper() {
 
@@ -290,33 +332,35 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-/*
+
         Log.i(TAG , "Saving");
 
         // save fragment
-        getSupportFragmentManager().putFragment(outState, MS_FRAGMENT, minesweeperFragment);
+        getSupportFragmentManager().putFragment(outState, MF_FRAGMENT, mineFieldFragment);
+        getSupportFragmentManager().putFragment(outState, HEADER_FRAGMENT, headerFragment);
 
         // save game
-        outState.putParcelable(KEY_MINESWEEPER_BUNDLE, minesweeper);
+        //outState.putParcelable(KEY_MINESWEEPER_BUNDLE, minesweeper);
 
-        */
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-/*
+
         Log.i(TAG , "Restoring");
 
         if (savedInstanceState != null) {
 
             Log.i(TAG, "Restoring fragment and game");
-            minesweeperFragment = (MinesweeperFragment) getSupportFragmentManager()
-                    .getFragment(savedInstanceState, MS_FRAGMENT);
+            mineFieldFragment = (MineFieldFragment) getSupportFragmentManager()
+                    .getFragment(savedInstanceState, MF_FRAGMENT);
 
-            minesweeper = savedInstanceState.getParcelable(KEY_MINESWEEPER_BUNDLE);
+            headerFragment = (HeaderFragment) getSupportFragmentManager()
+                    .getFragment(savedInstanceState, HEADER_FRAGMENT);
+
+            //minesweeper = savedInstanceState.getParcelable(KEY_MINESWEEPER_BUNDLE);
         }
-        */
     }
 
     @Override

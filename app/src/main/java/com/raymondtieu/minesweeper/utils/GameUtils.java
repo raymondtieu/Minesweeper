@@ -9,6 +9,9 @@ import android.os.Parcelable;
  */
 public class GameUtils implements Parcelable {
 
+
+    public static final String PREF_FILE = "pref_minesweeper";
+
     public static final String BEGINNER = "beginner";
     public static final String INTERMEDIATE = "intermediate";
     public static final String ADVANCED = "advanced";

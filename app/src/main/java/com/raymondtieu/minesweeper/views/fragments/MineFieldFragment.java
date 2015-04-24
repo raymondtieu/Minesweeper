@@ -1,5 +1,7 @@
 package com.raymondtieu.minesweeper.views.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -117,12 +119,32 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
 
     @Override
     public void onWin() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.win_title)
+                .setMessage(R.string.win_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
+                    public void onClick(DialogInterface dialog, int button) {
+                        presenter.startNewGame();
+                        mAdapter.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     @Override
     public void onLose() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.lost_title)
+                .setMessage(R.string.lost_message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
+                    public void onClick(DialogInterface dialog, int button) {
+                        presenter.startNewGame();
+                        mAdapter.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     @Override
@@ -154,6 +176,7 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        presenter.onSaveInstanceState(outState);
 
         Log.i(TAG, "Save Instance State");
     }

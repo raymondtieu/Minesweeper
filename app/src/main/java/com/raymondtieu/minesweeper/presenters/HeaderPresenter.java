@@ -13,11 +13,13 @@ public interface HeaderPresenter {
 
     public void onPause();
 
-    public void onSaveInstanceState(Bundle outState);
+    public void onSaveInstanceState(Bundle outState, Long time);
 
     public void onFinish();
 
     public void onToggleFlag();
 
     public void initialize();
+
+    public void startNewGame();
 }

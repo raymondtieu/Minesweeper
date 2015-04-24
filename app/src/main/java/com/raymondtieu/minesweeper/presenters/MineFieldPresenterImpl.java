@@ -16,8 +16,9 @@ import com.raymondtieu.minesweeper.views.MineFieldView;
  * Created by raymond on 2015-04-22.
  */
 public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
-
     private static final String TAG = "MFPRESENTER";
+
+    private static final String KEY_MINESWEEPER = "minesweeper";
 
     private MineFieldView mineFieldView;
     private GameUtils gameUtils;
@@ -28,7 +29,6 @@ public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
         this.mineFieldView = view;
 
         this.minesweeper = OnePlayerGame.getInstance();
-        this.minesweeper.attach(this);
     }
 
     @Override
@@ -38,6 +38,7 @@ public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
 
     @Override
     public void initialize() {
+        this.minesweeper.attach(this);
         gameUtils = minesweeper.getGameUtils();
         mineFieldView.setUpMineField(minesweeper.getField(), gameUtils);
 
@@ -48,16 +49,23 @@ public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
     @Override
     public void startNewGame() {
         minesweeper = OnePlayerGame.getInstance(gameUtils, true);
+
+        // notify the header that a new game has started
+        // ** temporary solution
+        HeaderPresenter header = HeaderPresenterImpl.getInstance();
+        header.startNewGame();
+
+        initialize();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-
+        outState.putParcelable(KEY_MINESWEEPER, minesweeper);
     }
 
     @Override
     public void onResume() {
-
+        // redraw with values from preferences
     }
 
     @Override
@@ -87,12 +95,18 @@ public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
                 && type != Notification.START_TIME && type != Notification.STOP_TIME) {
             if (type == Notification.WIN) {
                 Log.i(TAG, "Game is won");
+
                 onFinish();
+
+                mineFieldView.onWin();
+
             } else if (type == Notification.LOSE) {
                 Log.i(TAG, "Game is lost");
                 minesweeper.revealAllMines();
 
                 onFinish();
+
+                mineFieldView.onLose();
             } else
                 mineFieldView.updateField(type, value);
         }

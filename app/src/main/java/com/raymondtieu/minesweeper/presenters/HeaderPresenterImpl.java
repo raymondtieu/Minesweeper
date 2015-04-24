@@ -15,23 +15,36 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
 
     private static final String TAG = "HEADERPRESENTER";
 
+    private static final String KEY_TIME = "current_time";
+
     private HeaderView headerView;
     private OnePlayerGame minesweeper;
 
     private Long currentTime = 0L;
 
-    public HeaderPresenterImpl(HeaderView view) {
-        this.headerView = view;
+    private static HeaderPresenterImpl headerPresenter;
 
-        //init the game
-        this.minesweeper = OnePlayerGame.getInstance();
-        this.minesweeper.attach(this);
+    protected HeaderPresenterImpl(HeaderView view) {
+        this.headerView = view;
+    }
+
+    public static HeaderPresenterImpl getInstance(HeaderView view) {
+        if (headerPresenter == null) {
+            headerPresenter = new HeaderPresenterImpl(view);
+        }
+
+        return headerPresenter;
+    }
+
+    public static HeaderPresenterImpl getInstance() {
+        return headerPresenter;
     }
 
     @Override
     public void initialize() {
-        // init the game?
-
+        // init the game
+        minesweeper = OnePlayerGame.getInstance();
+        minesweeper.attach(this);
 
         // update the views
         headerView.setDifficulty(minesweeper.getGameUtils().getDifficulty());
@@ -60,9 +73,16 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState, Long time) {
 
         // save the time in here and put it back onresume
+        outState.putLong(KEY_TIME, time);
+    }
+
+    @Override
+    public void onToggleFlag() {
+        if (!minesweeper.isFinished())
+            minesweeper.toggleFlag();
     }
 
     @Override
@@ -73,8 +93,9 @@ public class HeaderPresenterImpl implements HeaderPresenter, Observer {
     }
 
     @Override
-    public void onToggleFlag() {
-        minesweeper.toggleFlag();
+    public void startNewGame() {
+        currentTime = 0L;
+        initialize();
     }
 
     @Override
