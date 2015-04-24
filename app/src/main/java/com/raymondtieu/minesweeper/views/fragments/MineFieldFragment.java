@@ -126,7 +126,7 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.win_title)
                     .setMessage(R.string.win_message)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.play_again, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {
                             presenter.startNewGame();
@@ -144,7 +144,7 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.lost_title)
                     .setMessage(R.string.lost_message)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.play_again, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {
                             presenter.startNewGame();

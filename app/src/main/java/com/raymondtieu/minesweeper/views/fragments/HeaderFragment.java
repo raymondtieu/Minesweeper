@@ -13,7 +13,6 @@ import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
 import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.layouts.FlagImageView;
-import com.raymondtieu.minesweeper.layouts.MinesTextView;
 import com.raymondtieu.minesweeper.layouts.TimerImageView;
 import com.raymondtieu.minesweeper.presenters.HeaderPresenter;
 import com.raymondtieu.minesweeper.presenters.HeaderPresenterImpl;

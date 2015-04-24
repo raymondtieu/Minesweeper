@@ -214,8 +214,8 @@ public class MainActivity extends ActionBarActivity {
 
         if (minesweeper.isStarted() && !minesweeper.isFinished()) {
             new AlertDialog.Builder(this)
-                    .setTitle("NEW GAME")
-                    .setMessage("ARE you sure?")
+                    .setTitle(R.string.quit_title)
+                    .setMessage(R.string.quit_message)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {

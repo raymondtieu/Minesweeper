@@ -9,20 +9,24 @@
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
-    <string name="easy_mode">Beginner (9x9, 10 mines)</string>
-    <string name="med_mode">Intermediate (16x16, 40 mines)</string>
-    <string name="hard_mode">Advanced (16x30, 99 mines)</string>
-
-    <string name="easy_title">BEGINNER</string>
-    <string name="medium_title">INTERMEDIATE</string>
-    <string name="hard_title">ADVANCED</string>
+    <string name="easy_mode">Beginner (10 mines - 9 x 9)</string>
+    <string name="med_mode">Intermediate (40 mines - 16 x 16)</string>
+    <string name="hard_mode">Advanced (99 mines - 16 x 30)</string>
 
     <string name="lost_title">You Lost!</string>
-    <string name="lost_message">Play again.</string>
+    <string name="lost_message">Sorry, you lost this game.</string>
 
     <string name="win_title">You Won!</string>
-    <string name="win_message">Play again.</string>
+    <string name="win_message">Congratulations, you won this game!</string>
+
+    <string name="play_again">Play Again</string>
+
+    <string name="quit_title">New Game</string>
+    <string name="quit_message">Are you sure you want to start a new game and quit this one?</string>
+
     <string name="title_activity_statistics">Statistics</string>
+    <string name="stats_delete_title">Reset Statistics</string>
+    <string name="stats_delete_message">Are you sure you want to reset all statistics to 0?</string>
 
     <string-array name="stats_tabs">
         <item>BEGINNER</item>

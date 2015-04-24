@@ -85,8 +85,8 @@ public class StatisticsActivity extends ActionBarActivity {
 
         if (id == R.id.action_delete) {
             new AlertDialog.Builder(this)
-                    .setTitle("Delete")
-                    .setMessage("Are you sure you want to delete records?")
+                    .setTitle(R.string.stats_delete_title)
+                    .setMessage(R.string.stats_delete_message)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int button) {
