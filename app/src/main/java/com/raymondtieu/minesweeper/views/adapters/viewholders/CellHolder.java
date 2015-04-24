@@ -1,4 +1,4 @@
-package com.raymondtieu.minesweeper.adapters;
+package com.raymondtieu.minesweeper.views.adapters.viewholders;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
 import com.raymondtieu.minesweeper.R;
+import com.raymondtieu.minesweeper.views.adapters.FieldAdapter;
 
 /**
  * Created by raymond on 2015-04-04.

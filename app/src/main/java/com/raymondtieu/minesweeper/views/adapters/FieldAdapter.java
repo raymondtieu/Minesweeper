@@ -1,9 +1,8 @@
-package com.raymondtieu.minesweeper.adapters;
+package com.raymondtieu.minesweeper.views.adapters;
 
 import android.content.Context;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +11,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 
 import com.raymondtieu.minesweeper.R;
+import com.raymondtieu.minesweeper.views.adapters.viewholders.CellHolder;
 import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
-import com.raymondtieu.minesweeper.services.Game;
 import com.raymondtieu.minesweeper.utils.GameUtils;
 import com.raymondtieu.minesweeper.utils.Notification;
 
@@ -104,6 +103,10 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             } else {
                 // set icon to be a mine
                 holder.setIcon(mContext, R.raw.mine_red, -1);
+
+                // start animation
+                Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.mine);
+                holder.icon.startAnimation(animation);
             }
         } else if (status == Cell.Status.FLAGGED) {
             holder.setIcon(mContext, R.raw.flag_primary, -1);
@@ -226,12 +229,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
 
     private void notifyMine(final int position) {
-        final CellHolder cell = holders[position];
-
-        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.mine);
-
         this.notifyItemChanged(position);
-        cell.icon.startAnimation(animation);
     }
 
     private void notifyInvalid(final int position, final boolean hidden) {

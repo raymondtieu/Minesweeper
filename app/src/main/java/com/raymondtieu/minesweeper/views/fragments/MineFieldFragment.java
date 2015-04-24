@@ -1,7 +1,6 @@
 package com.raymondtieu.minesweeper.views.fragments;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,8 +13,8 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 
 import com.raymondtieu.minesweeper.R;
-import com.raymondtieu.minesweeper.activities.MainActivity;
-import com.raymondtieu.minesweeper.adapters.FieldAdapter;
+import com.raymondtieu.minesweeper.views.activities.MainActivity;
+import com.raymondtieu.minesweeper.views.adapters.FieldAdapter;
 import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 import com.raymondtieu.minesweeper.models.Field;
 import com.raymondtieu.minesweeper.presenters.MineFieldPresenter;
@@ -84,9 +83,6 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
     private void initialize() {
         if (presenter == null)
             presenter = new MineFieldPresenterImpl(this);
-
-        // initialize views
-        //presenter.initialize();
     }
 
     @Override

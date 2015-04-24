@@ -1,29 +1,17 @@
-package com.raymondtieu.minesweeper.activities;
+package com.raymondtieu.minesweeper.views.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.raymondtieu.minesweeper.R;
-import com.raymondtieu.minesweeper.adapters.StatsPagerAdapter;
-import com.raymondtieu.minesweeper.fragments.StatsFragment;
+import com.raymondtieu.minesweeper.views.adapters.StatsPagerAdapter;
 import com.raymondtieu.minesweeper.layouts.SlidingTabLayout;
-import com.raymondtieu.minesweeper.services.DatabaseHandler;
-
-import java.io.File;
-import java.util.List;
 
 public class StatisticsActivity extends ActionBarActivity {
 
@@ -80,7 +68,6 @@ public class StatisticsActivity extends ActionBarActivity {
         if (id == android.R.id.home) {
             finish();
             return true;
-            //NavUtils.navigateUpFromSameTask(this);
         }
 
         if (id == R.id.action_delete) {

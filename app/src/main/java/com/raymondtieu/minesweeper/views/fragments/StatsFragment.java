@@ -1,4 +1,4 @@
-package com.raymondtieu.minesweeper.fragments;
+package com.raymondtieu.minesweeper.views.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

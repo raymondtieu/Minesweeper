@@ -1,4 +1,4 @@
-package com.raymondtieu.minesweeper.activities;
+package com.raymondtieu.minesweeper.views.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -15,18 +15,16 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.raymondtieu.minesweeper.fragments.*;
 
 import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.models.Field;
-import com.raymondtieu.minesweeper.services.Game;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.utils.GameUtils;
 import com.raymondtieu.minesweeper.views.fragments.HeaderFragment;
 import com.raymondtieu.minesweeper.views.fragments.MineFieldFragment;
+import com.raymondtieu.minesweeper.views.fragments.NavigationDrawerFragment;
 
 public class MainActivity extends ActionBarActivity {
     private static final String TAG = "MAINACTIVITY";
@@ -40,8 +38,6 @@ public class MainActivity extends ActionBarActivity {
     private static final String KEY_MINESWEEPER = "minesweeper";
     private static final String KEY_TIME = "time";
 
-    private static final String ARG_KEY_MINESWEEPER = "arg_minesweeper";
-
     private SharedPreferences sharedPreferences;
 
     private Toolbar toolbar;
@@ -50,7 +46,6 @@ public class MainActivity extends ActionBarActivity {
     private HeaderFragment headerFragment;
 
     private OnePlayerGame minesweeper;
-    private Long gameTime = 0L;
 
     private String difficulty;
 
@@ -67,46 +62,8 @@ public class MainActivity extends ActionBarActivity {
         sharedPreferences = getSharedPreferences(GameUtils.PREF_FILE, MODE_PRIVATE);
         difficulty = sharedPreferences.getString(KEY_DIFFICULTY, GameUtils.INTERMEDIATE);
 
-        if (savedInstanceState == null) {
-            Log.i(TAG, "Setting activity up");
-
+        if (savedInstanceState == null)
             setUpMinesweeper(difficulty, true);
-        } else {
-            Log.i(TAG, "ROTATING");
-        }
-/*
-
-        Log.i(TAG, "Starting new game");
-        GameUtils gameUtils = new GameUtils(GameUtils.BEGINNER);
-        minesweeper = OnePlayerGame.getInstance(gameUtils, true);
-
-        Log.i(TAG, "Setting up fragments");
-
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-
-        Bundle args = new Bundle();
-
-        MineFieldFragment mineFieldFragment = new MineFieldFragment();
-        HeaderFragment headerFragment = new HeaderFragment();
-
-        ft.replace(R.id.fragment_header, headerFragment);
-        ft.replace(R.id.fragment_minefield, mineFieldFragment, MS_FRAGMENT);
-        ft.commit();
-*/
-
-
-
-        /*
-        if (savedInstanceState == null) {
-            Log.i(TAG, "No saved instance, creating new fragment");
-
-            setUpMinesweeper(null);
-
-        } else {
-            Log.i(TAG, "Saved instance state found");
-        }
-        */
     }
 
     @Override
@@ -228,134 +185,6 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public void setUpMinesweeper() {
-
-        boolean started = sharedPreferences.getBoolean(KEY_STARTED, false);
-        boolean finished = sharedPreferences.getBoolean(KEY_FINISHED, false);
-/*
-        if (minesweeper == null) {
-            if (started && !finished) {
-                Log.i(TAG, "Loading saved game");
-
-                // load unfinished game
-                Gson gson = new Gson();
-                gameTime = sharedPreferences.getLong(KEY_TIME, 0L);
-                String jsonField = sharedPreferences.getString(KEY_MINESWEEPER, null);
-
-                Field field = gson.fromJson(jsonField, Field.class);
-                minesweeper = new OnePlayerGame(field);
-
-                int x = sharedPreferences.getInt(KEY_DIFFICULTY, 1);
-                difficulty = Game.Difficulty.values()[x];
-
-                setUpFragment();
-
-            } else {
-                Log.i(TAG, "Creating a new game");
-
-                // load a new game
-                // medium by default
-                int x = sharedPreferences.getInt(KEY_DIFFICULTY, 1);
-                difficulty = Game.Difficulty.values()[x];
-
-                setUpNewGame();
-            }
-        } else {
-            Log.i(TAG, "Starting a new game from menu");
-
-            // check if the current game is ongoing and prompt user to quit
-            if (minesweeper.isStarted() && !minesweeper.isFinished()) {
-                new AlertDialog.Builder(this)
-                        .setTitle("New Game")
-                        .setMessage("Are you sure you want to quit this game and start a new one?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int button) {
-                                // change difficulty from menu
-                                difficulty = d;
-                                setUpNewGame();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, null).show();
-            } else {
-                // change difficulty from menu
-                difficulty = d;
-                setUpNewGame();
-            }
-        }
-        */
-    }
-
-    public void promptNewGame(int title, int message) {
-        new AlertDialog.Builder(this)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface dialog, int button) {
-                    setUpNewGame();
-                }
-            })
-            .setNegativeButton(android.R.string.no, null).show();
-    }
-
-    public void setUpNewGame() {
-
-        /*
-        Log.i(TAG, "Setting up a new game");
-
-        int[] diff;
-
-        if (difficulty == Game.Difficulty.BEGINNER)
-            diff = getResources().getIntArray(R.array.beginner);
-        else if (difficulty == Game.Difficulty.INTERMEDIATE)
-            diff = getResources().getIntArray(R.array.intermediate);
-        else
-            diff = getResources().getIntArray(R.array.advanced);
-
-        minesweeper = new OnePlayerGame(diff[0], diff[1], diff[2]);
-
-        gameTime = 0L;
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        // reset the started and finished keys in preferences
-        editor.putBoolean(KEY_STARTED, false);
-        editor.putBoolean(KEY_FINISHED, false);
-        editor.commit();
-
-        setUpFragment();
-        */
-    }
-
-    public void setUpFragment() {
-/*
-        Log.i(TAG, "Setting up fragment");
-
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-
-        Bundle args = new Bundle();
-
-        minesweeperFragment = new MinesweeperFragment();
-
-        args.putParcelable(KEY_MINESWEEPER, minesweeper);
-        args.putLong(KEY_TIME, gameTime);
-        args.putSerializable(KEY_DIFFICULTY, difficulty);
-
-        minesweeperFragment.setArguments(args);
-
-        ft.replace(R.id.fragment_minesweeper, minesweeperFragment, MS_FRAGMENT);
-        ft.commit();
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        // put the difficulty of last loaded fragment into preferences
-        editor.putInt(KEY_DIFFICULTY, difficulty.ordinal());
-        editor.commit();
-
-        */
-    }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -402,7 +231,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (savedInstanceState != null) {
 
-            Log.i(TAG, "Restoring fragment and game");
+            Log.i(TAG, "Restoring fragments and game");
             mineFieldFragment = (MineFieldFragment) getSupportFragmentManager()
                     .getFragment(savedInstanceState, MF_FRAGMENT);
 

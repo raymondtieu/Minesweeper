@@ -1,9 +1,7 @@
-package com.raymondtieu.minesweeper.services;
+package com.raymondtieu.minesweeper.utils;
 
 import android.os.Handler;
 import android.widget.TextView;
-
-import com.raymondtieu.minesweeper.views.HeaderView;
 
 /**
  * Created by raymond on 2015-04-23.

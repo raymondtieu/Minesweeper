@@ -17,7 +17,7 @@ import com.raymondtieu.minesweeper.layouts.TimerImageView;
 import com.raymondtieu.minesweeper.presenters.HeaderPresenter;
 import com.raymondtieu.minesweeper.presenters.HeaderPresenterImpl;
 import com.raymondtieu.minesweeper.services.DatabaseHandler;
-import com.raymondtieu.minesweeper.services.Timer;
+import com.raymondtieu.minesweeper.utils.Timer;
 import com.raymondtieu.minesweeper.views.HeaderView;
 
 /**

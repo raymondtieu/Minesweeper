@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGParser;
 import com.raymondtieu.minesweeper.R;
-import com.raymondtieu.minesweeper.services.ViewListener;
 
 /**
  * Created by raymond on 2015-04-16.

@@ -1,4 +1,4 @@
-package com.raymondtieu.minesweeper.adapters;
+package com.raymondtieu.minesweeper.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-package com.raymondtieu.minesweeper.adapters;
+package com.raymondtieu.minesweeper.views.adapters;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -6,10 +6,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.raymondtieu.minesweeper.R;
-import com.raymondtieu.minesweeper.fragments.StatsFragment;
+import com.raymondtieu.minesweeper.views.fragments.StatsFragment;
 import com.raymondtieu.minesweeper.models.Statistic;
 import com.raymondtieu.minesweeper.services.DatabaseHandler;
-import com.raymondtieu.minesweeper.services.Game;
 import com.raymondtieu.minesweeper.utils.GameUtils;
 
 /**

@@ -3,7 +3,6 @@ package com.raymondtieu.minesweeper.presenters;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.raymondtieu.minesweeper.services.DatabaseHandler;
 import com.raymondtieu.minesweeper.services.Observer;
 import com.raymondtieu.minesweeper.services.OnePlayerGame;
 import com.raymondtieu.minesweeper.utils.Notification;

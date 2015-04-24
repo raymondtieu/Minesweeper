@@ -1,4 +1,4 @@
-package com.raymondtieu.minesweeper.fragments;
+package com.raymondtieu.minesweeper.views.fragments;
 
 
 import android.content.Intent;
@@ -19,9 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.raymondtieu.minesweeper.R;
-import com.raymondtieu.minesweeper.activities.StatisticsActivity;
+import com.raymondtieu.minesweeper.views.activities.StatisticsActivity;
 import com.raymondtieu.minesweeper.models.NavBarData;
-import com.raymondtieu.minesweeper.adapters.NavBarAdapter;
+import com.raymondtieu.minesweeper.views.adapters.NavBarAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
