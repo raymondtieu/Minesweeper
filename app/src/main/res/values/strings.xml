@@ -34,4 +34,6 @@
         <item>ADVANCED</item>
     </string-array>
 
+    <string name="title_activity_preferences">Settings</string>
+
 </resources>

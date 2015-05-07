@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.raymondtieu.minesweeper.R;
+import com.raymondtieu.minesweeper.views.activities.PreferencesActivity;
 import com.raymondtieu.minesweeper.views.activities.StatisticsActivity;
 import com.raymondtieu.minesweeper.models.NavBarData;
 import com.raymondtieu.minesweeper.views.adapters.NavBarAdapter;
@@ -166,6 +167,11 @@ public class NavigationDrawerFragment extends Fragment implements NavBarAdapter.
         switch(position) {
             case 0:
                 startActivity(new Intent(getActivity(), StatisticsActivity.class));
+                mDrawerLayout.closeDrawer(Gravity.START);
+                break;
+
+            case 1:
+                startActivity(new Intent(getActivity(), PreferencesActivity.class));
                 mDrawerLayout.closeDrawer(Gravity.START);
                 break;
 

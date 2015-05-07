@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.jenzz.materialpreference.PreferenceCategory android:title="Material Category">
+        <com.jenzz.materialpreference.Preference android:title="Material Preference"/>
+        <com.jenzz.materialpreference.Preference
+            android:title="Material "
+            android:summary="Material Summary"
+            />
+        <com.jenzz.materialpreference.Preference
+            android:title="Material Preference"
+            android:summary="Material Summary with icon"
+            android:dependency="Material checkbox key"
+            />
+        <com.jenzz.materialpreference.CheckBoxPreference
+            android:key="Material checkbox key"
+            android:title="Material checkbox preference"
+            android:summaryOn="Material checkbox summary on"
+            android:summaryOff="Material checkbox summary off"
+            android:disableDependentsState="true"
+            />
+        <com.jenzz.materialpreference.SwitchPreference
+            android:title="Material switch preference"
+            android:summaryOn="Material switch preference on"
+            android:summaryOff="Material _switch_preference_off"
+            />
+    </com.jenzz.materialpreference.PreferenceCategory>
+
+
+</PreferenceScreen>
