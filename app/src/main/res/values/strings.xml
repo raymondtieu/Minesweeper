@@ -36,4 +36,33 @@
 
     <string name="title_activity_preferences">Settings</string>
 
+    <string name="category_title_visual">Visual Settings</string>
+    <string name="preference_cell_size">Size of Cell</string>
+
+    <string name="category_title_game">Minesweeper Settings</string>
+
+    <string name="preference_sound_key">sounds</string>
+    <string name="preference_sound">Sounds</string>
+
+    <string name="preference_vibration_key">vibration</string>
+    <string name="preference_vibration">Vibration</string>
+
+    <string name="preference_long_press_key">long_press</string>
+    <string name="preference_long_press">Long Press for Flag</string>
+
+    <string name="preference_quick_reveal_key">quick_reveal</string>
+    <string name="preference_quick_reveal">Quick Reveal</string>
+
+    <string name="preference_quick_toggle_key">quick_toggle</string>
+    <string name="preference_quick_toggle">Quick Toggle Flag</string>
+
+    <string name="preference_volume_toggle_key">volume_toggle</string>
+    <string name="preference_volume_toggle">Volume Toggle Flag</string>
+
+    <string name="preference_autosave_key">autosave</string>
+    <string name="preference_autosave">Autosave Game</string>
+
+
+
+
 </resources>

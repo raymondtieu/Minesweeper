@@ -7,7 +7,6 @@ import android.support.v7.widget.Toolbar;
 import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.views.fragments.PreferencesFragment;
 
-import android.preference.PreferenceFragment;
 
 public class PreferencesActivity extends ActionBarActivity {
 
