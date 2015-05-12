@@ -11,14 +11,14 @@ public class Field implements Parcelable {
 
     private int dimX;
     private int dimY;
-    private int mines;
+    private int nMines;
 
     private Cell[][] field;
 
-    public Field(int x, int y, int mines) {
+    public Field(int x, int y, int nMines) {
         this.dimX = x;
         this.dimY = y;
-        this.mines = mines;
+        this.nMines = nMines;
 
         this.field = new Cell[dimX][dimY];
 
@@ -39,7 +39,7 @@ public class Field implements Parcelable {
     }
 
     public int getMines() {
-        return mines;
+        return nMines;
     }
 
     public int getNumCells() {
@@ -50,40 +50,36 @@ public class Field implements Parcelable {
         return field[x][y];
     }
 
-    public void generateField(int x, int y) {
-        int n = this.mines;
+    public void generateField(int startX, int startY) {
+        int minesLeft = this.nMines;
 
-        // place mines on blank field until there are no mines left to be placed
-        // generate i and j value until position without mine is found
-        while (n > 0) {
-            int a = (int) (Math.random() * dimX);
-            int b = (int) (Math.random() * dimY);
+        // place mines in random locations on field until there are none left
+        while (minesLeft > 0) {
+            int x = (int) (Math.random() * dimX);
+            int y = (int) (Math.random() * dimY);
 
-            // true when i and j are surrounding x and y
-            boolean adjacentX = Math.abs(x - a) <= 1;
-            boolean adjacentY = Math.abs(y - b) <= 1;
+            // true when (x, y) is adjacent to starting point
+            boolean adjacentX = Math.abs(startX - x) <= 1;
+            boolean adjacentY = Math.abs(startY - y) <= 1;
 
-            // check for valid coordinates (not starting point or around it)
-            if (!(adjacentX && adjacentY)) {
+            // place a mine only if it is not adjacent to the starting point
+            // and if (x, y) is not already a mine
+            if (!(adjacentX && adjacentY) && field[x][y].getAdjacentMines() < 9) {
+                field[x][y].setAdjacentMines(9);
 
-                // if no mine at (a,b), set mine
-                if (field[a][b].getAdjacentMines() < 9) {
-                    field[a][b].setAdjacentMines(9);
+                // increment number of adjacent mines around cell
+                for (int i = -1; i <= 1; i++) {
+                    for (int j = -1; j <= 1; j++) {
+                        int v = x + i;
+                        int w = y + j;
 
-                    // update surrounding blocks
-                    for (int i = -1; i <= 1; i++) {
-                        for (int j = -1; j <= 1; j++) {
-                            int v = a + i;
-                            int w = b + j;
-
-                            // check out of bounds
-                            if (v >= 0 && v < dimX && w >= 0 && w < dimY)
-                                field[v][w].addAdjacentMine();
-                        }
+                        // check out of bounds
+                        if (v >= 0 && v < dimX && w >= 0 && w < dimY)
+                            field[v][w].addAdjacentMine();
                     }
-
-                    n--;
                 }
+
+                minesLeft--;
             }
         }
     }
@@ -94,7 +90,7 @@ public class Field implements Parcelable {
     protected Field(Parcel in) {
         dimX = in.readInt();
         dimY = in.readInt();
-        mines = in.readInt();
+        nMines = in.readInt();
 
         field = new Cell[dimX][dimY];
 
@@ -114,7 +110,7 @@ public class Field implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(dimX);
         dest.writeInt(dimY);
-        dest.writeInt(mines);
+        dest.writeInt(nMines);
 
         // write the field to dest one row of cells at a time
         for (int i = 0; i < dimX; i++) {
