@@ -33,6 +33,11 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
     private GameUtils gameUtils;
 
+    private Animation animationGrow;
+    private Animation animationShrink;
+    private Animation animationMine;
+    private Animation animationInvalid;
+
     CellHolder[] holders;
 
     Integer[] CELL_MINES = {
@@ -65,6 +70,8 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         this.cellDimensions = size;
 
         holders = new CellHolder[field.getDimX() * field.getDimY()];
+
+        initializeAnimations();
     }
 
     @Override
@@ -104,9 +111,8 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
                 // set icon to be a mine
                 holder.setIcon(mContext, R.raw.mine_red, -1);
 
-                // start animation
-                Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.mine);
-                holder.icon.startAnimation(animation);
+                // start animation for mines
+                holder.icon.startAnimation(animationMine);
             }
         } else if (status == Cell.Status.FLAGGED) {
             holder.setIcon(mContext, R.raw.flag_primary, -1);
@@ -170,9 +176,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     private void notifyReveal(final int position) {
         final CellHolder cell = holders[position];
 
-        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
-
-        animation.setAnimationListener(new Animation.AnimationListener() {
+       animationGrow.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -190,7 +194,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         });
 
         this.notifyItemChanged(position);
-        cell.icon.startAnimation(animation);
+        cell.icon.startAnimation(animationGrow);
     }
 
     private void notifyFlag(final int position, final boolean flag) {
@@ -200,9 +204,9 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         final FieldAdapter f = this;
 
         if (flag)
-            animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
+            animation = animationGrow;
         else
-            animation = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
+            animation = animationShrink;
 
 
         animation.setAnimationListener(new Animation.AnimationListener() {
@@ -235,11 +239,9 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     private void notifyInvalid(final int position, final boolean hidden) {
         final CellHolder cell = holders[position];
 
-        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.invalid);
-
         if (!hidden) {
 
-            animation.setAnimationListener(new Animation.AnimationListener() {
+            animationInvalid.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
                     cell.icon.setVisibility(View.INVISIBLE);
@@ -260,6 +262,13 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         }
 
         this.notifyItemChanged(position);
-        cell.background.startAnimation(animation);
+        cell.background.startAnimation(animationInvalid);
+    }
+
+    private void initializeAnimations() {
+        animationGrow = AnimationUtils.loadAnimation(mContext, R.anim.grow);
+        animationShrink = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
+        animationMine = AnimationUtils.loadAnimation(mContext, R.anim.mine);
+        animationInvalid = AnimationUtils.loadAnimation(mContext, R.anim.invalid);
     }
 }
