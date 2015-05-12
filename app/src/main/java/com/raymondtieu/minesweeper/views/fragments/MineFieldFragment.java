@@ -2,7 +2,9 @@ package com.raymondtieu.minesweeper.views.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -173,6 +175,26 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
     public void onResume() {
         super.onResume();
         presenter.onResume();
+
+        // get current settings
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+
+        Log.i(TAG, "Long press: " + sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_long_press_key), true));
+        Log.i(TAG, "Quick reveal: " + sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_quick_reveal_key), true));
+        Log.i(TAG, "Quick toggle: " + sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_quick_toggle_key), true));
+        Log.i(TAG, "Sound: " + sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_sound_key), true));
+        Log.i(TAG, "Vibration: " + sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_vibration_key), true));
+        Log.i(TAG, "Volume toggle: " + sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_volume_toggle_key), true));
+        Log.i(TAG, "Autosave: " + sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_autosave_key), true));
+
     }
 
     @Override

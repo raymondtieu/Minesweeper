@@ -36,10 +36,10 @@
 
     <string name="title_activity_preferences">Settings</string>
 
-    <string name="category_title_visual">Visual Settings</string>
+    <string name="category_title_visual">Visual</string>
     <string name="preference_cell_size">Size of Cell</string>
 
-    <string name="category_title_game">Minesweeper Settings</string>
+    <string name="category_title_game">Minesweeper</string>
 
     <string name="preference_sound_key">sounds</string>
     <string name="preference_sound">Sounds</string>

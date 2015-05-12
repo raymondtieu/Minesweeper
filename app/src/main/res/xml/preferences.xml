@@ -15,31 +15,38 @@
 
         <com.jenzz.materialpreference.CheckBoxPreference
             android:key="@string/preference_vibration_key"
-            android:title="@string/preference_vibration" />
+            android:title="@string/preference_vibration"
+            android:defaultValue="true"/>
 
         <com.jenzz.materialpreference.CheckBoxPreference
             android:key="@string/preference_sound_key"
-            android:title="@string/preference_sound" />
+            android:title="@string/preference_sound"
+            android:defaultValue="true" />
 
         <com.jenzz.materialpreference.CheckBoxPreference
             android:key="@string/preference_long_press_key"
-            android:title="@string/preference_long_press" />
+            android:title="@string/preference_long_press"
+            android:defaultValue="true" />
 
         <com.jenzz.materialpreference.CheckBoxPreference
             android:key="@string/preference_quick_reveal_key"
-            android:title="@string/preference_quick_reveal" />
+            android:title="@string/preference_quick_reveal"
+            android:defaultValue="true" />
 
         <com.jenzz.materialpreference.CheckBoxPreference
             android:key="@string/preference_quick_toggle_key"
-            android:title="@string/preference_quick_toggle" />
+            android:title="@string/preference_quick_toggle"
+            android:defaultValue="true" />
 
         <com.jenzz.materialpreference.CheckBoxPreference
             android:key="@string/preference_volume_toggle_key"
-            android:title="@string/preference_volume_toggle" />
+            android:title="@string/preference_volume_toggle"
+            android:defaultValue="true" />
 
         <com.jenzz.materialpreference.CheckBoxPreference
             android:key="@string/preference_autosave_key"
-            android:title="@string/preference_autosave" />
+            android:title="@string/preference_autosave"
+            android:defaultValue="true" />
 
     </com.jenzz.materialpreference.PreferenceCategory>
 
