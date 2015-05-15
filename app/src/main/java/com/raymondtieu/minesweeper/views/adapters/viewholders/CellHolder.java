@@ -1,6 +1,8 @@
 package com.raymondtieu.minesweeper.views.adapters.viewholders;
 
 import android.content.Context;
+import android.graphics.Picture;
+import android.graphics.drawable.PictureDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,9 +19,10 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
     public ImageView icon;
     public ImageView background;
 
-    private int fillId;
+    private PictureDrawable cellImage;
+    private PictureDrawable cellFillImage;
 
-    public FieldAdapter mAdapter;
+    private FieldAdapter mAdapter;
 
     public CellHolder(View itemView, FieldAdapter adapter, int size)  {
         super(itemView);
@@ -42,8 +45,6 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
         itemView.getLayoutParams().width = size;
         itemView.getLayoutParams().height = size;
-
-        fillId = -1;
     }
 
     @Override
@@ -57,29 +58,38 @@ public class CellHolder extends RecyclerView.ViewHolder implements View.OnClickL
         return true;
     }
 
-    public void setIcon(Context context, int id, int fillId) {
-        SVG svg = SVGParser.getSVGFromResource(context.getResources(), id);
-
-        this.icon.setImageDrawable(svg.createPictureDrawable());
-
-        this.fillId = fillId;
+    public void clearIcon(int resId) {
+        this.icon.setImageResource(resId);
     }
 
-    public void setBackground(Context context, int id) {
-        SVG svg = SVGParser.getSVGFromResource(context.getResources(), id);
-
-        this.background.setImageDrawable(svg.createPictureDrawable());
+    public void setBackground(PictureDrawable cellBG) {
+        this.background.setImageDrawable(cellBG);
     }
 
-    public void toggleFlash(Context context, boolean fill) {
-        if (fillId != -1) {
-            if (fill) {
-                SVG svg = SVGParser.getSVGFromResource(context.getResources(), fillId);
+    public void setCellNum(PictureDrawable cellImage, PictureDrawable cellFillImage) {
+        this.cellImage = cellImage;
+        this.cellFillImage = cellFillImage;
 
-                this.background.setImageDrawable(svg.createPictureDrawable());
-            } else {
-                this.background.setImageResource(android.R.color.transparent);
-            }
+        this.icon.setImageDrawable(this.cellImage);
+    }
+
+    public void setMine(PictureDrawable mineImage) {
+        this.icon.setImageDrawable(mineImage);
+    }
+
+    public void setFlag(PictureDrawable flagImage) {
+        this.icon.setImageDrawable(flagImage);
+    }
+
+    public void startInvalid() {
+        if (cellFillImage != null) {
+            this.icon.setVisibility(View.INVISIBLE);
+            this.background.setImageDrawable(cellFillImage);
         }
+    }
+
+    public void stopInvalid() {
+        this.icon.setVisibility(View.VISIBLE);
+        this.background.setImageResource(android.R.color.transparent);
     }
 }

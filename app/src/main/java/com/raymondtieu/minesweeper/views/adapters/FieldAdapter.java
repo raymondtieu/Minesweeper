@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 
 import com.raymondtieu.minesweeper.R;
+import com.raymondtieu.minesweeper.utils.ImageLoader;
 import com.raymondtieu.minesweeper.views.adapters.viewholders.CellHolder;
 import com.raymondtieu.minesweeper.models.Cell;
 import com.raymondtieu.minesweeper.models.Field;
@@ -38,30 +39,9 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     private Animation animationMine;
     private Animation animationInvalid;
 
-    CellHolder[] holders;
+    private CellHolder[] holders;
 
-    Integer[] CELL_MINES = {
-            R.raw.mine_0,
-            R.raw.mine_1,
-            R.raw.mine_2,
-            R.raw.mine_3,
-            R.raw.mine_4,
-            R.raw.mine_5,
-            R.raw.mine_6,
-            R.raw.mine_7,
-            R.raw.mine_8
-    };
-
-    Integer[] CELL_MINES_FILLED = {
-            R.raw.fill_mine_1,
-            R.raw.fill_mine_2,
-            R.raw.fill_mine_3,
-            R.raw.fill_mine_4,
-            R.raw.fill_mine_5,
-            R.raw.fill_mine_6,
-            R.raw.fill_mine_7,
-            R.raw.fill_mine_8
-    };
+    private ImageLoader imageLoader;
 
     public FieldAdapter(Context context, Field field, int size) {
         inflater = LayoutInflater.from(context);
@@ -70,6 +50,8 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         this.cellDimensions = size;
 
         holders = new CellHolder[field.getDimX() * field.getDimY()];
+
+        imageLoader = ImageLoader.getInstance(mContext);
 
         initializeAnimations();
     }
@@ -82,7 +64,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         CellHolder holder = new CellHolder(view, this, cellDimensions);
 
         // set holder to be a hidden cell
-        holder.setBackground(mContext, R.raw.cell_bg);
+        holder.setBackground(imageLoader.getCellBG());
 
         // return holder that was inflated
         return holder;
@@ -103,25 +85,27 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             int n = cell.getAdjacentMines();
 
             if (n < 9) {
-                if (n > 0)
-                    holder.setIcon(mContext, CELL_MINES[n], CELL_MINES_FILLED[n - 1]);
-                else
-                    holder.setIcon(mContext, CELL_MINES[n], -1);
+                if (n > 0) {
+                    holder.setCellNum(imageLoader.getCellImage(n),
+                            imageLoader.getCellFillImage(n));
+                } else {
+                    holder.setCellNum(imageLoader.getCellImage(0), null);
+                }
             } else {
                 // set icon to be a mine
-                holder.setIcon(mContext, R.raw.mine_red, -1);
+                holder.setMine(imageLoader.getMineImage());
 
                 // start animation for mines
                 holder.icon.startAnimation(animationMine);
             }
         } else if (status == Cell.Status.FLAGGED) {
-            holder.setIcon(mContext, R.raw.flag_primary, -1);
+            holder.setFlag(imageLoader.getPrimaryFlagImage());
         } else if (status == Cell.Status.FLAG_CORRECT) {
-            holder.setIcon(mContext, R.raw.flag_correct, -1);
+            holder.setFlag(imageLoader.getGreenFlagImage());
         } else if (status == Cell.Status.FLAG_INCORRECT) {
-            holder.setIcon(mContext, R.raw.flag_incorrect, -1);
+            holder.setFlag(imageLoader.getRedFlagImage());
         } else if (status == Cell.Status.HIDDEN) {
-            holder.icon.setImageResource(android.R.color.transparent);
+            holder.clearIcon(android.R.color.transparent);
         }
     }
 
@@ -239,27 +223,25 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     private void notifyInvalid(final int position, final boolean hidden) {
         final CellHolder cell = holders[position];
 
-        if (!hidden) {
 
-            animationInvalid.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    cell.icon.setVisibility(View.INVISIBLE);
-                    cell.toggleFlash(mContext, true);
-                }
+        animationInvalid.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                if (!hidden)
+                    cell.startInvalid();
+            }
 
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    cell.icon.setVisibility(View.VISIBLE);
-                    cell.toggleFlash(mContext, false);
-                }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (!hidden)
+                    cell.stopInvalid();
+            }
 
-                @Override
-                public void onAnimationRepeat(Animation animation) {
+            @Override
+            public void onAnimationRepeat(Animation animation) {
 
-                }
-            });
-        }
+            }
+        });
 
         this.notifyItemChanged(position);
         cell.background.startAnimation(animationInvalid);

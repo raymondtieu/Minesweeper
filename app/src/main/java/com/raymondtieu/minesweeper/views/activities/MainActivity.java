@@ -114,7 +114,7 @@ public class MainActivity extends ActionBarActivity {
 
         // load previous game
         if (started && !finished && minesweeper == null) {
-            Log.i(TAG, "Loading a saved game");
+            Log.i(TAG, "Loading a saved game with difficulty: " + difficulty);
 
             Gson gson = new Gson();
             Long time = sharedPreferences.getLong(KEY_TIME, 0L);
