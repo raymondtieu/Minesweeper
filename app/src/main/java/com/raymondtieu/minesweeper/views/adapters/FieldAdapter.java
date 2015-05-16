@@ -34,11 +34,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
 
     private GameUtils gameUtils;
 
-    private Animation animationGrow;
-    private Animation animationShrink;
-    private Animation animationMine;
-    private Animation animationInvalid;
-
     private CellHolder[] holders;
 
     private ImageLoader imageLoader;
@@ -52,8 +47,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         holders = new CellHolder[field.getDimX() * field.getDimY()];
 
         imageLoader = ImageLoader.getInstance(mContext);
-
-        initializeAnimations();
     }
 
     @Override
@@ -96,6 +89,7 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
                 holder.setMine(imageLoader.getMineImage());
 
                 // start animation for mines
+                Animation animationMine = AnimationUtils.loadAnimation(mContext, R.anim.mine);
                 holder.icon.startAnimation(animationMine);
             }
         } else if (status == Cell.Status.FLAGGED) {
@@ -113,7 +107,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     public int getItemCount() {
         return field.getDimX() * field.getDimY();
     }
-
 
     public void setOnItemClickListener(AdapterView.OnItemClickListener i) {
         this.mOnItemClickListener = i;
@@ -137,10 +130,9 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         }
     }
 
-    public void setPositionAdapter(GameUtils gameUtils) {
+    public void setGameUtils(GameUtils gameUtils) {
         this.gameUtils = gameUtils;
     }
-
 
     public void notifyChange(int position, Notification notification) {
         if (notification == Notification.REVEAL)
@@ -160,7 +152,11 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     private void notifyReveal(final int position) {
         final CellHolder cell = holders[position];
 
-       animationGrow.setAnimationListener(new Animation.AnimationListener() {
+        this.notifyItemChanged(position);
+
+        Animation animationGrow = AnimationUtils.loadAnimation(mContext, R.anim.grow);
+
+        animationGrow.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -177,7 +173,6 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
             }
         });
 
-        this.notifyItemChanged(position);
         cell.icon.startAnimation(animationGrow);
     }
 
@@ -188,10 +183,9 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
         final FieldAdapter f = this;
 
         if (flag)
-            animation = animationGrow;
+            animation = AnimationUtils.loadAnimation(mContext, R.anim.grow);
         else
-            animation = animationShrink;
-
+            animation = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
 
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -223,34 +217,27 @@ public class FieldAdapter extends RecyclerView.Adapter<CellHolder> {
     private void notifyInvalid(final int position, final boolean hidden) {
         final CellHolder cell = holders[position];
 
+        Animation animationInvalid = AnimationUtils.loadAnimation(mContext, R.anim.invalid);
 
-        animationInvalid.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                if (!hidden)
+        if (!hidden) {
+            animationInvalid.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
                     cell.startInvalid();
-            }
+                }
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                if (!hidden)
+                @Override
+                public void onAnimationEnd(Animation animation) {
                     cell.stopInvalid();
-            }
+                }
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
+                @Override
+                public void onAnimationRepeat(Animation animation) {
 
-            }
-        });
+                }
+            });
+        }
 
-        this.notifyItemChanged(position);
         cell.background.startAnimation(animationInvalid);
-    }
-
-    private void initializeAnimations() {
-        animationGrow = AnimationUtils.loadAnimation(mContext, R.anim.grow);
-        animationShrink = AnimationUtils.loadAnimation(mContext, R.anim.shrink);
-        animationMine = AnimationUtils.loadAnimation(mContext, R.anim.mine);
-        animationInvalid = AnimationUtils.loadAnimation(mContext, R.anim.invalid);
     }
 }

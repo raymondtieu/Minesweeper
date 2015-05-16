@@ -98,7 +98,7 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
     public void setUpMineField(Field field, GameUtils gameUtils) {
         mAdapter = new FieldAdapter(getActivity(), field, cellDimen);
 
-        mAdapter.setPositionAdapter(gameUtils);
+        mAdapter.setGameUtils(gameUtils);
         mAdapter.setOnItemClickListener(this);
         mAdapter.setOnItemLongClickListener(this);
 

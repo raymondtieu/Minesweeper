@@ -55,6 +55,13 @@ public class ImageLoader {
         this.context = context;
         cellImage = new PictureDrawable[CELL.length];
         cellFillImage = new PictureDrawable[CELL_FILL.length];
+
+        // load frequently used images from disk on initialization
+        getCellBG();
+        for (int i = 0; i < 4; i++) {
+            getCellImage(i);
+            getCellFillImage(i);
+        }
     }
 
     public static ImageLoader getInstance(Context context) {
