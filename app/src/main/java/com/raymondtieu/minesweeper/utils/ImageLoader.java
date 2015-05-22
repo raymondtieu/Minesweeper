@@ -60,7 +60,7 @@ public class ImageLoader {
         getCellBG();
         for (int i = 0; i < 4; i++) {
             getCellImage(i);
-            getCellFillImage(i);
+            getCellFillImage(i + 1);
         }
     }
 

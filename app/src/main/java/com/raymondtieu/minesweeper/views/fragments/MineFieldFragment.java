@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -103,10 +104,9 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
         mAdapter.setOnItemLongClickListener(this);
 
         // the recycler view manager
-        FixedGridLayoutManager manager = new FixedGridLayoutManager();
-        manager.setTotalColumnCount(field.getDimY());
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), field.getDimY());
 
-        mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -154,7 +154,14 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        long start = System.nanoTime();
+
         presenter.onClick(position);
+
+        long end = System.nanoTime();
+
+        Log.i(TAG, "Time to process click: " + (end - start));
     }
 
     @Override
