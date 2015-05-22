@@ -16,7 +16,6 @@ import android.widget.FrameLayout;
 import com.raymondtieu.minesweeper.R;
 import com.raymondtieu.minesweeper.views.activities.MainActivity;
 import com.raymondtieu.minesweeper.views.adapters.FieldAdapter;
-import com.raymondtieu.minesweeper.layouts.FixedGridLayoutManager;
 import com.raymondtieu.minesweeper.models.Field;
 import com.raymondtieu.minesweeper.presenters.MineFieldPresenter;
 import com.raymondtieu.minesweeper.presenters.MineFieldPresenterImpl;
