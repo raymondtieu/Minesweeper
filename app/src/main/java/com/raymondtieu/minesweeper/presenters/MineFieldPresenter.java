@@ -13,9 +13,9 @@ public interface MineFieldPresenter {
 
     public void onResume();
 
-    public void onClick(int position);
+    public void onClick(int position, boolean quickRevealPreference, boolean quickTogglePreference);
 
-    public boolean onLongClick(int position);
+    public boolean onLongClick(int position, boolean longPressPreference);
 
     public void startNewGame();
 }

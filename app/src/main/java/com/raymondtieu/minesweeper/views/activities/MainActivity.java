@@ -3,6 +3,7 @@ package com.raymondtieu.minesweeper.views.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -48,6 +49,8 @@ public class MainActivity extends ActionBarActivity {
     private OnePlayerGame minesweeper;
 
     private String difficulty;
+
+    private boolean volumeTogglePreference, autoSavePreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,22 +194,39 @@ public class MainActivity extends ActionBarActivity {
         int action = event.getAction();
         int keyCode = event.getKeyCode();
 
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                if (action == KeyEvent.ACTION_DOWN) {
-                    minesweeper.toggleFlag();
-                }
-                return true;
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                if (action == KeyEvent.ACTION_DOWN) {
-                    minesweeper.toggleFlag();
-                }
-                return true;
-            default:
-                return super.dispatchKeyEvent(event);
+        if (volumeTogglePreference) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_VOLUME_UP:
+                    if (action == KeyEvent.ACTION_DOWN) {
+                        minesweeper.toggleFlag();
+                    }
+                    return true;
+                case KeyEvent.KEYCODE_VOLUME_DOWN:
+                    if (action == KeyEvent.ACTION_DOWN) {
+                        minesweeper.toggleFlag();
+                    }
+                    return true;
+                default:
+                    return super.dispatchKeyEvent(event);
+            }
+        } else {
+            return super.dispatchKeyEvent(event);
         }
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        volumeTogglePreference = sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_volume_toggle_key), true);
+
+        autoSavePreference = sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_autosave_key), true);
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -250,10 +270,8 @@ public class MainActivity extends ActionBarActivity {
 
         // put the number of mines in shared preferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(KEY_STARTED, minesweeper.isStarted());
-        editor.putBoolean(KEY_FINISHED, minesweeper.isFinished());
 
-        if (minesweeper.isStarted() && !minesweeper.isFinished()) {
+        if (autoSavePreference && minesweeper.isStarted() && !minesweeper.isFinished()) {
             Log.i(TAG, "Saving game to preferences");
 
             Gson gson = new Gson();
@@ -265,9 +283,19 @@ public class MainActivity extends ActionBarActivity {
 
             editor.putString(KEY_MINESWEEPER, jsonField);
             editor.putLong(KEY_TIME, time);
+
+            editor.putBoolean(KEY_STARTED, minesweeper.isStarted());
+            editor.putBoolean(KEY_FINISHED, minesweeper.isFinished());
         } else {
+            // remove any previous saved game data when there is no need to save
+            // to avoid any data being loaded into a new game
             editor.remove(KEY_MINESWEEPER);
             editor.remove(KEY_TIME);
+
+            editor.remove(KEY_STARTED);
+            editor.remove(KEY_FINISHED);
+
+            Log.i(TAG, "Removing any saved games");
         }
 
         editor.commit();

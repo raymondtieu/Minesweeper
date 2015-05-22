@@ -41,6 +41,11 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
     // read this from shared preferences
     private int cellDimen = 90;
 
+    private SharedPreferences sharedPreferences;
+
+    private boolean longPressPreference, quickRevealPreference,
+            quickTogglePreference, vibrationPreference, soundPreference;
+
     public static MineFieldFragment newInstance() {
         Bundle args = new Bundle();
 
@@ -156,12 +161,12 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        presenter.onClick(position);
+        presenter.onClick(position, quickRevealPreference, quickTogglePreference);
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        return presenter.onLongClick(position);
+        return presenter.onLongClick(position, longPressPreference);
     }
 
     @Override
@@ -177,24 +182,19 @@ public class MineFieldFragment extends Fragment implements AdapterView.OnItemCli
         presenter.onResume();
 
         // get current settings
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 
-        Log.i(TAG, "Long press: " + sharedPreferences.getBoolean(
-                getResources().getString(R.string.preference_long_press_key), true));
-        Log.i(TAG, "Quick reveal: " + sharedPreferences.getBoolean(
-                getResources().getString(R.string.preference_quick_reveal_key), true));
-        Log.i(TAG, "Quick toggle: " + sharedPreferences.getBoolean(
-                getResources().getString(R.string.preference_quick_toggle_key), true));
-        Log.i(TAG, "Sound: " + sharedPreferences.getBoolean(
-                getResources().getString(R.string.preference_sound_key), true));
-        Log.i(TAG, "Vibration: " + sharedPreferences.getBoolean(
-                getResources().getString(R.string.preference_vibration_key), true));
-        Log.i(TAG, "Volume toggle: " + sharedPreferences.getBoolean(
-                getResources().getString(R.string.preference_volume_toggle_key), true));
-        Log.i(TAG, "Autosave: " + sharedPreferences.getBoolean(
-                getResources().getString(R.string.preference_autosave_key), true));
-
+        longPressPreference = sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_long_press_key), true);
+        quickRevealPreference = sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_quick_reveal_key), true);
+        quickTogglePreference = sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_quick_toggle_key), true);
+        soundPreference = sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_sound_key), true);
+        vibrationPreference = sharedPreferences.getBoolean(
+                getResources().getString(R.string.preference_vibration_key), true);
     }
 
     @Override

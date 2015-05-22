@@ -4,6 +4,8 @@ import android.graphics.Point;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.raymondtieu.minesweeper.R;
+
 /**
  * Created by raymond on 2015-04-22.
  */

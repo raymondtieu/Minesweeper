@@ -144,7 +144,7 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
     }
 
     @Override
-    public void onClick(int x, int y) {
+    public void onClick(int x, int y, boolean quickReveal, boolean quickToggle) {
         Cell cell = field.getCell(x, y);
         Cell.Status status = cell.getStatus();
 
@@ -164,11 +164,11 @@ public class OnePlayerGame extends Observable implements Game, Parcelable {
 
         } else if (status == Cell.Status.REVEALED) {
             // toggle flag mode on empty cell click
-            if (cell.getAdjacentMines() <= 0) {
+            if (cell.getAdjacentMines() <= 0 && quickToggle) {
                 toggleFlag();
 
                 // reveal surrounding cells when cell is pressed
-            } else {
+            } else if (quickReveal) {
                 revealSurrounding(x, y);
 
                 // if a mine was not found, check to see if game is won

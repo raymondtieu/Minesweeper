@@ -13,6 +13,6 @@ public interface Game {
     public void flagCell(int x, int y, Cell.Status status);
     public void checkGameFinished(Cell cell);
 
-    public void onClick(int x, int y);
+    public void onClick(int x, int y, boolean quickReveal, boolean quickToggle);
     public boolean onLongClick(int x, int y);
 }

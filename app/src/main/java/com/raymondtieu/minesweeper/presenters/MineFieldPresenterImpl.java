@@ -70,17 +70,21 @@ public class MineFieldPresenterImpl implements MineFieldPresenter, Observer {
     }
 
     @Override
-    public void onClick(int position) {
+    public void onClick(int position, boolean quickRevealPreference, boolean quickTogglePreference) {
         Point p = gameUtils.getPoint(position);
 
-        minesweeper.onClick(p.x, p.y);
+        minesweeper.onClick(p.x, p.y, quickRevealPreference, quickTogglePreference);
     }
 
     @Override
-    public boolean onLongClick(int position) {
-        Point p = gameUtils.getPoint(position);
+    public boolean onLongClick(int position, boolean longPressPreference) {
+        if (longPressPreference) {
+            Point p = gameUtils.getPoint(position);
 
-        return minesweeper.onLongClick(p.x, p.y);
+            return minesweeper.onLongClick(p.x, p.y);
+        }
+
+        return false;
     }
 
     private void onFinish() {
